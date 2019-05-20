@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./simpleui-1.0.0/simple.js?mode=jquery" module="datagrid,datatree"></script>
+    <script src="./simpleui-1.0.0/simple.js?mode=vue&modules=datagrid&skin=blue&lang=zh_CN"></script>
 </head>
 <body>
-
+<div id="app">
+    <a class="btn btn-primary" title href="#">{{message}}</a>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: '嘻嘻'
+        }
+    })
+</script>
 </body>
+
 </html>
