@@ -75,13 +75,13 @@
 			html += '<div property="footer">';
 			html += '<div class="mini-col-12 mini-yearpicker-footer">';
 			if(that.showToyearButton){
-				html += '<input name="yearpicker-button" groupName="toyear" class="mini-button mini-yearpicker-button" text="'+Object.getPrototypeOf(that).nowYearButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="toyear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.nowYearButton+'"/>';
 			}
 			if(that.showClearButton){
-				html += '<input name="yearpicker-button" groupName="clear" class="mini-button mini-yearpicker-button" text="'+Object.getPrototypeOf(that).clearButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="clear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.clearButton+'"/>';
 			}
 			if(that.showOkButton){
-				html += '<input name="yearpicker-button" groupName="commit" class="mini-button mini-yearpicker-button" text="'+Object.getPrototypeOf(that).commitButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="commit" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.commitButton+'"/>';
 			}
 			html += '</div">';
 			html += '</div>';
@@ -387,7 +387,7 @@
 			if(!that.hasInit){
 				var tableHtml = "<table class=\"mini-time-calendar-table\" cellpadding=\"0\" cellspacing=\"0\">";
 				tableHtml += "<tbody>";
-				tableHtml +="<tr class=\"mini-time-calendar-header\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+Object.getPrototypeOf(that).hourText+"</div></td><td><div class=\"time-calendar-inner\">"+Object.getPrototypeOf(that).minuteText+"</div></td><td><div class=\"time-calendar-inner\">"+Object.getPrototypeOf(that).secondText+"</div></td></tr>";
+				tableHtml +="<tr class=\"mini-time-calendar-header\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+mini.TimeCalendar.hourText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.minuteText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.secondText+"</div></td></tr>";
 				var hourHtml = "<ol class=\"main-hour\">";
 				for(var i=0;i<24;i++){
 					hourHtml +="<li data-val=\""+i+"\">"+i+"</li>"
@@ -404,7 +404,7 @@
 				}
 				secHtml +="</ol>";
 				tableHtml +="<tr class=\"mini-time-calendar-main\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+hourHtml+"</div></td><td><div class=\"time-calendar-inner\">"+minuHtml+"</div></td><td><div class=\"time-calendar-inner\">"+secHtml+"</div></td></tr>";
-				tableHtml +="<tr class=\"mini-time-calendar-footer\"><td colSpan=\"3\"><div class=\"time-calendar-inner\"><input name=\"mini-time-calendar-now\" class=\"mini-button\" text=\""+Object.getPrototypeOf(that).nowButton+"\"/><input name=\"mini-time-calendar-clear\" class=\"mini-button\" text=\""+Object.getPrototypeOf(that).clearButton+"\"/></div></td></tr>";
+				tableHtml +="<tr class=\"mini-time-calendar-footer\"><td colSpan=\"3\"><div class=\"time-calendar-inner\"><input name=\"mini-time-calendar-now\" class=\"mini-button\" text=\""+mini.TimeCalendar.nowButton+"\"/><input name=\"mini-time-calendar-clear\" class=\"mini-button\" text=\""+mini.TimeCalendar.clearButton+"\"/></div></td></tr>";
 				$(that.el).html(tableHtml);
 				that._tableEl = $(that.el).find("table.mini-time-calendar-table")[0];
 				that._headerEl = $(that.el).find("tr.mini-time-calendar-header")[0];
@@ -505,7 +505,7 @@
 					$(popup._contentEl).append(html);
 					mini.parse(popup._contentEl);
 					that.timecalendar = mini.getByName("mini-time-calendar",popup._contentEl);
-					$(that.timecalendar._footerEl).find("div.time-calendar-inner").append("<input name=\"calendar-button\" groupName=\"commit\" class=\"mini-button\" text=\""+Object.getPrototypeOf(that).commitButton+"\"/><input name=\"calendar-button\" groupName=\"return\" class=\"mini-button\" text=\""+Object.getPrototypeOf(that).returnButton+"\"/>");
+					$(that.timecalendar._footerEl).find("div.time-calendar-inner").append("<input name=\"calendar-button\" groupName=\"commit\" class=\"mini-button\" text=\""+mini.Timepicker.commitButton+"\"/><input name=\"calendar-button\" groupName=\"return\" class=\"mini-button\" text=\""+mini.Timepicker.returnButton+"\"/>");
 					mini.parse(that.timecalendar._footerEl);
 					var btns = mini.getsByName("calendar-button",that.timecalendar._footerEl);
 					that.timecalendarBtns = btns;
@@ -534,7 +534,7 @@
 					var tempDate = mini.parseData(that.getText(),"date",that.getFormat());
 					that.datecalendar.setViewDate(tempDate);
 					that.datecalendar.setValue(tempDate);
-					$(that.datecalendar.okButtonEl).replaceWith("<input name=\"commit-calendar-button\" class=\"mini-button mini-timepicker-commit-button\" text=\""+Object.getPrototypeOf(that).commitButton+"\"/>");
+					$(that.datecalendar.okButtonEl).replaceWith("<input name=\"commit-calendar-button\" class=\"mini-button mini-timepicker-commit-button\" text=\""+mini.Timepicker.commitButton+"\"/>");
 					mini.parse(that.datecalendar.el);
 					var btn = mini.getByName("commit-calendar-button",that.datecalendar.el);
 					btn.on("click",function(e){
@@ -562,7 +562,7 @@
 							that.popup.setVisible(false);
 						}
 					});
-					$(that.datecalendar.todayButtonEl).text(Object.getPrototypeOf(that).nowButton);
+					$(that.datecalendar.todayButtonEl).text(mini.Timepicker.nowButton);
 					$(that.datecalendar.todayButtonEl).click(function(e){
 						setTimeout(function(){
 							that.timecalendar.setValue(that.datecalendar.getValue());
