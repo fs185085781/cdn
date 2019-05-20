@@ -75,13 +75,13 @@
 			html += '<div property="footer">';
 			html += '<div class="mini-col-12 mini-yearpicker-footer">';
 			if(that.showToyearButton){
-				html += '<input name="yearpicker-button" groupName="toyear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.nowYearButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="toyear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.prototype.nowYearButton+'"/>';
 			}
 			if(that.showClearButton){
-				html += '<input name="yearpicker-button" groupName="clear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.clearButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="clear" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.prototype.clearButton+'"/>';
 			}
 			if(that.showOkButton){
-				html += '<input name="yearpicker-button" groupName="commit" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.commitButton+'"/>';
+				html += '<input name="yearpicker-button" groupName="commit" class="mini-button mini-yearpicker-button" text="'+mini.YearPicker.prototype.commitButton+'"/>';
 			}
 			html += '</div">';
 			html += '</div>';
@@ -230,19 +230,14 @@
 			var minuteLi = $(that._mainEl).find("ol.main-minute li.select-this");
 			var secondLi = $(that._mainEl).find("ol.main-second li.select-this");
 			if(hourLi.length>0 && minuteLi.length>0 && secondLi.length>0){
-				var hour = $(hourLi).attr("data-val");
-				if(hour<10){
-					hour = "0"+hour;
-				}
-				var minute = $(minuteLi).attr("data-val");
-				if(minute<10){
-					minute = "0"+minute;
-				}
-				var second = $(secondLi).attr("data-val");
-				if(second<10){
-					second = "0"+second;
-				}
-				return mini.parseData(hour+":"+minute+":"+second,"date","HH:mm:ss");
+				var hour = $(hourLi).attr("data-val")*1;
+				var minute = $(minuteLi).attr("data-val")*1;
+				var second = $(secondLi).attr("data-val")*1;
+				var date = new Date();
+				date.setHours(hour);
+				date.setMinutes(minute);
+				date.setSeconds(second);
+				return date;
 			}else{
 				return null;
 			}
@@ -387,7 +382,7 @@
 			if(!that.hasInit){
 				var tableHtml = "<table class=\"mini-time-calendar-table\" cellpadding=\"0\" cellspacing=\"0\">";
 				tableHtml += "<tbody>";
-				tableHtml +="<tr class=\"mini-time-calendar-header\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+mini.TimeCalendar.hourText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.minuteText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.secondText+"</div></td></tr>";
+				tableHtml +="<tr class=\"mini-time-calendar-header\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+mini.TimeCalendar.prototype.hourText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.prototype.minuteText+"</div></td><td><div class=\"time-calendar-inner\">"+mini.TimeCalendar.prototype.secondText+"</div></td></tr>";
 				var hourHtml = "<ol class=\"main-hour\">";
 				for(var i=0;i<24;i++){
 					hourHtml +="<li data-val=\""+i+"\">"+i+"</li>"
@@ -404,7 +399,7 @@
 				}
 				secHtml +="</ol>";
 				tableHtml +="<tr class=\"mini-time-calendar-main\"><td class=\"time-calendar-first-td\"><div class=\"time-calendar-inner\">"+hourHtml+"</div></td><td><div class=\"time-calendar-inner\">"+minuHtml+"</div></td><td><div class=\"time-calendar-inner\">"+secHtml+"</div></td></tr>";
-				tableHtml +="<tr class=\"mini-time-calendar-footer\"><td colSpan=\"3\"><div class=\"time-calendar-inner\"><input name=\"mini-time-calendar-now\" class=\"mini-button\" text=\""+mini.TimeCalendar.nowButton+"\"/><input name=\"mini-time-calendar-clear\" class=\"mini-button\" text=\""+mini.TimeCalendar.clearButton+"\"/></div></td></tr>";
+				tableHtml +="<tr class=\"mini-time-calendar-footer\"><td colSpan=\"3\"><div class=\"time-calendar-inner\"><input name=\"mini-time-calendar-now\" class=\"mini-button\" text=\""+mini.TimeCalendar.prototype.nowButton+"\"/><input name=\"mini-time-calendar-clear\" class=\"mini-button\" text=\""+mini.TimeCalendar.prototype.clearButton+"\"/></div></td></tr>";
 				$(that.el).html(tableHtml);
 				that._tableEl = $(that.el).find("table.mini-time-calendar-table")[0];
 				that._headerEl = $(that.el).find("tr.mini-time-calendar-header")[0];
@@ -505,7 +500,7 @@
 					$(popup._contentEl).append(html);
 					mini.parse(popup._contentEl);
 					that.timecalendar = mini.getByName("mini-time-calendar",popup._contentEl);
-					$(that.timecalendar._footerEl).find("div.time-calendar-inner").append("<input name=\"calendar-button\" groupName=\"commit\" class=\"mini-button\" text=\""+mini.Timepicker.commitButton+"\"/><input name=\"calendar-button\" groupName=\"return\" class=\"mini-button\" text=\""+mini.Timepicker.returnButton+"\"/>");
+					$(that.timecalendar._footerEl).find("div.time-calendar-inner").append("<input name=\"calendar-button\" groupName=\"commit\" class=\"mini-button\" text=\""+mini.Timepicker.prototype.commitButton+"\"/><input name=\"calendar-button\" groupName=\"return\" class=\"mini-button\" text=\""+mini.Timepicker.prototype.returnButton+"\"/>");
 					mini.parse(that.timecalendar._footerEl);
 					var btns = mini.getsByName("calendar-button",that.timecalendar._footerEl);
 					that.timecalendarBtns = btns;
@@ -534,7 +529,7 @@
 					var tempDate = mini.parseData(that.getText(),"date",that.getFormat());
 					that.datecalendar.setViewDate(tempDate);
 					that.datecalendar.setValue(tempDate);
-					$(that.datecalendar.okButtonEl).replaceWith("<input name=\"commit-calendar-button\" class=\"mini-button mini-timepicker-commit-button\" text=\""+mini.Timepicker.commitButton+"\"/>");
+					$(that.datecalendar.okButtonEl).replaceWith("<input name=\"commit-calendar-button\" class=\"mini-button mini-timepicker-commit-button\" text=\""+mini.Timepicker.prototype.commitButton+"\"/>");
 					mini.parse(that.datecalendar.el);
 					var btn = mini.getByName("commit-calendar-button",that.datecalendar.el);
 					btn.on("click",function(e){
@@ -562,7 +557,7 @@
 							that.popup.setVisible(false);
 						}
 					});
-					$(that.datecalendar.todayButtonEl).text(mini.Timepicker.nowButton);
+					$(that.datecalendar.todayButtonEl).text(mini.Timepicker.prototype.nowButton);
 					$(that.datecalendar.todayButtonEl).click(function(e){
 						setTimeout(function(){
 							that.timecalendar.setValue(that.datecalendar.getValue());
@@ -661,7 +656,10 @@
 			return mini.parseDate(str);
 		}
 		//仅支持yyyy MM dd HH mm ss相互组合
-		var date = new Date("1900-01-01 00:00:00");
+		var date = new Date();
+		date.setFullYear(1900);
+		date.setMonth(0);
+		date.setDate(1);
 		var formatMaps = [{id:"yyyy",name:"FullYear"},{id:"MM",name:"Month"},{id:"dd",name:"Date"},{id:"HH",name:"Hours"},{id:"mm",name:"Minutes"},{id:"ss",name:"Seconds"}];
 		var flag = true;
 		var c;
