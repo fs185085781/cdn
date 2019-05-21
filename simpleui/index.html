@@ -6,9 +6,14 @@
     <script src="./simpleui-1.0.0/simple.js?mode=jquery&modules=datagrid&skin=blue&lang=zh_CN"></script>
 </head>
 <body>
-<div class="simple-textbox" height="200" dsadsa="dsadsa">大撒旦撒</div>
+<div id="my-test" name="myname" visible="true" enabled="true" cls="haha" class="simple-combobox" width="500" height="200" style="border:1px solid black;" title="aaadd" ondestroy="xixi">
+    <input sytle="width:100px;height:30px;"/>大撒旦撒</div>
 </body>
 <script>
     simple.parse();
+    function xixi(e){
+        console.log("已经销毁");
+        console.log(e);
+    }
 </script>
 </html>

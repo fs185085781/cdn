@@ -1,4 +1,31 @@
 (function(win){
+    /*兼容IE5不支持的属性*/
+    /*重写string的trim方法*/
+    if(typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, '');
+        }
+        String.prototype.startsWith = function(str) {
+            return this.indexOf(str) == 0;
+        }
+    }
+    /*重写getElementsByClassName*/
+    if(!win.document.getElementsByClassName){
+        win.document.getElementsByClassName = function(cName){
+            var arr = [];
+            var allElements = document.getElementsByTagName('*');
+            for (var i = 0; i < allElements.length; i++) {
+                var allCNames = allElements[i].className.split(' ');
+                for (var j = 0; j < allCNames.length; j++) {
+                    if (allCNames[j] == cName) {
+                        arr.push(allElements[i]);
+                        break;
+                    }
+                }
+            }
+            return arr;
+        }
+    }
     var simplePlus = {
         encode:function(jsonObj) {
             var that = this;
@@ -230,11 +257,11 @@
             if(!options.useClass){
                 return;
             }
+            options.useClass = options.useClass.toLowerCase().trim();
             var moduleMap = win.simple.moduleMap;
             if(!moduleMap){
                 moduleMap = {};
             }
-            options.useClass = options.useClass.toLowerCase().trim();
             if(moduleMap[options.useClass]){
                 return;
             }
@@ -272,11 +299,18 @@
                 }
             }
             thisClass.eventMap = eventMap;
-            thisClass.initHtml = options.init;
+            var parentInit = thisClass.initHtml;
+            thisClass.initHtml = function(){
+                if(parentInit){
+                    parentInit();
+                }
+                options.init();
+            }
             win.simple[options.className] = function(){
                 for(var key in thisClass){
                     this[key] = thisClass[key];
                 }
+                this.useClass = options.useClass;
                 return this;
             }
             moduleMap[options.useClass] = win.simple[options.className];
@@ -296,7 +330,7 @@
                         continue;
                     }
                     if(win.simple.lastKeyId == null){
-                        win.simple.lastKeyId = 0;
+                        win.simple.lastKeyId = 1;
                     }
                     var keyId = win.simple.lastKeyId++;
                     var moduleObj = new module();
@@ -307,78 +341,75 @@
                     moduleObj.el = ele;
                     win.simple.allSimple[moduleObj.simplekey] = moduleObj;
                     moduleObj.initHtml();
+                    //获取默认的display
+                    moduleObj._defaultDisplay = win.simple.getCss(moduleObj.el,"display");
                     //设置属性
-                    var attributes = ele.attributes;
                     var fieldMap = moduleObj.fieldMap;
-                    for(var i=0;i<attributes.length;i++){
-                        var attribute = attributes[i];
-                        if(fieldMap[attribute.name]){
-                            var value = attribute.nodeValue;
-                            var setFunctionName = "set"+that.firstToUpperCase(attribute.name);
-                            if(moduleObj[setFunctionName]){
-                                eval("moduleObj."+setFunctionName+"(value)");
-                            }else{
-                                moduleObj[attribute.name] = value;
-                            }
+                    for(var key in fieldMap){
+                        var value = ele[key];
+                        if(!value){
+                            value = moduleObj.el.getAttribute(key);
+                        }
+                        if(!value){
+                            continue;
+                        }
+                        if(key == "style"){
+                            value = value.cssText;
+                        }
+                        var setFunctionName = "set"+that.firstToUpperCase(key);
+                        if(moduleObj[setFunctionName]){
+                            eval("moduleObj."+setFunctionName+"(value)");
                         }else{
-                            //多余的属性 删掉
-                            if(attribute.name != "class"){
-                                ele.removeAttribute(attribute.name);
-                            }
+                            moduleObj[key] = value;
                         }
                     }
-                    ele.setAttribute("simplekey",moduleObj.simplekey);
+                    moduleObj.el.simplekey = moduleObj.simplekey;
+                    //绑定事件
+                    var eventMap = moduleObj.eventMap;
+                    for(var key in eventMap){
+                        var value = ele["on"+key];
+                        if(!value){
+                            value = moduleObj.el.getAttribute("on"+key);
+                        }
+                        if(!value){
+                            continue;
+                        }
+                        if(win[value]){
+                            moduleObj.on(key,win[value]);
+                        }else{
+                            if(value.trim().startsWith("function")){
+                                if(win.simple.lastEventId == null){
+                                    win.simple.lastEventId = 1;
+                                }
+                                var eventName = "win.simple_event_"+(win.simple.lastEventId++);
+                                eval(eventName+"="+value);
+                                moduleObj.on(key,eval(eventName));
+                            }else{
+                                moduleObj.on(key,Function(value));
+                            }
+                        }
+
+                    }
                 }
             }
+        },
+        parseBoolean:function(val){
+            if(typeof val == "boolean"){
+                return val;
+            }if(val == "true" || val == "false"){
+                return eval(val);
+            }if(val == "1" || val =="0"){
+                return Boolean(Number(val));
+            }else if(val == null){
+                return false;
+            }
+            return true;
         },
         setCss:function(el,csskey,cssval){
-            var style = el.getAttribute("style");
-            if(!style){
-                style = "";
-            }
-            var csss = style.split(";");
-            var styleNew = "";
-            var has = false;
-            for (var i=0;i<csss.length;i++){
-                var css = csss[i];
-                var cssMap = css.split(":");
-                if(cssMap.length != 2){
-                    continue;
-                }
-                var key = cssMap[0].trim();
-                var val = cssMap[1].trim();
-                if(key == csskey){
-                    val = cssval;
-                    has = true;
-                }
-                if(key && val){
-                    styleNew += key+":"+val+";";
-                }
-            }
-            if(!has){
-                styleNew += csskey+":"+cssval+";";
-            }
-            el.setAttribute("style",styleNew);
+            el.style[csskey]=cssval;
         },
         getCss:function(el,csskey){
-            var style = el.getAttribute("style");
-            if(!style){
-                style = "";
-            }
-            var csss = style.split(";");
-            for (var i=0;i<csss.length;i++){
-                var css = csss[i];
-                var cssMap = css.split(":");
-                if(cssMap.length != 2){
-                    continue;
-                }
-                var key = cssMap[0].trim();
-                var val = cssMap[1].trim();
-                if(key == csskey){
-                    return val;
-                }
-            }
-            return null;
+            return el.style[csskey];
         },
         css:function(el,options,value){
             //1.value 不存在 options 存在  获取,设置
@@ -409,19 +440,22 @@
     }
     var baseModule = {
         init:function(){
-
+            console.log("初始化了base");
         },
         fire:function(type,data){
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
                 return;
             }
-            this.allBindEventMap[type](data);
+            var e = {base:this,type:type};
+            if(data){
+                e.data = data;
+            }
+            this.allBindEventMap[type](e);
         },
         getEl:function(){
             return this.el;
         },
         on:function(type,callback){
-            var has = false;
             if(!this.eventMap || !this.eventMap[type]){
                 return;
             }
@@ -440,43 +474,57 @@
             if(!opt){
                 return;
             }
+            var that = this;
             for(var key in opt){
-
+                var value = opt[key];
+                var setFunctionName = "set"+simple.firstToUpperCase(key);
+                if(that[setFunctionName]){
+                    eval("that."+setFunctionName+"(value)");
+                }else{
+                    that[key] = value;
+                }
             }
         },
-        render:function(element){
-
-        },
         destroy:function(){
-            this.el.remove();
-            this.fire("destroy",{base:this});
+            this.el.parentNode.removeChild(this.el);
+            this.fire("destroy");
+            delete win.simple.allSimple[this.simplekey];
         },
         show:function(){
-
+            this.setVisible(true);
         },
         hide:function(){
-
+            this.setVisible(false);
         },
         enable:function(){
-
+            this.setEnabled(true);
         },
         disable:function(){
-
-        },
-        focus:function(){
-
-        },
-        blur:function(){
-
+            this.setEnabled(false);
         },
         doLayout:function(){
 
         },
-        addCls:function(){
-
+        addCls:function(value){
+            value = value.trim();
+            if(value == this.useClass){
+                return;
+            }
+            var clazz = " "+this.el.className+" ";
+            if(clazz.indexOf(" "+value+" ") != -1){
+                return;
+            }
+            clazz = clazz.trim()+" "+value;
+            this.el.className = clazz;
         },
-        removeCls:function(){
-
+        removeCls:function(value){
+            value = value.trim();
+            if(value == this.useClass){
+                return;
+            }
+            var clazz = this.el.className.trim();
+            clazz = clazz.replace(value,"").trim();
+            this.el.className = clazz;
         },
         mask:function(option){
 
@@ -485,41 +533,87 @@
 
         },
         getId:function(){
-
+            return this.id;
         },
         setId:function(value){
-
+            if(!value){
+                this.el.removeAttribute("id");
+                delete this.id;
+                return;
+            }
+            this.el.id = value;
+            this.id = this.el.id;
         },
         getName:function(){
-
+            return this.name;
         },
         setName:function(value){
-
+            if(!value){
+                this.el.removeAttribute("name");
+                delete this.name;
+                return;
+            }
+            this.el.name = value;
+            this.name = this.el.name;
         },
         getVisible:function(){
-
+            if(typeof this.visible != "boolean"){
+                this.setVisible(true);
+            }
+            return this.visible;
         },
         setVisible:function(value){
-
+            this.visible = simple.parseBoolean(value);
+            this.removeCls("show");
+            this.removeCls("hidden");
+            if(this.visible){
+                this.addCls("show");
+            }else{
+                this.addCls("hidden");
+            }
         },
         getEnabled:function(){
-
+            if(typeof this.enabled != "boolean"){
+                this.setEnabled(true);
+            }
+            return this.enabled;
         },
         setEnabled:function(value){
-
+            this.enabled = simple.parseBoolean(value);
+            function toDisabled(el,val){
+                el.disabled = val;
+                if(el.children && el.children.length>0){
+                    for(var i=0;i<el.children.length;i++){
+                        var temp = el.children[i];
+                        toDisabled(temp,val);
+                    }
+                }
+            }
+            toDisabled(this.el,!this.enabled);
         },
         getCls:function(){
-
+            if(!this.cls){
+                this.cls = this.el.className.replace(this.useClass,"").trim();
+            }
+            return this.cls;
         },
         setCls:function(value){
-
+            if(!value){
+                value = "";
+            }
+            value = value.trim().replace(this.useClass,"").trim();
+            this.cls = value;
+            this.el.className = this.useClass+" "+value;
         },
         getStyle:function(){
-            return this.el.getAttribute("style");
+            if(!this.style){
+                this.style = this.el.style.cssText;
+            }
+            return this.style;
         },
         setStyle:function(value){
             if(!value){
-                this.el.removeAttribute("style");
+                this.el.style.cssText = "";
                 return;
             }
             var csss = value.split(";");
@@ -536,47 +630,58 @@
                     styleNew += key+":"+val+";";
                 }
             }
-            if(!styleNew){
-                this.el.removeAttribute("style");
-                return;
-            }
-            this.el.setAttribute("style",styleNew);
-        },
-        getBorderStyle:function(){
-
-        },
-        setBorderStyle:function(value){
-
+            this.el.style.cssText = styleNew;
+            this.style = this.el.style.cssText;
         },
         getWidth:function(){
-            return this.el.clientWidth;
+            if(!this.width){
+                this.width = this.el.offsetWidth;
+            }
+            return this.width;
         },
         setWidth:function(value){
-            if(!isNaN(value)){
-                value = value+"px";
+            console.log(value);
+            if(value){
+                if(!isNaN(value)){
+                    value = value+"px";
+                }
+                simple.css(this.el,{width:value});
             }
-            simple.css(this.el,{width:value});
+            this.width = this.el.offsetWidth;
         },
         getHeight:function(){
-            return this.el.clientHeight;
+            if(!this.height){
+                this.height = this.el.offsetHeight;
+            }
+            return this.height;
         },
         setHeight:function(value){
-            if(!isNaN(value)){
-                value = value+"px";
+            console.log(value);
+            if(value){
+                if(!isNaN(value)){
+                    value = value+"px";
+                }
+                simple.css(this.el,{height:value});
             }
-            simple.css(this.el,{height:value});
+            this.height = this.el.offsetHeight;
         },
-        getTooltip:function(){
-
+        getTitle:function(){
+            return this.title;
         },
-        setTooltip:function(value){
-
+        setTitle:function(value){
+            if(!value){
+                this.el.removeAttribute("title");
+                delete this.title;
+                return;
+            }
+            this.el.title = value;
+            this.title = this.el.title;
         }
     }
     simple.regModule({
         className:"BaseModule",
         useClass:"simple-base",
-        fields:["id","name","visible","enabled","cls","style","borderStyle","width","height","tooltip"],
+        fields:["id","name","visible","enabled","cls","style","width","height","title"],
         events:["destroy"],
         parentClass:null,
         thisClass:baseModule,
@@ -598,5 +703,22 @@
         parentClass:simple.BaseModule,
         thisClass:textBox,
         init:textBox.init
+    });
+    var combobox = {
+        init:function(){
+            console.log("初始化了combobox");
+        },
+        getFormValue:function(){
+
+        }
+    }
+    simple.regModule({
+        className:"ComboBox",
+        useClass:"simple-combobox",
+        fields:["value"],
+        events:["enter"],
+        parentClass:simple.TextBox,
+        thisClass:combobox,
+        init:combobox.init
     });
 })(window);
