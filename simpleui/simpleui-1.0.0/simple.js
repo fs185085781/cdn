@@ -67,9 +67,9 @@
     /*加载核心文件*/
     document.write('<script src="' + jsPath + '/base/simple.base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/
-    simple.skin = jsSearch.skin;
+    simple.skin = htmlSearch.skin;
     if(!simple.skin){
-        simple.skin = htmlSearch.skin;
+        simple.skin = jsSearch.skin;
     }
     if(!jsSearch.modules){
         return;
@@ -86,9 +86,9 @@
         }
     }
     /*初始化语言包*/
-    simple.lang = jsSearch.lang;
+    simple.lang = htmlSearch.lang;
     if(!simple.lang){
-        simple.lang = htmlSearch.lang;
+        simple.lang = jsSearch.lang;
     }
     if(!simple.lang){
         simple.lang = "zh_CN";

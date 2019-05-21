@@ -80,7 +80,6 @@
             var MMMS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
             var dddds = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
             var ddds = ["日","一","二","三","四","五","六"];
-            //mini.formatDate(new Date(),"yyyy-yy-y-MMMM-MMM-MM-M-dddd-ddd-dd-d-HH-H-hh-h-mm-m-ss-s-SSS-SS-S-a");
             var year = date.getFullYear();//yyyy
             var month = date.getMonth();
             var day = date.getDate();
@@ -219,9 +218,385 @@
                 return tempDate;
             }
             return null;
+        }, firstToUpperCase:function(str){
+            if(!str){
+                return str;
+            }
+            str = str+"";
+            str = str.substring(0,1).toUpperCase()+str.substring(1);
+            return str;
+        },
+        regModule:function(options){
+            if(!options.useClass){
+                return;
+            }
+            var moduleMap = win.simple.moduleMap;
+            if(!moduleMap){
+                moduleMap = {};
+            }
+            options.useClass = options.useClass.toLowerCase().trim();
+            if(moduleMap[options.useClass]){
+                return;
+            }
+            if(!options.thisClass){
+                return;
+            }
+            var thisClass = {};
+            if(options.parentClass){
+                var obj = new options.parentClass();
+                for(var key in obj){
+                    thisClass[key] = obj[key];
+                }
+            }
+            //子类覆盖父类的方法和属性
+            for(var key in options.thisClass){
+                thisClass[key] = options.thisClass[key];
+            }
+            var fieldMap  = thisClass.fieldMap;
+            if(!fieldMap){
+                fieldMap = {};
+            }
+            if(options.fields && options.fields.length > 0){
+                for(var i=0;i<options.fields.length;i++){
+                    fieldMap[options.fields[i]] = 1;
+                }
+            }
+            thisClass.fieldMap = fieldMap;
+            var eventMap  = thisClass.eventMap;
+            if(!eventMap){
+                eventMap = {};
+            }
+            if(options.events && options.events.length > 0){
+                for(var i=0;i<options.events.length;i++){
+                    eventMap[options.events[i]] = 1;
+                }
+            }
+            thisClass.eventMap = eventMap;
+            thisClass.initHtml = options.init;
+            win.simple[options.className] = function(){
+                for(var key in thisClass){
+                    this[key] = thisClass[key];
+                }
+                return this;
+            }
+            moduleMap[options.useClass] = win.simple[options.className];
+            win.simple.moduleMap = moduleMap;
+        },
+        parse:function(element){
+            var that  = this;
+            for(var key in win.simple.moduleMap){
+                var module = win.simple.moduleMap[key];
+                var list = document.getElementsByClassName(key);
+                if(list.length == 0){
+                    continue;
+                }
+                for(var i=0;i<list.length;i++){
+                    var ele = list[i];
+                    if(ele.getAttribute("simplekey")){
+                        continue;
+                    }
+                    if(win.simple.lastKeyId == null){
+                        win.simple.lastKeyId = 0;
+                    }
+                    var keyId = win.simple.lastKeyId++;
+                    var moduleObj = new module();
+                    moduleObj.simplekey = "simple-"+keyId;
+                    if(!win.simple.allSimple){
+                        win.simple.allSimple = {};
+                    }
+                    moduleObj.el = ele;
+                    win.simple.allSimple[moduleObj.simplekey] = moduleObj;
+                    moduleObj.initHtml();
+                    //设置属性
+                    var attributes = ele.attributes;
+                    var fieldMap = moduleObj.fieldMap;
+                    for(var i=0;i<attributes.length;i++){
+                        var attribute = attributes[i];
+                        if(fieldMap[attribute.name]){
+                            var value = attribute.nodeValue;
+                            var setFunctionName = "set"+that.firstToUpperCase(attribute.name);
+                            if(moduleObj[setFunctionName]){
+                                eval("moduleObj."+setFunctionName+"(value)");
+                            }else{
+                                moduleObj[attribute.name] = value;
+                            }
+                        }else{
+                            //多余的属性 删掉
+                            if(attribute.name != "class"){
+                                ele.removeAttribute(attribute.name);
+                            }
+                        }
+                    }
+                    ele.setAttribute("simplekey",moduleObj.simplekey);
+                }
+            }
+        },
+        setCss:function(el,csskey,cssval){
+            var style = el.getAttribute("style");
+            if(!style){
+                style = "";
+            }
+            var csss = style.split(";");
+            var styleNew = "";
+            var has = false;
+            for (var i=0;i<csss.length;i++){
+                var css = csss[i];
+                var cssMap = css.split(":");
+                if(cssMap.length != 2){
+                    continue;
+                }
+                var key = cssMap[0].trim();
+                var val = cssMap[1].trim();
+                if(key == csskey){
+                    val = cssval;
+                    has = true;
+                }
+                if(key && val){
+                    styleNew += key+":"+val+";";
+                }
+            }
+            if(!has){
+                styleNew += csskey+":"+cssval+";";
+            }
+            el.setAttribute("style",styleNew);
+        },
+        getCss:function(el,csskey){
+            var style = el.getAttribute("style");
+            if(!style){
+                style = "";
+            }
+            var csss = style.split(";");
+            for (var i=0;i<csss.length;i++){
+                var css = csss[i];
+                var cssMap = css.split(":");
+                if(cssMap.length != 2){
+                    continue;
+                }
+                var key = cssMap[0].trim();
+                var val = cssMap[1].trim();
+                if(key == csskey){
+                    return val;
+                }
+            }
+            return null;
+        },
+        css:function(el,options,value){
+            //1.value 不存在 options 存在  获取,设置
+            //4.value 存在 options 存在 设置
+            if(!options){
+                return;
+            }
+            if(typeof options == "string"){
+                if(value){
+                    this.setCss(el,options,value);
+                }else{
+                    return this.getCss(el,options);
+                }
+            }else if(typeof options == "object"){
+                for(var key in options){
+                    this.setCss(el,key,options[key]);
+                }
+            }else{
+                return;
+            }
+        },
+        getByUid:function(uid){
+            return win.simple.allSimple[uid];
         }
     };
     for(var key in simplePlus){
         win.simple[key] = simplePlus[key];
     }
+    var baseModule = {
+        init:function(){
+
+        },
+        fire:function(type,data){
+            if(!this.allBindEventMap || !this.allBindEventMap[type]){
+                return;
+            }
+            this.allBindEventMap[type](data);
+        },
+        getEl:function(){
+            return this.el;
+        },
+        on:function(type,callback){
+            var has = false;
+            if(!this.eventMap || !this.eventMap[type]){
+                return;
+            }
+            if(!this.allBindEventMap){
+                this.allBindEventMap = {};
+            }
+            this.allBindEventMap[type] = callback;
+        },
+        un:function(type){
+            if(!this.allBindEventMap){
+                return;
+            }
+            delete this.allBindEventMap[type];
+        },
+        set:function(opt){
+            if(!opt){
+                return;
+            }
+            for(var key in opt){
+
+            }
+        },
+        render:function(element){
+
+        },
+        destroy:function(){
+            this.el.remove();
+            this.fire("destroy",{base:this});
+        },
+        show:function(){
+
+        },
+        hide:function(){
+
+        },
+        enable:function(){
+
+        },
+        disable:function(){
+
+        },
+        focus:function(){
+
+        },
+        blur:function(){
+
+        },
+        doLayout:function(){
+
+        },
+        addCls:function(){
+
+        },
+        removeCls:function(){
+
+        },
+        mask:function(option){
+
+        },
+        unmask:function(){
+
+        },
+        getId:function(){
+
+        },
+        setId:function(value){
+
+        },
+        getName:function(){
+
+        },
+        setName:function(value){
+
+        },
+        getVisible:function(){
+
+        },
+        setVisible:function(value){
+
+        },
+        getEnabled:function(){
+
+        },
+        setEnabled:function(value){
+
+        },
+        getCls:function(){
+
+        },
+        setCls:function(value){
+
+        },
+        getStyle:function(){
+            return this.el.getAttribute("style");
+        },
+        setStyle:function(value){
+            if(!value){
+                this.el.removeAttribute("style");
+                return;
+            }
+            var csss = value.split(";");
+            var styleNew = "";
+            for (var i=0;i<csss.length;i++){
+                var css = csss[i];
+                var cssMap = css.split(":");
+                if(cssMap.length != 2){
+                    continue;
+                }
+                var key = cssMap[0].trim();
+                var val = cssMap[1].trim();
+                if(key && val){
+                    styleNew += key+":"+val+";";
+                }
+            }
+            if(!styleNew){
+                this.el.removeAttribute("style");
+                return;
+            }
+            this.el.setAttribute("style",styleNew);
+        },
+        getBorderStyle:function(){
+
+        },
+        setBorderStyle:function(value){
+
+        },
+        getWidth:function(){
+            return this.el.clientWidth;
+        },
+        setWidth:function(value){
+            if(!isNaN(value)){
+                value = value+"px";
+            }
+            simple.css(this.el,{width:value});
+        },
+        getHeight:function(){
+            return this.el.clientHeight;
+        },
+        setHeight:function(value){
+            if(!isNaN(value)){
+                value = value+"px";
+            }
+            simple.css(this.el,{height:value});
+        },
+        getTooltip:function(){
+
+        },
+        setTooltip:function(value){
+
+        }
+    }
+    simple.regModule({
+        className:"BaseModule",
+        useClass:"simple-base",
+        fields:["id","name","visible","enabled","cls","style","borderStyle","width","height","tooltip"],
+        events:["destroy"],
+        parentClass:null,
+        thisClass:baseModule,
+        init:baseModule.init
+    });
+    var textBox = {
+        init:function(){
+            console.log("初始化了textBox");
+        },
+        getFormValue:function(){
+
+        }
+    }
+    simple.regModule({
+        className:"TextBox",
+        useClass:"simple-textbox",
+        fields:["value"],
+        events:["enter"],
+        parentClass:simple.BaseModule,
+        thisClass:textBox,
+        init:textBox.init
+    });
 })(window);
