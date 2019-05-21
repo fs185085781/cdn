@@ -440,7 +440,12 @@
     }
     var baseModule = {
         init:function(){
-            console.log("初始化了base");
+            console.log("初始化了base",this.el);
+            console.log();
+            //var mask = document.createElement("div");
+            //mask.className = "simple-mask";
+            //this.el.appendChild(mask);
+            //this._maskEl = mask;
         },
         fire:function(type,data){
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
