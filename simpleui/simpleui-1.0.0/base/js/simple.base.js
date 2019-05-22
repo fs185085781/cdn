@@ -297,6 +297,8 @@
                 this.useClass = options.useClass;
                 return this;
             }
+            win.simple[options.className]["fieldMap"] =  thisClass.fieldMap;
+            win.simple[options.className]["eventMap"] =  thisClass.eventMap;
             moduleMap[options.useClass] = win.simple[options.className];
             win.simple.moduleMap = moduleMap;
         },
@@ -385,6 +387,12 @@
         },
         getByUid:function(uid){
             return win.simple.allSimple[uid];
+        },
+        guid:function(){
+            function S4() {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            }
+            return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
         }
     };
     for(var key in simplePlus){
@@ -392,7 +400,6 @@
     }
     var baseModule = {
         init:function(that){
-            console.log("初始化基础模块");
         },
         fire:function(type,data){
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
@@ -609,7 +616,6 @@
             return this.height;
         },
         setHeight:function(value){
-            console.log(value);
             if(value){
                 if(!isNaN(value)){
                     value = value+"px";
@@ -641,44 +647,57 @@
         thisClass:baseModule,
         init:baseModule.init
     });
-    var textBox = {
-        init:function(that){
-            console.log("初始化了textBox",that.el);
-        },
-        getFormValue:function(){
-
-        }
-    }
-    simple.regModule({
-        className:"TextBox",
-        useClass:"simple-textbox",
-        fields:["value"],
-        events:["enter"],
-        parentClass:simple.BaseModule,
-        thisClass:textBox,
-        init:textBox.init
-    });
-    var combobox = {
-        init:function(that){
-            console.log("初始化了combobox",that.el);
-        },
-        getFormValue:function(){
-
-        }
-    }
-    simple.regModule({
-        className:"ComboBox",
-        useClass:"simple-combobox",
-        fields:["value"],
-        events:["enter"],
-        parentClass:simple.TextBox,
-        thisClass:combobox,
-        init:combobox.init
-    });
     iBase(function(){
         if(!simple._hasparse){
             simple.parse();
             simple._hasparse = true;
         }
     });
+    if(simple.mode == "vue"){
+        var simpleVue = Vue;
+        Vue = function(options){
+            //创建vue之前处理
+            var pageMap = beforeCreateVue();
+            if(!options.watch){
+                options.watch = {};
+            }
+            var data = options.data;
+            for(var key in data){
+                options.watch[key] = {
+                    handler:function(val){
+                        console.log(key);
+                        console.log(JSON.stringify(val));
+                        console.log(pageMap);
+                    },
+                    deep:true
+                }
+            }
+            return new simpleVue(options);
+        }
+        function beforeCreateVue(){
+            var pageMap = {};
+            var moduleMap = simple.moduleMap;
+            for(var key in moduleMap){
+                var fieldMap = moduleMap[key]["fieldMap"];
+                var eventMap = moduleMap[key]["eventMap"];
+                var list = iBase("."+key);
+                if(list.length == 0){
+                    continue;
+                }
+                for(var i=0;i<list.length;i++){
+                    var ele = list[i];
+                    var vue_id = "vue_id"+simple.guid();
+                    iBase(ele).attr("vue_id",vue_id);
+                    for(var field in fieldMap){
+                        var val = iBase(ele).attr("v-bind:"+field);
+                        if(!val){
+                            continue;
+                        }
+                        eval("pageMap."+val+"={field:field,vue_id:vue_id}");
+                    }
+                }
+            }
+            return pageMap;
+        }
+    }
 })(window);

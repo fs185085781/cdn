@@ -3,11 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./simpleui-1.0.0/simple.js?mode=vue&modules=datagrid&skin=blue&lang=zh_CN"></script>
+    <script src="./simpleui-1.0.0/simple.js?mode=vue&modules=form&skin=blue&lang=zh_CN"></script>
 </head>
 <body>
-<div id="my-test" name="myname" visible="true" enabled="true" cls="haha" class="simple-combobox" width="500" height="200" style="border:1px solid black;" title="aaadd" ondestroy="xixi" onclick="console.log(this)">
-    <input />
+<div id="app">
+    <div class="simple-button" v-bind:text="simpleData.btn_text" v-bind:href="simpleData.url"></div>
 </div>
 </body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            simpleData: {
+                btn_text:'默认按钮',
+                url:"xixi"
+            }
+        }
+    })
+</script>
 </html>
