@@ -15,6 +15,7 @@
         setText:function(val){
             iBase(this._buttonEl).html(val);
             this.text = val;
+            this.fire("xixi");
         },
         getHref:function(){
             return this.href;
@@ -22,8 +23,10 @@
         setHref:function(val){
             if(!val){
                 val = null;
+                console.log("触发删除");
                 iBase(this._buttonEl).removeAttr("href");
             }else{
+                console.log("触发覆盖");
                 iBase(this._buttonEl).attr("href",val);
             }
             this.href = val;
@@ -34,7 +37,7 @@
         className:"Button",
         useClass:"simple-button",
         fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
-        events:["click"],
+        events:["click","xixi"],
         parentClass:simple.BaseModule,
         thisClass:button,
         init:button.init

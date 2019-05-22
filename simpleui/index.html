@@ -8,7 +8,7 @@
 <body>
 <div id="app">
     <div class="simple-button" v-bind:text="btn_text"></div>
-    <div class="simple-button" v-bind:text="simpleDataHa.btn_text" v-bind:href="simpleDataHa.url"></div>
+    <div class="simple-button" v-bind:text="simpleDataHa.btn_text" v-bind:href="simpleDataHa.url" v-on:xixi="myhaha"></div>
 </div>
 </body>
 <script>
@@ -17,8 +17,12 @@
         data: {
             btn_text:'默认按钮',
             simpleDataHa:{
-                btn_text:'默认按钮2',
-                url:"xixi2"
+                btn_text:'默认按钮2'
+            }
+        },
+        methods:{
+            myhaha:function(e){
+                console.log(e);
             }
         }
     })

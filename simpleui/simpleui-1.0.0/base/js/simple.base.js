@@ -304,13 +304,13 @@
         },
         parse:function(element){
             var that  = this;
-            for(var key in win.simple.moduleMap){
-                var module = win.simple.moduleMap[key];
+            for(var clazz in win.simple.moduleMap){
+                var module = win.simple.moduleMap[clazz];
                 var list;
                 if(element){
-                    list = iBase(element).find("."+key);
+                    list = iBase(element).find("."+clazz);
                 }else{
-                    list = iBase("."+key);
+                    list = iBase("."+clazz);
                 }
                 if(list == null || list.length == 0){
                     continue;
@@ -334,41 +334,48 @@
                     moduleObj.initHtml(moduleObj);
                     //设置属性
                     var fieldMap = moduleObj.fieldMap;
-                    for(var key in fieldMap){
-                        var value = iBase(ele).attr(key);
+                    for(var field in fieldMap){
+                        var value = iBase(ele).attr(field);
                         if(!value){
                             continue;
                         }
-                        var setFunctionName = "set"+that.firstToUpperCase(key);
+                        var setFunctionName = "set"+that.firstToUpperCase(field);
                         if(moduleObj[setFunctionName]){
                             eval("moduleObj."+setFunctionName+"(value)");
                         }else{
-                            moduleObj[key] = value;
+                            moduleObj[field] = value;
                         }
                     }
                     iBase(moduleObj.el).attr("simplekey",moduleObj.simplekey);
                     //绑定事件
                     var eventMap = moduleObj.eventMap;
-                    for(var key in eventMap){
-                        var value = iBase(ele).attr("on"+key);
+                    for(var event in eventMap){
+                        //vue绑定事件
+                        if(simple.mode == "vue"){
+                            if(simple.vueEventMap && simple.vueEventMap[clazz] && simple.vueEventMap[clazz][event] && simple.vueEventMap[clazz][event]["event"]){
+                                var callback = simple.vueEventMap[clazz][event]["event"];
+                                moduleObj.on(event,callback);
+                                continue;
+                            }
+                        }
+                        var value = iBase(ele).attr("on"+event);
                         if(!value){
                             continue;
                         }
                         if(win[value]){
-                            moduleObj.on(key,win[value]);
+                            moduleObj.on(event,win[value]);
                         }else{
                             if(value.trim().startsWith("function")){
                                 if(win.simple.lastEventId == null){
                                     win.simple.lastEventId = 1;
                                 }
-                                var eventName = "win.simple_event_"+(win.simple.lastEventId++);
-                                eval(eventName+"="+value);
-                                moduleObj.on(key,eval(eventName));
+                                var eventName = "simple_event_"+(win.simple.lastEventId++);
+                                eval("win."+eventName+"="+value);
+                                moduleObj.on(event,eval(eventName));
                             }else{
-                                moduleObj.on(key,Function(value));
+                                moduleObj.on(event,Function(value));
                             }
                         }
-
                     }
                 }
             }
@@ -660,6 +667,7 @@
     });
 
     if(simple.mode == "jquery"){
+        /*jquery模式,在文档加载完毕后执行parse*/
         iBase(function(){
             if(!simple._hasparse){
                 simple.parse();
@@ -667,6 +675,7 @@
             }
         });
     }else if(simple.mode == "vue"){
+        /*vue模式,先拦截vue字段watch和事件,然后在文档加载完毕后执行parse*/
         iBase(function(){
             if(!simple._hasparse){
                 simple.parse();
@@ -675,17 +684,29 @@
         });
         var simpleVue = Vue;
         Vue = function(options){
-            //创建vue之前处理
-            var pageMap = beforeCreateVue();
-            win.vuePageMap = pageMap;
+            /*创建vue之前处理 两件事1.字段变更同步更新 2.窃取VUE事件函数*/
+            win.vuePageFieldMap = beforeCreateVueField();
             if(!options.watch){
                 options.watch = {};
             }
             var data = options.data;
             for(var key in data){
                 options.watch[key] = {
-                    handler:new Function("val","var tempMap=vuePageMap."+key+";updateVueSimpleData(tempMap,val)"),
-                    deep:true
+                    handler:new Function("val","var tempMap=vuePageFieldMap."+key+";updateVueSimpleData(tempMap,val)"),
+                    deep:true,
+                    immediate:true
+                }
+            }
+            var methods = options.methods;
+            for(var clazz in simple.vueEventMap){
+                /**clazz为useClass字段/
+                 */
+                for(var type in simple.vueEventMap[clazz]){
+                    /**type为事件名称/
+                     */
+                    for(var methodName in simple.vueEventMap[clazz][type]){
+                        simple.vueEventMap[clazz][type]["event"] = methods[simple.vueEventMap[clazz][type][methodName]];
+                    }
                 }
             }
             return new simpleVue(options);
@@ -715,10 +736,12 @@
                 }
             }
         }
-        function beforeCreateVue(){
+        function beforeCreateVueField(){
             var pageMap = {};
             var moduleMap = simple.moduleMap;
+            var pageEventMap = {};
             for(var key in moduleMap){
+                pageEventMap[key] = {};
                 var fieldMap = moduleMap[key]["fieldMap"];
                 var eventMap = moduleMap[key]["eventMap"];
                 var list = iBase("."+key);
@@ -744,9 +767,23 @@
                         }
                         eval("pageMap."+val+"={field:field,vue_id:vue_id}");
                     }
+                    for(var event in eventMap){
+                        var eventName = iBase(ele).attr("v-on:"+event);
+                        if(!eventName){
+                            continue;
+                        }
+                        pageEventMap[key][event]={methodName:eventName};
+                    }
                 }
             }
+            simple.vueEventMap = pageEventMap;
             return pageMap;
         }
+    }else if(simple.mode == "react"){
+        /*react模式*/
+
+    }else if(simple.mode == "angular"){
+        /*angular模式*/
+
     }
 })(window);
