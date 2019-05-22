@@ -698,14 +698,16 @@
                 }
             }
             var methods = options.methods;
-            for(var clazz in simple.vueEventMap){
-                /**clazz为useClass字段/
-                 */
-                for(var type in simple.vueEventMap[clazz]){
-                    /**type为事件名称/
+            if(methods){
+                for(var clazz in simple.vueEventMap){
+                    /**clazz为useClass字段/
                      */
-                    for(var methodName in simple.vueEventMap[clazz][type]){
-                        simple.vueEventMap[clazz][type]["event"] = methods[simple.vueEventMap[clazz][type][methodName]];
+                    for(var type in simple.vueEventMap[clazz]){
+                        /**type为事件名称/
+                         */
+                        for(var methodName in simple.vueEventMap[clazz][type]){
+                            simple.vueEventMap[clazz][type]["event"] = methods[simple.vueEventMap[clazz][type][methodName]];
+                        }
                     }
                 }
             }

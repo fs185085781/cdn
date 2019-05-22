@@ -66,6 +66,12 @@
     /*加载mode文件 4种之一 jquery  vue  react  angular*/
     simple.mode = jsSearch.mode;
     document.write('<script src="' + jsPath + '/base/js/'+simple.mode+'.min.js" type="text/javascript"></sc' + 'ript>');
+    if(simple.mode == "react"){
+        document.write('<script src="' + jsPath + '/base/js/react-dom.min.js" type="text/javascript"></sc' + 'ript>');
+        if(jsSearch.jsx=="true"){
+            document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
+        }
+    }
     /*加载核心文件*/
     document.write('<script src="' + jsPath + '/base/js/simple.base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/

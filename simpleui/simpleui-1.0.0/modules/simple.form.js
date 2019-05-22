@@ -37,7 +37,7 @@
         className:"Button",
         useClass:"simple-button",
         fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
-        events:["click","xixi"],
+        events:["click"],
         parentClass:simple.BaseModule,
         thisClass:button,
         init:button.init
