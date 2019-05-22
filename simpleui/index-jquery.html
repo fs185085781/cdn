@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./simpleui-1.0.0/simple.js?mode=jquery&modules=form&skin=blue&lang=zh_CN"></script>
+</head>
+<body>
+<div id="simple-button" class="simple-button" text="默认按钮" ontextchange="textchange"></div>
+<a onclick="changeButton()">点击我修改按钮名称</a>
+<div id="message"></div>
+</body>
+<script>
+    function textchange(e){
+        $("#message").html("您刚才更改了"+e.base.getId()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
+    }
+    function changeButton() {
+        var simpleObj = simple.getBySelect("#simple-button");
+        if(simpleObj){
+            simpleObj.setText("VUE按钮");
+        }
+    }
+</script>
+</html>

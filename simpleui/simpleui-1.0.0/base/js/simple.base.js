@@ -423,7 +423,7 @@
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
                 return;
             }
-            var e = {base:this,type:type};
+            var e = {base:this,type:type,vue:simple.vueObj};
             if(data){
                 e.data = data;
             }
@@ -711,7 +711,9 @@
                     }
                 }
             }
-            return new simpleVue(options);
+            var vueObj = new simpleVue(options);
+            simple.vueObj = vueObj;
+            return vueObj;
         }
         win.updateVueSimpleData = function(map,data){
             if(typeof data == "object" && !(data instanceof Date)){

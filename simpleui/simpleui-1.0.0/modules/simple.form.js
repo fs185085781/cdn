@@ -13,9 +13,12 @@
             return this.text;
         },
         setText:function(val){
+            var oldText = this.text;
             iBase(this._buttonEl).html(val);
             this.text = val;
-            this.fire("xixi");
+            if(oldText != val){
+                this.fire("textchange",{oldText:oldText,text:val});
+            }
         },
         getHref:function(){
             return this.href;
@@ -37,7 +40,7 @@
         className:"Button",
         useClass:"simple-button",
         fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
-        events:["click"],
+        events:["click","textchange"],
         parentClass:simple.BaseModule,
         thisClass:button,
         init:button.init
