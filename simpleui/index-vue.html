@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="app">
-    <div id="simple-button" class="simple-button" v-bind:text="btn_text" v-on:textchange="textchange"></div>
+    <div id="simple-button" class="simple-button" v-bind:text="buttonData.btn_text" v-on:textchange="textchange"></div>
     <a v-on:click="changeButton">点击我修改按钮名称</a>
     <div>{{message}}</div>
 </div>
@@ -16,7 +16,9 @@
     var app = new Vue({
         el: '#app',
         data: {
-            btn_text:'默认按钮',
+            buttonData:{
+                btn_text:'默认按钮'
+            },
             message:""
         },
         methods:{
@@ -32,5 +34,11 @@
             }
         }
     })
+    /**
+     * simple ui vue使用切记
+     * 1.属性仅支持v-bind的形式绑定且与app.data直接map映射
+     * 2.请勿将组件放置于v-for内部
+     * 3.事件仅支持v-on默认形式绑定
+     * */
 </script>
 </html>
