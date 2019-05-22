@@ -423,9 +423,12 @@
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
                 return;
             }
-            var e = {base:this,type:type,vue:simple.vueObj};
+            var e = {base:this,type:type};
             if(data){
                 e.data = data;
+            }
+            if(simple.vueObj){
+                e.vue = simple.vueObj;
             }
             this.allBindEventMap[type](e);
         },
