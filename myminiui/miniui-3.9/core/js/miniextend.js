@@ -463,10 +463,12 @@
 				e.sender.setShowOkButton(true);
 			});
 			that.on("hidepopup",function(e){
-				that.datecalendar.destroy();
-				delete that.datecalendar;
-				that.timecalendar.destroy();
-				delete that.timecalendar;
+			    if(getParamer("mode") != "debug"){
+                    that.datecalendar.destroy();
+                    delete that.datecalendar;
+                    that.timecalendar.destroy();
+                    delete that.timecalendar;
+                }
 			});
 			that.on("showpopup",function(e){
 				var popup = e.sender.popup;
