@@ -16,6 +16,18 @@
             iBase(this._buttonEl).html(val);
             this.text = val;
         },
+        getHref:function(){
+            return this.href;
+        },
+        setHref:function(val){
+            if(!val){
+                val = null;
+                iBase(this._buttonEl).removeAttr("href");
+            }else{
+                iBase(this._buttonEl).attr("href",val);
+            }
+            this.href = val;
+        },
 
     }
     simple.regModule({

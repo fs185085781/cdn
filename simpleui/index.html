@@ -7,16 +7,18 @@
 </head>
 <body>
 <div id="app">
-    <div class="simple-button" v-bind:text="simpleData.btn_text" v-bind:href="simpleData.url"></div>
+    <div class="simple-button" v-bind:text="btn_text"></div>
+    <div class="simple-button" v-bind:text="simpleDataHa.btn_text" v-bind:href="simpleDataHa.url"></div>
 </div>
 </body>
 <script>
     var app = new Vue({
         el: '#app',
         data: {
-            simpleData: {
-                btn_text:'默认按钮',
-                url:"xixi"
+            btn_text:'默认按钮',
+            simpleDataHa:{
+                btn_text:'默认按钮2',
+                url:"xixi2"
             }
         }
     })
