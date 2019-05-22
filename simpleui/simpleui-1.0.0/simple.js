@@ -58,14 +58,16 @@
     if(!jsSearch.mode){
         return;
     }
+    /*加载简版jquery*/
+    document.write('<script src="' + jsPath + '/base/js/base.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular"){
         return;
     }
     /*加载mode文件 4种之一 jquery  vue  react  angular*/
     simple.mode = jsSearch.mode;
-    document.write('<script src="' + jsPath + '/base/'+simple.mode+'.min.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/'+simple.mode+'.min.js" type="text/javascript"></sc' + 'ript>');
     /*加载核心文件*/
-    document.write('<script src="' + jsPath + '/base/simple.base.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/simple.base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/
     simple.skin = htmlSearch.skin;
     if(!simple.skin){
@@ -75,7 +77,8 @@
         return;
     }
     /*核心样式文件bootstrap*/
-    document.write('<link href="' + jsPath + '/base/bootstrap.min.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + jsPath + '/base/css/simple.css" rel="stylesheet" type="text/css" />');
     var modules = jsSearch.modules.split(",");
     for(var i=0;i<modules.length;i++){
         var module = modules[i];

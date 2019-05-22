@@ -9,23 +9,6 @@
             return this.indexOf(str) == 0;
         }
     }
-    /*重写getElementsByClassName*/
-    if(!win.document.getElementsByClassName){
-        win.document.getElementsByClassName = function(cName){
-            var arr = [];
-            var allElements = document.getElementsByTagName('*');
-            for (var i = 0; i < allElements.length; i++) {
-                var allCNames = allElements[i].className.split(' ');
-                for (var j = 0; j < allCNames.length; j++) {
-                    if (allCNames[j] == cName) {
-                        arr.push(allElements[i]);
-                        break;
-                    }
-                }
-            }
-            return arr;
-        }
-    }
     var simplePlus = {
         encode:function(jsonObj) {
             var that = this;
@@ -300,13 +283,14 @@
             }
             thisClass.eventMap = eventMap;
             var parentInit = thisClass.initHtml;
-            thisClass.initHtml = function(){
+            thisClass.initHtml = function(that){
                 if(parentInit){
-                    parentInit();
+                    parentInit(that);
                 }
-                options.init();
+                options.init(that);
             }
             win.simple[options.className] = function(){
+
                 for(var key in thisClass){
                     this[key] = thisClass[key];
                 }
@@ -320,7 +304,7 @@
             var that  = this;
             for(var key in win.simple.moduleMap){
                 var module = win.simple.moduleMap[key];
-                var list = document.getElementsByClassName(key);
+                var list = iBase("."+key);
                 if(list.length == 0){
                     continue;
                 }
@@ -340,21 +324,13 @@
                     }
                     moduleObj.el = ele;
                     win.simple.allSimple[moduleObj.simplekey] = moduleObj;
-                    moduleObj.initHtml();
-                    //获取默认的display
-                    moduleObj._defaultDisplay = win.simple.getCss(moduleObj.el,"display");
+                    moduleObj.initHtml(moduleObj);
                     //设置属性
                     var fieldMap = moduleObj.fieldMap;
                     for(var key in fieldMap){
-                        var value = ele[key];
-                        if(!value){
-                            value = moduleObj.el.getAttribute(key);
-                        }
+                        var value = iBase(ele).attr(key);
                         if(!value){
                             continue;
-                        }
-                        if(key == "style"){
-                            value = value.cssText;
                         }
                         var setFunctionName = "set"+that.firstToUpperCase(key);
                         if(moduleObj[setFunctionName]){
@@ -367,10 +343,7 @@
                     //绑定事件
                     var eventMap = moduleObj.eventMap;
                     for(var key in eventMap){
-                        var value = ele["on"+key];
-                        if(!value){
-                            value = moduleObj.el.getAttribute("on"+key);
-                        }
+                        var value = iBase(ele).attr("on"+key);
                         if(!value){
                             continue;
                         }
@@ -405,32 +378,6 @@
             }
             return true;
         },
-        setCss:function(el,csskey,cssval){
-            el.style[csskey]=cssval;
-        },
-        getCss:function(el,csskey){
-            return el.style[csskey];
-        },
-        css:function(el,options,value){
-            //1.value 不存在 options 存在  获取,设置
-            //4.value 存在 options 存在 设置
-            if(!options){
-                return;
-            }
-            if(typeof options == "string"){
-                if(value){
-                    this.setCss(el,options,value);
-                }else{
-                    return this.getCss(el,options);
-                }
-            }else if(typeof options == "object"){
-                for(var key in options){
-                    this.setCss(el,key,options[key]);
-                }
-            }else{
-                return;
-            }
-        },
         getByUid:function(uid){
             return win.simple.allSimple[uid];
         }
@@ -439,13 +386,8 @@
         win.simple[key] = simplePlus[key];
     }
     var baseModule = {
-        init:function(){
-            console.log("初始化了base",this.el);
-            console.log();
-            //var mask = document.createElement("div");
-            //mask.className = "simple-mask";
-            //this.el.appendChild(mask);
-            //this._maskEl = mask;
+        init:function(that){
+            console.log("初始化基础模块");
         },
         fire:function(type,data){
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
@@ -491,7 +433,7 @@
             }
         },
         destroy:function(){
-            this.el.parentNode.removeChild(this.el);
+            iBase(this.el).remove();
             this.fire("destroy");
             delete win.simple.allSimple[this.simplekey];
         },
@@ -515,51 +457,55 @@
             if(value == this.useClass){
                 return;
             }
-            var clazz = " "+this.el.className+" ";
-            if(clazz.indexOf(" "+value+" ") != -1){
-                return;
-            }
-            clazz = clazz.trim()+" "+value;
-            this.el.className = clazz;
+            iBase(this.el).addClass(value);
         },
         removeCls:function(value){
             value = value.trim();
             if(value == this.useClass){
                 return;
             }
-            var clazz = this.el.className.trim();
-            clazz = clazz.replace(value,"").trim();
-            this.el.className = clazz;
+            iBase(this.el).removeClass(value);
         },
         mask:function(option){
-
+            if(this._ismask){
+               return;
+            }
+            this._ismask = true;
+            iBase(this.el).append("<div class='simple-mask'><div class='simple-mask-loading'></div></div>");
+            var loading = iBase(this.el).find(".simple-mask .simple-mask-loading");
+            var top = parseInt((this.getHeight()-loading.height())/2);
+            var left = parseInt((this.getWidth()-loading.width())/2);
+            loading.css({top:top+"px",left:left+"px"});
         },
         unmask:function(){
-
+            this._ismask = false;
+            iBase(this.el).find(".simple-mask").remove();
         },
         getId:function(){
             return this.id;
         },
         setId:function(value){
             if(!value){
-                this.el.removeAttribute("id");
-                delete this.id;
-                return;
+                value = null;
+                iBase(this.el).removeAttr("id");
+            }else{
+                value = value.trim();
+                iBase(this.el).attr("id",value);
             }
-            this.el.id = value;
-            this.id = this.el.id;
+            this.id = value;
         },
         getName:function(){
             return this.name;
         },
         setName:function(value){
             if(!value){
-                this.el.removeAttribute("name");
-                delete this.name;
-                return;
+                value = null;
+                iBase(this.el).removeAttr("name");
+            }else{
+                value = value.trim();
+                iBase(this.el).attr("name",value);
             }
-            this.el.name = value;
-            this.name = this.el.name;
+            this.name = value;
         },
         getVisible:function(){
             if(typeof this.visible != "boolean"){
@@ -569,12 +515,10 @@
         },
         setVisible:function(value){
             this.visible = simple.parseBoolean(value);
-            this.removeCls("show");
-            this.removeCls("hidden");
             if(this.visible){
-                this.addCls("show");
+                iBase(this.el).show();
             }else{
-                this.addCls("hidden");
+                iBase(this.el).hide();
             }
         },
         getEnabled:function(){
@@ -598,7 +542,7 @@
         },
         getCls:function(){
             if(!this.cls){
-                this.cls = this.el.className.replace(this.useClass,"").trim();
+                this.cls = iBase(this.el).attr("class").replace(this.useClass,"").trim();
             }
             return this.cls;
         },
@@ -608,21 +552,21 @@
             }
             value = value.trim().replace(this.useClass,"").trim();
             this.cls = value;
-            this.el.className = this.useClass+" "+value;
+            iBase(this.el).attr("class",this.useClass+" "+value);
         },
         getStyle:function(){
             if(!this.style){
-                this.style = this.el.style.cssText;
+                this.style = iBase(this.el).attr("style");
             }
             return this.style;
         },
         setStyle:function(value){
             if(!value){
-                this.el.style.cssText = "";
+                iBase(this.el).attr("style","");
                 return;
             }
             var csss = value.split(";");
-            var styleNew = "";
+            var styleMap = {};
             for (var i=0;i<csss.length;i++){
                 var css = csss[i];
                 var cssMap = css.split(":");
@@ -632,31 +576,30 @@
                 var key = cssMap[0].trim();
                 var val = cssMap[1].trim();
                 if(key && val){
-                    styleNew += key+":"+val+";";
+                    styleMap[key] = val;
                 }
             }
-            this.el.style.cssText = styleNew;
-            this.style = this.el.style.cssText;
+            iBase(this.el).css(styleMap);
+            this.style = iBase(this.el).attr("style");
         },
         getWidth:function(){
             if(!this.width){
-                this.width = this.el.offsetWidth;
+                this.width = iBase(this.el).width();
             }
             return this.width;
         },
         setWidth:function(value){
-            console.log(value);
             if(value){
                 if(!isNaN(value)){
                     value = value+"px";
                 }
-                simple.css(this.el,{width:value});
+                iBase(this.el).width(value);
             }
-            this.width = this.el.offsetWidth;
+            this.width = iBase(this.el).width();
         },
         getHeight:function(){
             if(!this.height){
-                this.height = this.el.offsetHeight;
+                this.height = iBase(this.el).height();
             }
             return this.height;
         },
@@ -666,21 +609,22 @@
                 if(!isNaN(value)){
                     value = value+"px";
                 }
-                simple.css(this.el,{height:value});
+                iBase(this.el).height(value);
             }
-            this.height = this.el.offsetHeight;
+            this.height = iBase(this.el).height();
         },
         getTitle:function(){
             return this.title;
         },
         setTitle:function(value){
             if(!value){
-                this.el.removeAttribute("title");
-                delete this.title;
-                return;
+                value = null;
+                iBase(this.el).removeAttr("title");
+            }else{
+                value = value.trim();
+                iBase(this.el).attr("title",value);
             }
-            this.el.title = value;
-            this.title = this.el.title;
+            this.title = value;
         }
     }
     simple.regModule({
@@ -693,8 +637,8 @@
         init:baseModule.init
     });
     var textBox = {
-        init:function(){
-            console.log("初始化了textBox");
+        init:function(that){
+            console.log("初始化了textBox",that.el);
         },
         getFormValue:function(){
 
@@ -710,8 +654,8 @@
         init:textBox.init
     });
     var combobox = {
-        init:function(){
-            console.log("初始化了combobox");
+        init:function(that){
+            console.log("初始化了combobox",that.el);
         },
         getFormValue:function(){
 
