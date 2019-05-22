@@ -304,8 +304,13 @@
             var that  = this;
             for(var key in win.simple.moduleMap){
                 var module = win.simple.moduleMap[key];
-                var list = iBase("."+key);
-                if(list.length == 0){
+                var list;
+                if(element){
+                    list = iBase(element).find("."+key);
+                }else{
+                    list = iBase("."+key);
+                }
+                if(list == null || list.length == 0){
                     continue;
                 }
                 for(var i=0;i<list.length;i++){
@@ -669,5 +674,11 @@
         parentClass:simple.TextBox,
         thisClass:combobox,
         init:combobox.init
+    });
+    iBase(function(){
+        if(!simple._hasparse){
+            simple.parse();
+            simple._hasparse = true;
+        }
     });
 })(window);
