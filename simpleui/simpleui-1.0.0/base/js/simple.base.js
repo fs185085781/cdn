@@ -346,7 +346,7 @@
                             moduleObj[key] = value;
                         }
                     }
-                    moduleObj.el.simplekey = moduleObj.simplekey;
+                    iBase(moduleObj.el).attr("simplekey",moduleObj.simplekey);
                     //绑定事件
                     var eventMap = moduleObj.eventMap;
                     for(var key in eventMap){
@@ -647,13 +647,21 @@
         thisClass:baseModule,
         init:baseModule.init
     });
-    iBase(function(){
-        if(!simple._hasparse){
-            simple.parse();
-            simple._hasparse = true;
-        }
-    });
-    if(simple.mode == "vue"){
+
+    if(simple.mode == "jquery"){
+        iBase(function(){
+            if(!simple._hasparse){
+                simple.parse();
+                simple._hasparse = true;
+            }
+        });
+    }else if(simple.mode == "vue"){
+        iBase(function(){
+            if(!simple._hasparse){
+                simple.parse();
+                simple._hasparse = true;
+            }
+        });
         var simpleVue = Vue;
         Vue = function(options){
             //创建vue之前处理
@@ -665,14 +673,39 @@
             for(var key in data){
                 options.watch[key] = {
                     handler:function(val){
-                        console.log(key);
-                        console.log(JSON.stringify(val));
-                        console.log(pageMap);
+                        var tempMap = pageMap[key];
+                        updateSimpleData(tempMap,val);
                     },
                     deep:true
                 }
             }
             return new simpleVue(options);
+        }
+        function updateSimpleData(map,data){
+            for(var field in data){
+                var val = data[field];
+                var tempMap = map[field];
+                if(typeof val == "object" && !(val instanceof Date)){
+                    updateSimpleData(tempMap,val);
+                }else{
+                    if(tempMap != null){
+                        var vue_id = tempMap["vue_id"];
+                        var fieldKey = tempMap["field"];
+                        var ele = iBase("."+vue_id);
+                        if(ele.length > 0 ){
+                            var simpleId = ele.attr("simplekey");
+                            var simpleObj = simple.getByUid(simpleId);
+                            var setFunctionName = "set"+simple.firstToUpperCase(fieldKey);
+                            if(simpleObj[setFunctionName]){
+                                eval("simpleObj."+setFunctionName+"(val)");
+                            }else{
+                                simpleObj[fieldKey] = val;
+                            }
+
+                        }
+                    }
+                }
+            }
         }
         function beforeCreateVue(){
             var pageMap = {};
@@ -687,11 +720,19 @@
                 for(var i=0;i<list.length;i++){
                     var ele = list[i];
                     var vue_id = "vue_id"+simple.guid();
-                    iBase(ele).attr("vue_id",vue_id);
+                    iBase(ele).addClass(vue_id);
                     for(var field in fieldMap){
                         var val = iBase(ele).attr("v-bind:"+field);
                         if(!val){
                             continue;
+                        }
+                        var sz = val.split(".");
+                        var temp = "pageMap";
+                        for(var m=0;m<sz.length;m++){
+                            temp += "."+sz[m];
+                            if(eval(temp+"== null")){
+                                eval(temp+"={}");
+                            }
                         }
                         eval("pageMap."+val+"={field:field,vue_id:vue_id}");
                     }
