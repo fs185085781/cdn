@@ -9,6 +9,10 @@
             that._buttonEl = iBase(btn)[0];
             that.setWidth(120);
             that.setHeight(38);
+            iBase(that._buttonEl).click(function(e){
+                e.stopPropagation();
+                that.fire("click");
+            });
         },
         getText:function(){
             return this.text;

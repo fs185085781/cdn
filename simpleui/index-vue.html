@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="app">
-    <div v-for="button in buttons" v-bind:name="button.name" class="simple-button" v-bind:text="button.text" v-on:textchange="textchange"></div>
+    <div v-for="button in buttons" v-bind:name="button.name" class="simple-button" v-bind:text="button.text" v-on:textchange="textchange" v-on:click="buttonClick"></div>
     <a v-on:click="changeButton">点击我修改第二个按钮名称</a>
     <div>{{message}}</div>
 </div>
@@ -34,6 +34,9 @@
             },
             changeButton:function(){
                 this.buttons[1].text = "修改后按钮";
+            },
+            buttonClick:function(){
+                alert("你点击了按钮");
             }
         }
     })

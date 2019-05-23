@@ -5,6 +5,8 @@
         String.prototype.trim = function() {
             return this.replace(/^\s+|\s+$/g, '');
         }
+    }
+    if(typeof String.prototype.startsWith !== 'function') {
         String.prototype.startsWith = function(str) {
             return this.indexOf(str) == 0;
         }
@@ -357,15 +359,19 @@
                         if(win[value]){
                             moduleObj.on(event,win[value]);
                         }else{
-                            if(value.trim().startsWith("function")){
-                                if(win.simple.lastEventId == null){
-                                    win.simple.lastEventId = 1;
-                                }
-                                var eventName = "simple_event_"+(win.simple.lastEventId++);
-                                eval("win."+eventName+"="+value);
-                                moduleObj.on(event,eval(eventName));
+                            if(typeof value == "function"){
+                                moduleObj.on(event,value);
                             }else{
-                                moduleObj.on(event,Function(value));
+                                if(value.trim().startsWith("function")){
+                                    if(win.simple.lastEventId == null){
+                                        win.simple.lastEventId = 1;
+                                    }
+                                    var eventName = "simple_event_"+(win.simple.lastEventId++);
+                                    eval("win."+eventName+"="+value);
+                                    moduleObj.on(event,eval(eventName));
+                                }else{
+                                    moduleObj.on(event,Function(value));
+                                }
                             }
                         }
                     }
@@ -664,45 +670,47 @@
     if(simple.mode == "jquery"){
         /*jquery模式,在文档加载完毕后执行parse*/
         iBase(function(){
-            if(!simple._hasparse){
-                simple.parse();
-                simple._hasparse = true;
-            }
+            simple.parse();
         });
     }else if(simple.mode == "vue"){
-        /*vue模式,先拦截vue字段watch和事件,然后在文档加载完毕后执行parse*/
-        iBase(function(){
-            if(!simple._hasparse){
-                simple.parse();
-                simple._hasparse = true;
-            }
-        });
+        /*vue模式,先修改vue拦截,然后在文档加载完毕后执行parse*/
         var simpleVue = Vue;
         Vue = function(options){
             var oldUpdated = options.updated;
-            var oldCreated = options.created;
-            options.created = function(){
-                var that = this;
-                var _vnode = that._vnode;
-                updateSimpleUi(_vnode);
-                if(oldCreated){
-                    that.oldCreated = oldCreated;
-                    that.oldCreated();
-                }
-            }
+            var oldMounted = options.mounted;
+            var oldDestroyed = options.destroyed;
             options.updated = function(){
                 var that = this;
                 var _vnode = that._vnode;
-                updateSimpleUi(_vnode);
+                updateSimpleUi(_vnode,"updated");
                 if(oldUpdated){
                     that.oldUpdated = oldUpdated;
                     that.oldUpdated();
                 }
             }
+            options.mounted = function(){
+                var that = this;
+                var _vnode = that._vnode;
+                updateSimpleUi(_vnode,"mounted");
+                if(oldMounted){
+                    that.oldMounted = oldMounted;
+                    that.oldMounted();
+                }
+            }
+            options.destroyed = function(){
+                var that = this;
+                if(oldDestroyed){
+                    that.oldDestroyed = oldDestroyed;
+                    that.oldDestroyed();
+                }
+            }
             var vueObj = new simpleVue(options);
             return vueObj;
         }
-        function updateSimpleUi(_vnode){
+        function updateSimpleUi(_vnode,eventName){
+            if(eventName == "mounted"){
+                simple.parse();
+            }
             if(!_vnode){
                 return;
             }
