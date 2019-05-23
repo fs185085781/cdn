@@ -3,22 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>simple-ui在react中使用</title>
-    <script src="./simpleui-1.0.0/simple.js?mode=react&jsx=true&modules=form&skin=blue&lang=zh_CN"></script>
+    <script src="./simpleui-1.0.0/simple.js?mode=react&jsx=true&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
 </head>
 <body>
-<div id="simple-button" class="simple-button" text="默认按钮" ontextchange="textchange"></div>
-<a onclick="changeButton()">点击我修改按钮名称</a>
-<div id="message"></div>
-</body>
-<script>
-    function textchange(e){
-        $("#message").html("您刚才更改了"+e.base.getId()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
-    }
-    function changeButton() {
-        var simpleObj = simple.getBySelect("#simple-button");
-        if(simpleObj){
-            simpleObj.setText("VUE按钮");
+<div id="example"></div>
+<script type="text/babel">
+    class Button extends React.Component{
+        constructor(props){
+            super(props);
+        }
+
+        componentDidMount(){
+            //console.log(this);
+            //this.itemChange = emitter.addListener('ItemChange',(msg,data)=>console.log(msg));//注册事件
+        }
+        componentWillUnmount(){
+            //emitter.removeListener(this.itemChange);//取消事件
+        }
+        buttonClick(){
+            console.log(this);
+        }
+
+        render(){
+            var list = this.props.data;
+            const listItems = list.map((data) =>
+                <div key={data.name} name={data.name} className="simple-button" text={data.text} elclick="buttonClick"></div>
+            );
+            return (
+                listItems
+            )
         }
     }
+    ReactDOM.render(
+        <Button data={[{name:"第一个按钮",text:"第一个按钮名称"},{name:"第二个按钮",text:"第二个按钮名称"}]} />,
+        document.getElementById('example')
+    );
 </script>
+</body>
 </html>

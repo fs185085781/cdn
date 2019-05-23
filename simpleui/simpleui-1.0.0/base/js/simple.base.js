@@ -352,7 +352,7 @@
                     //绑定事件
                     var eventMap = moduleObj.eventMap;
                     for(var event in eventMap){
-                        var value = iBase(ele).attr("on"+event);
+                        var value = iBase(ele).attr("el"+event);
                         if(!value){
                             continue;
                         }
@@ -730,13 +730,14 @@
                 var eventMap = node.data.on;
                 var fieldMap = node.data.attrs;
                 for(var event in eventMap){
-                    if(simpleObj.allBindEventMap[event]){
+                    var eventName = event.substring(2);
+                    if(simpleObj.allBindEventMap[eventName]){
                         continue;
                     }
-                    if(!simpleObj.eventMap[event]){
+                    if(!simpleObj.eventMap[eventName]){
                         continue;
                     }
-                    simpleObj.on(event,eventMap[event]);
+                    simpleObj.on(eventName,eventMap[event]);
                 }
                 for(var field in fieldMap){
                     if(!simpleObj.fieldMap[field]){
@@ -756,7 +757,12 @@
         }
     }else if(simple.mode == "react"){
         /*react模式*/
-
+        var render = ReactDOM.render;
+        ReactDOM.render = function(a,b){
+            console.log("拦截了",a,b);
+            console.log( a.type.prototype);
+            render(a,b);
+        }
     }else if(simple.mode == "angular"){
         /*angular模式*/
 
