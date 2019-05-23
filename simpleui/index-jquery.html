@@ -6,13 +6,14 @@
     <script src="./simpleui-1.0.0/simple.js?mode=jquery&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
 </head>
 <body>
-<div id="simple-button" class="simple-button" text="默认按钮" ontextchange="textchange"></div>
-<a onclick="changeButton()">点击我修改按钮名称</a>
+<div class="simple-button" name="第一个按钮" text="第一个按钮名称" ontextchange="textchange"></div>
+<div id="simple-button" name="第二个按钮" class="simple-button" text="第二个按钮名称" ontextchange="textchange"></div>
+<a onclick="changeButton()">点击我修改第二个按钮名称</a>
 <div id="message"></div>
 </body>
 <script>
     function textchange(e){
-        $("#message").html("您刚才更改了"+e.base.getId()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
+        $("#message").html("您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
     }
     function changeButton() {
         var simpleObj = simple.getBySelect("#simple-button");
@@ -20,10 +21,5 @@
             simpleObj.setText("修改后按钮");
         }
     }
-    /**
-     * simple ui jquery使用切记
-     * 本组件基于jquery 1.0.0编写,支持IE5
-     * 因此对于jquery用户,无使用注意事项
-     * */
 </script>
 </html>
