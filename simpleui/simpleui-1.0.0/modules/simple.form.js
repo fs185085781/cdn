@@ -1,6 +1,7 @@
 
 (function(win){
     /*表单组件*/
+    /*按钮*/
     var button = {
         init:function(that){
             var btn = iBase("<a class='btn btn-default' style='width:100%;height:100%'></a>");

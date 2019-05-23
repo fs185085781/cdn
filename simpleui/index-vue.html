@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>simple-ui在vue中使用</title>
-    <script src="./simpleui-1.0.0/simple.js?mode=vue&modules=form&skin=blue&lang=zh_CN"></script>
+    <script src="./simpleui-1.0.0/simple.js?mode=vue&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
 </head>
 <body>
 <div id="app">
@@ -28,7 +28,7 @@
             changeButton:function(){
                 var simpleObj = simple.getBySelect("#simple-button");
                 if(simpleObj){
-                    simpleObj.setText("VUE按钮");
+                    simpleObj.setText("修改后按钮");
                 }
 
             }
