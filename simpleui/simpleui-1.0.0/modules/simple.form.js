@@ -27,10 +27,8 @@
         setHref:function(val){
             if(!val){
                 val = null;
-                console.log("触发删除");
                 iBase(this._buttonEl).removeAttr("href");
             }else{
-                console.log("触发覆盖");
                 iBase(this._buttonEl).attr("href",val);
             }
             this.href = val;

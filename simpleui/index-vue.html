@@ -7,7 +7,7 @@
 </head>
 <body>
 <div id="app">
-    <div class="simple-button" v-bind:text="buttonData.btn_text" v-on:textchange="textchange"></div>
+    <div name="测试一下按钮" class="simple-button" v-bind:text="buttonData.btn_text" v-on:textchange="textchange"></div>
     <a v-on:click="changeButton">点击我修改按钮名称</a>
     <div>{{message}}</div>
 </div>
@@ -23,7 +23,7 @@
         },
         methods:{
             textchange:function(e){
-                e.vue.message = "您刚才更改了"+e.base.getId()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'";
+                this.message = "您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'";
             },
             changeButton:function(){
                 this.buttonData.btn_text = "修改后按钮";

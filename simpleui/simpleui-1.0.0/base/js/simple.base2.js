@@ -350,6 +350,14 @@
                     //绑定事件
                     var eventMap = moduleObj.eventMap;
                     for(var event in eventMap){
+                        //vue绑定事件
+                        if(simple.mode == "vue"){
+                            if(simple.vueEventMap && simple.vueEventMap[clazz] && simple.vueEventMap[clazz][event] && simple.vueEventMap[clazz][event]["event"]){
+                                var callback = simple.vueEventMap[clazz][event]["event"];
+                                moduleObj.on(event,callback);
+                                continue;
+                            }
+                        }
                         var value = iBase(ele).attr("on"+event);
                         if(!value){
                             continue;
@@ -415,12 +423,12 @@
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
                 return;
             }
-            if(!this.allBindEventMap[type]){
-                return;
-            }
             var e = {base:this,type:type};
             if(data){
                 e.data = data;
+            }
+            if(simple.vueObj){
+                e.vue = simple.vueObj;
             }
             this.allBindEventMap[type](e);
         },
@@ -679,72 +687,104 @@
         });
         var simpleVue = Vue;
         Vue = function(options){
-            var oldUpdated = options.updated;
-            var oldCreated = options.created;
-            options.created = function(){
-                var that = this;
-                var _vnode = that._vnode;
-                updateSimpleUi(_vnode);
-                if(oldCreated){
-                    that.oldCreated = oldCreated;
-                    that.oldCreated();
+            /*创建vue之前处理 两件事1.字段变更同步更新 2.窃取VUE事件函数*/
+            win.vuePageFieldMap = beforeCreateVueField();
+            if(!options.watch){
+                options.watch = {};
+            }
+            var data = options.data;
+            for(var key in data){
+                options.watch[key] = {
+                    handler:new Function("val","var tempMap=vuePageFieldMap."+key+";updateVueSimpleData(tempMap,val)"),
+                    deep:true,
+                    immediate:true
                 }
             }
-            options.updated = function(){
-                var that = this;
-                var _vnode = that._vnode;
-                updateSimpleUi(_vnode);
-                if(oldUpdated){
-                    that.oldUpdated = oldUpdated;
-                    that.oldUpdated();
+            var methods = options.methods;
+            if(methods){
+                for(var clazz in simple.vueEventMap){
+                    /**clazz为useClass字段/
+                     */
+                    for(var type in simple.vueEventMap[clazz]){
+                        /**type为事件名称/
+                         */
+                        for(var methodName in simple.vueEventMap[clazz][type]){
+                            simple.vueEventMap[clazz][type]["event"] = methods[simple.vueEventMap[clazz][type][methodName]];
+                        }
+                    }
                 }
             }
             var vueObj = new simpleVue(options);
+            simple.vueObj = vueObj;
             return vueObj;
         }
-        function updateSimpleUi(_vnode){
-            if(!_vnode){
-                return;
+        win.updateVueSimpleData = function(map,data){
+            if(typeof data == "object" && !(data instanceof Date)){
+                for(var field in data){
+                    var val = data[field];
+                    var tempMap = map[field];
+                    win.updateVueSimpleData(tempMap,val);
+                }
+            }else{
+                if(!map){
+                    return;
+                }
+                var vue_id = map["vue_id"];
+                var field = map["field"];
+                var simpleObj = simple.getBySelect("."+vue_id);
+                if(!simpleObj ){
+                    return;
+                }
+                var setFunctionName = "set"+simple.firstToUpperCase(field);
+                if(simpleObj[setFunctionName]){
+                    eval("simpleObj."+setFunctionName+"(data)");
+                }else{
+                    simpleObj[field] = data;
+                }
             }
-            var children = _vnode.children;
-            if(!children || children.length ==0){
-                return;
-            }
-            for(var i=0;i<children.length;i++){
-                var node = children[i];
-                var simpleObj = simple.getBySelect(node.elm);
-                if(!simpleObj){
+        }
+        function beforeCreateVueField(){
+            var pageMap = {};
+            var moduleMap = simple.moduleMap;
+            var pageEventMap = {};
+            for(var key in moduleMap){
+                pageEventMap[key] = {};
+                var fieldMap = moduleMap[key]["fieldMap"];
+                var eventMap = moduleMap[key]["eventMap"];
+                var list = iBase("."+key);
+                if(list.length == 0){
                     continue;
                 }
-                if(!simpleObj.allBindEventMap){
-                    simpleObj.allBindEventMap = {};
+                for(var i=0;i<list.length;i++){
+                    var ele = list[i];
+                    var vue_id = "vue_id"+simple.guid();
+                    iBase(ele).addClass(vue_id);
+                    for(var field in fieldMap){
+                        var val = iBase(ele).attr("v-bind:"+field);
+                        if(!val){
+                            continue;
+                        }
+                        var sz = val.split(".");
+                        var temp = "pageMap";
+                        for(var m=0;m<sz.length;m++){
+                            temp += "."+sz[m];
+                            if(eval(temp+"== null")){
+                                eval(temp+"={}");
+                            }
+                        }
+                        eval("pageMap."+val+"={field:field,vue_id:vue_id}");
+                    }
+                    for(var event in eventMap){
+                        var eventName = iBase(ele).attr("v-on:"+event);
+                        if(!eventName){
+                            continue;
+                        }
+                        pageEventMap[key][event]={methodName:eventName};
+                    }
                 }
-                var eventMap = node.data.on;
-                var fieldMap = node.data.attrs;
-                for(var event in eventMap){
-                    if(simpleObj.allBindEventMap[event]){
-                        continue;
-                    }
-                    if(!simpleObj.eventMap[event]){
-                        continue;
-                    }
-                    simpleObj.on(event,eventMap[event]);
-                }
-                for(var field in fieldMap){
-                    if(!simpleObj.fieldMap[field]){
-                        continue;
-                    }
-                    var value = fieldMap[field];
-                    var setFunctionName = "set"+simple.firstToUpperCase(field);
-                    if(simpleObj[setFunctionName]){
-                        eval("simpleObj."+setFunctionName+"(value)");
-                    }else{
-                        simpleObj[field] = value;
-                    }
-                }
-
             }
-
+            simple.vueEventMap = pageEventMap;
+            return pageMap;
         }
     }else if(simple.mode == "react"){
         /*react模式*/
