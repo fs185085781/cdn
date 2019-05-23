@@ -34,9 +34,9 @@
                 iBase(this._buttonEl).attr("href",val);
             }
             this.href = val;
-        },
+        }
 
-    };
+    }
     simple.regModule({
         className:"Button",
         useClass:"simple-button",
