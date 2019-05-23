@@ -58,6 +58,9 @@
     if(!jsSearch.mode){
         return;
     }
+    if(!jsSearch.profile){
+        jsSearch.profile = "product";
+    }
     /*加载简版jquery*/
     document.write('<script src="' + jsPath + '/base/js/base.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular"){
@@ -65,12 +68,12 @@
     }
     /*加载mode文件 4种之一 jquery  vue  react  angular*/
     simple.mode = jsSearch.mode;
-    document.write('<script src="' + jsPath + '/base/js/'+simple.mode+'.min.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+simple.mode+'.js" type="text/javascript"></sc' + 'ript>');
     if(simple.mode == "react"){
-        document.write('<script src="' + jsPath + '/base/js/react-dom.min.js" type="text/javascript"></sc' + 'ript>');
-        if(jsSearch.jsx=="true"){
-            document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
-        }
+        document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
+    }
+    if(jsSearch.jsx=="true"){
+        document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
     /*加载核心文件*/
     document.write('<script src="' + jsPath + '/base/js/simple.base.js" type="text/javascript"></sc' + 'ript>');
