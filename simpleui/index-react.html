@@ -4,38 +4,42 @@
     <meta charset="UTF-8">
     <title>simple-ui在react中使用</title>
     <script src="./simpleui-1.0.0/simple.js?mode=react&jsx=true&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
+    <script>
+        class Button extends SimpleUi {
+            simpleUiDidMount(){
+                console.log("我是子级");
+            }
+            simpleUiDidUpdate(){
+                console.log("我是子级更新");
+            }
+            textchange(){
+                console.log("改变事件");
+            }
+        }
+    </script>
 </head>
 <body>
 <div id="example"></div>
 <script type="text/babel">
-    class Button extends React.Component{
-        constructor(props){
-            super(props);
+    function Abtn(props) {
+        return (
+            <a onClick={props.app.handleClick}>点击我修改第二个按钮名称</a>
+        );
+    }
+    function App() {
+        function handleClick(e){
+            console.log(11);
         }
-
-        componentDidMount(){
-            //console.log(this);
-            //this.itemChange = emitter.addListener('ItemChange',(msg,data)=>console.log(msg));//注册事件
-        }
-        componentWillUnmount(){
-            //emitter.removeListener(this.itemChange);//取消事件
-        }
-        buttonClick(){
-            console.log(this);
-        }
-
-        render(){
-            var list = this.props.data;
-            const listItems = list.map((data) =>
-                <div key={data.name} name={data.name} className="simple-button" text={data.text} elclick="buttonClick"></div>
-            );
-            return (
-                listItems
-            )
-        }
+        return (
+            <div>
+                <Button className="simple-button" name="第一个按钮" text="第一个按钮名称"  />
+                <Button className="simple-button" name="第二个按钮" text="第二个按钮名称"  />
+                <Abtn app={handleClick}/>
+            </div>
+        );
     }
     ReactDOM.render(
-        <Button data={[{name:"第一个按钮",text:"第一个按钮名称"},{name:"第二个按钮",text:"第二个按钮名称"}]} />,
+         <App />,
         document.getElementById('example')
     );
 </script>

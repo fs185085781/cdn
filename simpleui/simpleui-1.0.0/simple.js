@@ -1,4 +1,5 @@
 (function(win){
+    /*提供js的引入机制*/
     win.simple={
         getJsPath:function(js){
             var scripts = document.getElementsByTagName("script");
@@ -75,7 +76,7 @@
     if(jsSearch.jsx=="true"){
         document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
-    /*加载核心文件*/
+    /*加载核心文件 提供基础组件和工具类*/
     document.write('<script src="' + jsPath + '/base/js/simple.base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/
     simple.skin = htmlSearch.skin;
@@ -97,6 +98,8 @@
             document.write('<link href="' + jsPath + '/skin/'+simple.skin+'/'+module+'.css" rel="stylesheet" type="text/css" />');
         }
     }
+    /*引入模块插件包,用于打通ui的中间件*/
+    document.write('<script src="' + jsPath + '/base/js/'+simple.mode+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     /*初始化语言包*/
     simple.lang = htmlSearch.lang;
     if(!simple.lang){

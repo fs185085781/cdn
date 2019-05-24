@@ -6,11 +6,13 @@
             return this.replace(/^\s+|\s+$/g, '');
         }
     }
+    /*重写string的startsWith方法*/
     if(typeof String.prototype.startsWith !== 'function') {
         String.prototype.startsWith = function(str) {
             return this.indexOf(str) == 0;
         }
     }
+    /*提供基础方法工具类*/
     var simplePlus = {
         encode:function(jsonObj) {
             var that = this;
@@ -253,125 +255,143 @@
             if(!options.thisClass){
                 return;
             }
-            var thisClass = {};
-            if(options.parentClass){
-                var obj = new options.parentClass();
-                for(var key in obj){
-                    thisClass[key] = obj[key];
-                }
-            }
-            //子类覆盖父类的方法和属性
+            var m = options.className;
+            var s = win.simple;
+            eval("function "+m+"(){}");
+            s[m] = eval(m);
+            s[m].prototype.useClass = options.useClass;
             for(var key in options.thisClass){
-                thisClass[key] = options.thisClass[key];
+                s[m].prototype[key] = options.thisClass[key];
             }
-            var fieldMap  = thisClass.fieldMap;
-            if(!fieldMap){
-                fieldMap = {};
+            s[m].prototype.fieldMap = {};
+            for(var i=0;i<options.fields.length;i++){
+                s[m].prototype.fieldMap[options.fields[i]] = 1;
             }
-            if(options.fields && options.fields.length > 0){
-                for(var i=0;i<options.fields.length;i++){
-                    fieldMap[options.fields[i]] = 1;
+            s[m].prototype.eventMap = {};
+            for(var i=0;i<options.events.length;i++){
+                s[m].prototype.eventMap[options.events[i]] = 1;
+            }
+            if(options.parentClass){
+                var parentThat = new options.parentClass();
+                for(var key in parentThat){
+                    if(s[m].prototype[key]){
+                        continue;
+                    }
+                    s[m].prototype[key] = parentThat[key];
                 }
-            }
-            thisClass.fieldMap = fieldMap;
-            var eventMap  = thisClass.eventMap;
-            if(!eventMap){
-                eventMap = {};
-            }
-            if(options.events && options.events.length > 0){
-                for(var i=0;i<options.events.length;i++){
-                    eventMap[options.events[i]] = 1;
+                var fieldMap = parentThat.fieldMap;
+                for(var field in fieldMap){
+                    if(s[m].prototype.fieldMap[field]){
+                        continue;
+                    }
+                    s[m].prototype.fieldMap[field] = 1;
                 }
-            }
-            thisClass.eventMap = eventMap;
-            var parentInit = thisClass.initHtml;
-            thisClass.initHtml = function(that){
-                if(parentInit){
-                    parentInit(that);
+                var eventMap = parentThat.eventMap;
+                for(var event in eventMap){
+                    if(s[m].prototype.eventMap[event]){
+                        continue;
+                    }
+                    s[m].prototype.eventMap[event] = 1;
                 }
-                options.init(that);
-            }
-            win.simple[options.className] = function(){
-
-                for(var key in thisClass){
-                    this[key] = thisClass[key];
+                s[m].prototype.initHtml = function(){
+                    parentThat.initHtml();
+                    this.init();
                 }
-                this.useClass = options.useClass;
-                return this;
+            }else{
+                s[m].prototype.initHtml = options.init;
             }
-            win.simple[options.className]["fieldMap"] =  thisClass.fieldMap;
-            win.simple[options.className]["eventMap"] =  thisClass.eventMap;
-            moduleMap[options.useClass] = win.simple[options.className];
+            moduleMap[options.useClass] = s[m];
             win.simple.moduleMap = moduleMap;
         },
         parse:function(element){
             var that  = this;
+            var parentEle = iBase("body");
+            if(element){
+                parentEle = iBase(element);
+            }
+            if(parentEle.length == 0){
+                return;
+            }
+            if(element){
+                /*父级也可能是组件*/
+                for(var clazz in win.simple.moduleMap){
+                   var clist = parentEle[0].classList;
+                   var has = false;
+                   for(var i=0;i<clist.length;i++){
+                       if(clist[0] == clazz){
+                           has = true;
+                           break;
+                       }
+                   }
+                    if(has){
+                        parseSimpleData(parentEle[0],win.simple.moduleMap[clazz]);
+                    }
+                }
+            }
             for(var clazz in win.simple.moduleMap){
                 var module = win.simple.moduleMap[clazz];
-                var list;
-                if(element){
-                    list = iBase(element).find("."+clazz);
-                }else{
-                    list = iBase("."+clazz);
-                }
+                var list = iBase(parentEle).find("."+clazz);
                 if(list == null || list.length == 0){
                     continue;
                 }
                 for(var i=0;i<list.length;i++){
                     var ele = list[i];
-                    if(ele.getAttribute("simplekey")){
+                    parseSimpleData(ele,module);
+                }
+            }
+            function parseSimpleData(ele,module){
+                if(ele.getAttribute("simplekey")){
+                    return;
+                }
+                if(win.simple.lastKeyId == null){
+                    win.simple.lastKeyId = 1;
+                }
+                var keyId = win.simple.lastKeyId++;
+                var moduleObj = new module();
+                moduleObj.simplekey = "simple-"+keyId;
+                if(!win.simple.allSimple){
+                    win.simple.allSimple = {};
+                }
+                moduleObj.el = ele;
+                win.simple.allSimple[moduleObj.simplekey] = moduleObj;
+                moduleObj.initHtml();
+                //设置属性
+                var fieldMap = moduleObj.fieldMap;
+                for(var field in fieldMap){
+                    var value = iBase(ele).attr(field);
+                    if(!value){
                         continue;
                     }
-                    if(win.simple.lastKeyId == null){
-                        win.simple.lastKeyId = 1;
+                    var setFunctionName = "set"+that.firstToUpperCase(field);
+                    if(moduleObj[setFunctionName]){
+                        eval("moduleObj."+setFunctionName+"(value)");
+                    }else{
+                        moduleObj[field] = value;
                     }
-                    var keyId = win.simple.lastKeyId++;
-                    var moduleObj = new module();
-                    moduleObj.simplekey = "simple-"+keyId;
-                    if(!win.simple.allSimple){
-                        win.simple.allSimple = {};
+                }
+                iBase(moduleObj.el).attr("simplekey",moduleObj.simplekey);
+                //绑定事件
+                var eventMap = moduleObj.eventMap;
+                for(var event in eventMap){
+                    var value = iBase(ele).attr("el"+event);
+                    if(!value){
+                        continue;
                     }
-                    moduleObj.el = ele;
-                    win.simple.allSimple[moduleObj.simplekey] = moduleObj;
-                    moduleObj.initHtml(moduleObj);
-                    //设置属性
-                    var fieldMap = moduleObj.fieldMap;
-                    for(var field in fieldMap){
-                        var value = iBase(ele).attr(field);
-                        if(!value){
-                            continue;
-                        }
-                        var setFunctionName = "set"+that.firstToUpperCase(field);
-                        if(moduleObj[setFunctionName]){
-                            eval("moduleObj."+setFunctionName+"(value)");
+                    if(win[value]){
+                        moduleObj.on(event,win[value]);
+                    }else{
+                        if(typeof value == "function"){
+                            moduleObj.on(event,value);
                         }else{
-                            moduleObj[field] = value;
-                        }
-                    }
-                    iBase(moduleObj.el).attr("simplekey",moduleObj.simplekey);
-                    //绑定事件
-                    var eventMap = moduleObj.eventMap;
-                    for(var event in eventMap){
-                        var value = iBase(ele).attr("el"+event);
-                        if(!value){
-                            continue;
-                        }
-                        if(win[value]){
-                            moduleObj.on(event,win[value]);
-                        }else{
-                            if(typeof value == "function"){
-                                moduleObj.on(event,value);
-                            }else{
-                                if(value.trim().startsWith("function")){
-                                    if(win.simple.lastEventId == null){
-                                        win.simple.lastEventId = 1;
-                                    }
-                                    var eventName = "simple_event_"+(win.simple.lastEventId++);
-                                    eval("win."+eventName+"="+value);
-                                    moduleObj.on(event,eval(eventName));
-                                }else{
-                                    moduleObj.on(event,Function(value));
+                            if(value.trim().startsWith("function")){
+                                if(win.simple.lastEventId == null){
+                                    win.simple.lastEventId = 1;
                                 }
+                                var eventName = "simple_event_"+(win.simple.lastEventId++);
+                                eval("win."+eventName+"="+value);
+                                moduleObj.on(event,eval(eventName));
+                            }else{
+                                moduleObj.on(event,Function(value));
                             }
                         }
                     }
@@ -414,8 +434,9 @@
     for(var key in simplePlus){
         win.simple[key] = simplePlus[key];
     }
+    /*提供基础组件*/
     var baseModule = {
-        init:function(that){
+        init:function(){
         },
         fire:function(type,data){
             if(!this.allBindEventMap || !this.allBindEventMap[type]){
@@ -657,6 +678,7 @@
             this.title = value;
         }
     }
+    /*注册基础组件*/
     simple.regModule({
         className:"BaseModule",
         useClass:"simple-base",
@@ -666,105 +688,4 @@
         thisClass:baseModule,
         init:baseModule.init
     });
-
-    if(simple.mode == "jquery"){
-        /*jquery模式,在文档加载完毕后执行parse*/
-        iBase(function(){
-            simple.parse();
-        });
-    }else if(simple.mode == "vue"){
-        /*vue模式,先修改vue拦截,然后在文档加载完毕后执行parse*/
-        var simpleVue = Vue;
-        Vue = function(options){
-            var oldUpdated = options.updated;
-            var oldMounted = options.mounted;
-            var oldDestroyed = options.destroyed;
-            options.updated = function(){
-                var that = this;
-                var _vnode = that._vnode;
-                updateSimpleUi(_vnode,"updated");
-                if(oldUpdated){
-                    that.oldUpdated = oldUpdated;
-                    that.oldUpdated();
-                }
-            }
-            options.mounted = function(){
-                var that = this;
-                var _vnode = that._vnode;
-                updateSimpleUi(_vnode,"mounted");
-                if(oldMounted){
-                    that.oldMounted = oldMounted;
-                    that.oldMounted();
-                }
-            }
-            options.destroyed = function(){
-                var that = this;
-                if(oldDestroyed){
-                    that.oldDestroyed = oldDestroyed;
-                    that.oldDestroyed();
-                }
-            }
-            var vueObj = new simpleVue(options);
-            return vueObj;
-        }
-        function updateSimpleUi(_vnode,eventName){
-            if(eventName == "mounted"){
-                simple.parse();
-            }
-            if(!_vnode){
-                return;
-            }
-            var children = _vnode.children;
-            if(!children || children.length ==0){
-                return;
-            }
-            for(var i=0;i<children.length;i++){
-                var node = children[i];
-                var simpleObj = simple.getBySelect(node.elm);
-                if(!simpleObj){
-                    continue;
-                }
-                if(!simpleObj.allBindEventMap){
-                    simpleObj.allBindEventMap = {};
-                }
-                var eventMap = node.data.on;
-                var fieldMap = node.data.attrs;
-                for(var event in eventMap){
-                    var eventName = event.substring(2);
-                    if(simpleObj.allBindEventMap[eventName]){
-                        continue;
-                    }
-                    if(!simpleObj.eventMap[eventName]){
-                        continue;
-                    }
-                    simpleObj.on(eventName,eventMap[event]);
-                }
-                for(var field in fieldMap){
-                    if(!simpleObj.fieldMap[field]){
-                        continue;
-                    }
-                    var value = fieldMap[field];
-                    var setFunctionName = "set"+simple.firstToUpperCase(field);
-                    if(simpleObj[setFunctionName]){
-                        eval("simpleObj."+setFunctionName+"(value)");
-                    }else{
-                        simpleObj[field] = value;
-                    }
-                }
-
-            }
-
-        }
-    }else if(simple.mode == "react"){
-        /*react模式*/
-        var render = ReactDOM.render;
-        ReactDOM.render = function(a,b){
-            console.log("拦截了",a,b);
-            console.log( a.type.prototype);
-            render(a,b);
-        }
-    }else if(simple.mode == "angular"){
-        /*angular模式*/
-
-    }
 })(window);

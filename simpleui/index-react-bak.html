@@ -5,42 +5,6 @@
     <title>simple-ui在react中使用</title>
     <script src="./simpleui-1.0.0/simple.js?mode=react&jsx=true&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
     <script>
-        (function(win){
-            var render = ReactDOM.render;
-            ReactDOM.render = function(element, container, callback){
-                if(element && element.type && element.type.prototype instanceof SimpleUi){
-                    if(element.type.prototype.componentDidMount){
-                        element.type.prototype.simpleUiDidMount = element.type.prototype.componentDidMount;
-                        delete element.type.prototype.componentDidMount;
-                    }
-                }
-                render(element, container, callback);
-             }
-        })(window)
-        class SimpleUi extends React.Component {
-            constructor(props) {
-                super(props);
-                this.myRef = React.createRef();
-            }
-            componentDidMount(){
-                console.log("我是父级");
-                console.log(this.myRef.current == iBase(".simple-button")[0]);
-                if(this.simpleUiDidMount){
-                    this.simpleUiDidMount();
-                }
-                debugger
-                console.log(this.textchange);
-            }
-            render() {
-                var props = this.props;
-                var config = {};
-                for(var key in props){
-                    config[key] = props[key];
-                }
-                config.ref = this.myRef;
-                return React.createElement('div',config,null);
-            }
-        }
         class Button extends SimpleUi {
             componentDidMount(){
                 console.log("我是子级");

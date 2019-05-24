@@ -3,7 +3,8 @@
     /*表单组件*/
     /*按钮*/
     var button = {
-        init:function(that){
+        init:function(){
+            var that = this;
             var btn = iBase("<a class='btn btn-default' style='width:100%;height:100%'></a>");
             btn.appendTo(iBase(that.el));
             that._buttonEl = iBase(btn)[0];
