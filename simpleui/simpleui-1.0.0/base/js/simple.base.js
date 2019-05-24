@@ -391,7 +391,7 @@
                                 eval("win."+eventName+"="+value);
                                 moduleObj.on(event,eval(eventName));
                             }else{
-                                moduleObj.on(event,Function(value));
+                                //moduleObj.on(event,Function(value));
                             }
                         }
                     }

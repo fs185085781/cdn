@@ -1,20 +1,12 @@
 (function(win){
-    /*var render = ReactDOM.render;
-    ReactDOM.render = function(element, container, callback){
-        render(element, container, callback);
-    }*/
     class SimpleUi extends React.Component {
         constructor(props) {
             super(props);
             this.myRef = React.createRef();
-            var map = simple.decode(simple.encode(props));
-            delete map.className;
-            this.state = map;
         }
         componentDidMount(){
             var el = this.myRef.current;
             simple.parse(el);
-            console.log("父类加载完成");
             updateSimpleUiByReactNode(this,el);
             if(this.simpleUiDidMount){
                 this.simpleUiDidMount();
@@ -22,26 +14,60 @@
         }
         componentDidUpdate(){
             var el = this.myRef.current;
-            console.log("父类更新完成");
             updateSimpleUiByReactNode(this,el);
             if(this.simpleUiDidUpdate){
                 this.simpleUiDidUpdate();
             }
         }
         render() {
-            var map = this.state;
-            var config = {};
-            for(var key in map){
-                config[key] = map[key];
-            }
-            config.className = this.props.className;
-            config.ref = this.myRef;
-            win.aaa = this;
-            return React.createElement('div',config,null);
+            this.props.options.ref = this.myRef;
+            return React.createElement('div',this.props.options,null);
         }
     }
     win.SimpleUi = SimpleUi;
     function updateSimpleUiByReactNode(that,el){
-
+        var simpleObj = simple.getBySelect(el);
+        if(!simpleObj){
+            return;
+        }
+        var map = that.props.options;
+        for(var field in map){
+            if(field == "ref"){
+                continue;
+            }
+            var hasEvent = true;
+            var eventType = "";
+            if(field.length <= 2){
+                //一定不是事件
+                hasEvent = false;
+            }else{
+                eventType = field.substring(2);
+            }
+            if(!simpleObj.fieldMap[field] && !hasEvent){
+                continue;
+            }
+            if(simpleObj.fieldMap[field]){
+                var value = map[field];
+                var setFunctionName = "set"+simple.firstToUpperCase(field);
+                if(simpleObj[setFunctionName]){
+                    eval("simpleObj."+setFunctionName+"(value)");
+                }else{
+                    simpleObj[field] = value;
+                }
+            }else if(hasEvent && simpleObj.eventMap[eventType]){
+                var eventName = map[field];
+                if(!that[eventName]){
+                    continue;
+                }
+                if(!simpleObj.allBindEventMap){
+                    simpleObj.allBindEventMap = {};
+                }
+                if(simpleObj.allBindEventMap[eventType]){
+                    continue;
+                }
+                simpleObj.react = that;
+                simpleObj.on(eventType,that[eventName]);
+            }
+        }
     }
 })(window)

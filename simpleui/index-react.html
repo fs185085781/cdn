@@ -6,14 +6,11 @@
     <script src="./simpleui-1.0.0/simple.js?mode=react&jsx=true&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
     <script>
         class Button extends SimpleUi {
-            simpleUiDidMount(){
-                console.log("我是子级");
+            textchange(e){
+                e.base.react.props.changeMessage("您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
             }
-            simpleUiDidUpdate(){
-                console.log("我是子级更新");
-            }
-            textchange(){
-                console.log("改变事件");
+            buttonClick(e){
+                alert("你点击了按钮");
             }
         }
     </script>
@@ -21,22 +18,41 @@
 <body>
 <div id="example"></div>
 <script type="text/babel">
-    function Abtn(props) {
-        return (
-            <a onClick={props.app.handleClick}>点击我修改第二个按钮名称</a>
-        );
-    }
-    function App() {
-        function handleClick(e){
-            console.log(11);
+    class App extends React.Component {
+        constructor() {
+            super();
+            this.state = {
+                btn_1:{
+                    name:"第一个按钮",
+                    text:"第一个按钮名称",
+                    className:"simple-button",
+                    elclick:"buttonClick"
+                },
+                btn_2:{
+                    name:"第二个按钮",
+                    text:"第二个按钮名称",
+                    className:"simple-button",
+                    eltextchange:"textchange",
+                    elclick:"buttonClick"
+                },
+                a_btn:{
+                    name:"点击我修改第二个按钮名称"
+                },
+                message:""
+            }
         }
-        return (
-            <div>
-                <Button className="simple-button" name="第一个按钮" text="第一个按钮名称"  />
-                <Button className="simple-button" name="第二个按钮" text="第二个按钮名称"  />
-                <Abtn app={handleClick}/>
-            </div>
-        );
+        btnClick = () => this.setState({btn_2:{text:"修改后按钮"}});
+        changeMessage = message =>  this.setState({message:message});
+        render() {
+            return (
+                <div>
+                    <Button options={this.state.btn_1} />
+                    <Button options={this.state.btn_2} changeMessage={this.changeMessage}/>
+                    <a onClick={this.btnClick}>{this.state.a_btn.name}</a>
+                    <div>{this.state.message}</div>
+                </div>
+            );
+        }
     }
     ReactDOM.render(
          <App />,
