@@ -30,6 +30,7 @@
         if(!simpleObj){
             return;
         }
+        that.simple = simpleObj;
         var map = that.props.options;
         for(var field in map){
             if(field == "ref"){
