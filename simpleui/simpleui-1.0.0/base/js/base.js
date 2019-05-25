@@ -339,7 +339,7 @@
                 }
             }
             function parseSimpleData(ele,module){
-                if(ele.getAttribute("simplekey")){
+                if(ele.getAttribute("uikey")){
                     return;
                 }
                 if(ui.lastKeyId == null){
@@ -347,12 +347,12 @@
                 }
                 var keyId = ui.lastKeyId++;
                 var moduleObj = new module();
-                moduleObj.simplekey = "simple-"+keyId;
+                moduleObj.uikey = ui.prefix+"-"+keyId;
                 if(!ui.allSimple){
                     ui.allSimple = {};
                 }
                 moduleObj.el = ele;
-                ui.allSimple[moduleObj.simplekey] = moduleObj;
+                ui.allSimple[moduleObj.uikey] = moduleObj;
                 moduleObj.initHtml();
                 //设置属性
                 var fieldMap = moduleObj.fieldMap;
@@ -368,7 +368,7 @@
                         moduleObj[field] = value;
                     }
                 }
-                iBase(moduleObj.el).attr("simplekey",moduleObj.simplekey);
+                iBase(moduleObj.el).attr("uikey",moduleObj.uikey);
                 //绑定事件
                 var eventMap = moduleObj.eventMap;
                 for(var event in eventMap){
@@ -386,7 +386,7 @@
                                 if(ui.lastEventId == null){
                                     ui.lastEventId = 1;
                                 }
-                                var eventName = "simple_event_"+(ui.lastEventId++);
+                                var eventName = ui.prefix+"_event_"+(ui.lastEventId++);
                                 eval("win."+eventName+"="+value);
                                 moduleObj.on(event,eval(eventName));
                             }else{
@@ -421,7 +421,22 @@
                 return null;
             }
             l = iBase(l[0]);
-            return this.getByUid(l.attr("simplekey"));
+            return this.getByUid(l.attr("uikey"));
+        },
+        getsBySelect:function(ele){
+            var l = iBase(ele);
+            if(l.length == 0){
+                return [];
+            }
+            var list = [];
+            for(var i=0;i<l.length;i++){
+                var one = this.getByUid(iBase(l[i]).attr("uikey"));
+                if(one == null){
+                    continue;
+                }
+                list[list.length] = one;
+            }
+            return list;
         },
         guid:function(){
             function S4() {
@@ -486,7 +501,7 @@
         destroy:function(){
             iBase(this.el).remove();
             this.fire("destroy");
-            delete ui.allSimple[this.simplekey];
+            delete ui.allSimple[this.uikey];
         },
         show:function(){
             this.setVisible(true);
@@ -681,7 +696,7 @@
     ui.BaseModule=function(){};
     ui.regModule({
         clazz:ui.BaseModule,
-        useClass:"simple-base",
+        useClass:ui.prefix+"-base",
         fields:["id","name","visible","enabled","cls","style","width","height","title"],
         events:["destroy"],
         parentClass:null,

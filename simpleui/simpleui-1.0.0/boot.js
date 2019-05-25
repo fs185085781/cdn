@@ -69,7 +69,7 @@
         return;
     }
     /*加载mode文件 4种之一 jquery  vue  react  angular*/
-    var ui = {};
+    var ui = {prefix:"simple"};
     ui.mode = jsSearch.mode;
     document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
     if(ui.mode == "react"){

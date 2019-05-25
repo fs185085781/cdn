@@ -1,14 +1,14 @@
 (function(win){
     "use strict";
-    var simpleVue = Vue;
+    var ui = win.simple;
+    var tempVue = Vue;
     Vue = function(options){
         var oldUpdated = options.updated;
         var oldMounted = options.mounted;
         var oldDestroyed = options.destroyed;
         options.updated = function(){
             var that = this;
-            var _vnode = that._vnode;
-            updateSimpleUiByVueNode(_vnode,"updated");
+            updateUiByVueNode(that,"updated");
             if(oldUpdated){
                 that.oldUpdated = oldUpdated;
                 that.oldUpdated();
@@ -16,8 +16,7 @@
         }
         options.mounted = function(){
             var that = this;
-            var _vnode = that._vnode;
-            updateSimpleUiByVueNode(_vnode,"mounted");
+            updateUiByVueNode(that,"mounted");
             if(oldMounted){
                 that.oldMounted = oldMounted;
                 that.oldMounted();
@@ -30,12 +29,13 @@
                 that.oldDestroyed();
             }
         }
-        var vueObj = new simpleVue(options);
+        var vueObj = new tempVue(options);
         return vueObj;
     }
-    function updateSimpleUiByVueNode(_vnode,eventName){
+    function updateUiByVueNode(that,eventName){
+        var _vnode = that._vnode;
         if(eventName == "mounted"){
-            simple.parse();
+            ui.parse();
         }
         if(!_vnode){
             return;
@@ -46,35 +46,36 @@
         }
         for(var i=0;i<children.length;i++){
             var node = children[i];
-            var simpleObj = simple.getBySelect(node.elm);
-            if(!simpleObj){
+            var uiObj = ui.getBySelect(node.elm);
+            if(!uiObj){
                 continue;
             }
-            if(!simpleObj.allBindEventMap){
-                simpleObj.allBindEventMap = {};
+            uiObj.vue = that;
+            if(!uiObj.allBindEventMap){
+                uiObj.allBindEventMap = {};
             }
             var eventMap = node.data.on;
             var fieldMap = node.data.attrs;
             for(var event in eventMap){
                 var eventName = event.substring(2);
-                if(simpleObj.allBindEventMap[eventName]){
+                if(uiObj.allBindEventMap[eventName]){
                     continue;
                 }
-                if(!simpleObj.eventMap[eventName]){
+                if(!uiObj.eventMap[eventName]){
                     continue;
                 }
-                simpleObj.on(eventName,eventMap[event]);
+                uiObj.on(eventName,eventMap[event]);
             }
             for(var field in fieldMap){
-                if(!simpleObj.fieldMap[field]){
+                if(!uiObj.fieldMap[field]){
                     continue;
                 }
                 var value = fieldMap[field];
-                var setFunctionName = "set"+simple.firstToUpperCase(field);
-                if(simpleObj[setFunctionName]){
-                    eval("simpleObj."+setFunctionName+"(value)");
+                var setFunctionName = "set"+ui.firstToUpperCase(field);
+                if(uiObj[setFunctionName]){
+                    eval("uiObj."+setFunctionName+"(value)");
                 }else{
-                    simpleObj[field] = value;
+                    uiObj[field] = value;
                 }
             }
 

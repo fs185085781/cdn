@@ -1,5 +1,6 @@
 (function(win){
     "use strict";
+    var ui = win.simple;
     class SimpleUi extends React.Component {
         constructor(props) {
             super(props);
@@ -7,17 +8,17 @@
         }
         componentDidMount(){
             var el = this.myRef.current;
-            simple.parse(el);
-            updateSimpleUiByReactNode(this,el);
-            if(this.simpleUiDidMount){
-                this.simpleUiDidMount();
+            ui.parse(el);
+            updateUiByReactNode(this,el);
+            if(this.didMount){
+                this.didMount();
             }
         }
         componentDidUpdate(){
             var el = this.myRef.current;
-            updateSimpleUiByReactNode(this,el);
-            if(this.simpleUiDidUpdate){
-                this.simpleUiDidUpdate();
+            updateUiByReactNode(this,el);
+            if(this.didUpdate){
+                this.didUpdate();
             }
         }
         render() {
@@ -26,12 +27,12 @@
         }
     }
     win.SimpleUi = SimpleUi;
-    function updateSimpleUiByReactNode(that,el){
-        var simpleObj = simple.getBySelect(el);
-        if(!simpleObj){
+    function updateUiByReactNode(that,el){
+        var uiObj = ui.getBySelect(el);
+        if(!uiObj){
             return;
         }
-        that.simple = simpleObj;
+        that.ui = uiObj;
         var map = that.props.options;
         for(var field in map){
             if(field == "ref"){
@@ -45,30 +46,30 @@
             }else{
                 eventType = field.substring(2);
             }
-            if(!simpleObj.fieldMap[field] && !hasEvent){
+            if(!uiObj.fieldMap[field] && !hasEvent){
                 continue;
             }
-            if(simpleObj.fieldMap[field]){
+            if(uiObj.fieldMap[field]){
                 var value = map[field];
-                var setFunctionName = "set"+simple.firstToUpperCase(field);
-                if(simpleObj[setFunctionName]){
-                    eval("simpleObj."+setFunctionName+"(value)");
+                var setFunctionName = "set"+ui.firstToUpperCase(field);
+                if(uiObj[setFunctionName]){
+                    eval("uiObj."+setFunctionName+"(value)");
                 }else{
-                    simpleObj[field] = value;
+                    uiObj[field] = value;
                 }
-            }else if(hasEvent && simpleObj.eventMap[eventType]){
+            }else if(hasEvent && uiObj.eventMap[eventType]){
                 var eventName = map[field];
                 if(!that[eventName]){
                     continue;
                 }
-                if(!simpleObj.allBindEventMap){
-                    simpleObj.allBindEventMap = {};
+                if(!uiObj.allBindEventMap){
+                    uiObj.allBindEventMap = {};
                 }
-                if(simpleObj.allBindEventMap[eventType]){
+                if(uiObj.allBindEventMap[eventType]){
                     continue;
                 }
-                simpleObj.react = that;
-                simpleObj.on(eventType,that[eventName]);
+                uiObj.react = that;
+                uiObj.on(eventType,that[eventName]);
             }
         }
     }
