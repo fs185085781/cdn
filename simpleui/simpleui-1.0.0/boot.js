@@ -54,8 +54,8 @@
         }
     }
     var htmlSearch = simple.getSearch();
-    var jsSearch = simple.getJsSearch("simple.js");
-    var jsPath = simple.getJsPath("simple.js");
+    var jsSearch = simple.getJsSearch("boot.js");
+    var jsPath = simple.getJsPath("boot.js");
     if(!jsSearch.mode){
         return;
     }
@@ -88,11 +88,11 @@
     }
     /*核心样式文件bootstrap*/
     document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
-    document.write('<link href="' + jsPath + '/base/css/simple.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
     var modules = jsSearch.modules.split(",");
     for(var i=0;i<modules.length;i++){
         var module = modules[i];
-        document.write('<script src="' + jsPath + '/modules/simple.'+module+'.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jsPath + '/modules/'+module+'.js" type="text/javascript"></sc' + 'ript>');
         document.write('<link href="' + jsPath + '/skin/default/'+module+'.css" rel="stylesheet" type="text/css" />');
         if(simple.skin){
             document.write('<link href="' + jsPath + '/skin/'+simple.skin+'/'+module+'.css" rel="stylesheet" type="text/css" />');
