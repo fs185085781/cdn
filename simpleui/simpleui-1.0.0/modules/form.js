@@ -1,5 +1,6 @@
-
 (function(win){
+    "use strict";
+    var ui = win.simple;
     /*表单组件*/
     /*按钮*/
     var button = {
@@ -40,12 +41,13 @@
         }
 
     }
-    simple.regModule({
-        className:"Button",
+    ui.Button = function(){}
+    ui.regModule({
+        clazz:ui.Button,
         useClass:"simple-button",
         fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
         events:["click","textchange"],
-        parentClass:simple.BaseModule,
+        parentClass:ui.BaseModule,
         thisClass:button,
         init:button.init
     });

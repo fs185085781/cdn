@@ -1,5 +1,7 @@
 (function(win){
+    "use strict";
+    var t = win.simple;
     iBase(function(){
-        simple.parse();
+        t.parse();
     });
 })(window)

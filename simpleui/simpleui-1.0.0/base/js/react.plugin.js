@@ -1,4 +1,5 @@
 (function(win){
+    "use strict";
     class SimpleUi extends React.Component {
         constructor(props) {
             super(props);

@@ -1,4 +1,5 @@
 (function(win){
+    "use strict";
     var simpleVue = Vue;
     Vue = function(options){
         var oldUpdated = options.updated;

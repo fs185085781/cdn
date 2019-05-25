@@ -1,6 +1,7 @@
 (function(win){
+    "use strict";
     /*提供js的引入机制*/
-    win.simple={
+    var t={
         getJsPath:function(js){
             var scripts = document.getElementsByTagName("script");
             var path = "";
@@ -53,9 +54,9 @@
             return map;
         }
     }
-    var htmlSearch = simple.getSearch();
-    var jsSearch = simple.getJsSearch("boot.js");
-    var jsPath = simple.getJsPath("boot.js");
+    var htmlSearch = t.getSearch();
+    var jsSearch = t.getJsSearch("boot.js");
+    var jsPath = t.getJsPath("boot.js");
     if(!jsSearch.mode){
         return;
     }
@@ -63,25 +64,26 @@
         jsSearch.profile = "product";
     }
     /*加载简版jquery*/
-    document.write('<script src="' + jsPath + '/base/js/base.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/idocument.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular"){
         return;
     }
     /*加载mode文件 4种之一 jquery  vue  react  angular*/
-    simple.mode = jsSearch.mode;
-    document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+simple.mode+'.js" type="text/javascript"></sc' + 'ript>');
-    if(simple.mode == "react"){
+    var ui = {};
+    ui.mode = jsSearch.mode;
+    document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
+    if(ui.mode == "react"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
     }
     if(jsSearch.jsx=="true"){
         document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
     /*加载核心文件 提供基础组件和工具类*/
-    document.write('<script src="' + jsPath + '/base/js/simple.base.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/
-    simple.skin = htmlSearch.skin;
-    if(!simple.skin){
-        simple.skin = jsSearch.skin;
+    ui.skin = htmlSearch.skin;
+    if(!ui.skin){
+        ui.skin = jsSearch.skin;
     }
     if(!jsSearch.modules){
         return;
@@ -94,19 +96,20 @@
         var module = modules[i];
         document.write('<script src="' + jsPath + '/modules/'+module+'.js" type="text/javascript"></sc' + 'ript>');
         document.write('<link href="' + jsPath + '/skin/default/'+module+'.css" rel="stylesheet" type="text/css" />');
-        if(simple.skin){
-            document.write('<link href="' + jsPath + '/skin/'+simple.skin+'/'+module+'.css" rel="stylesheet" type="text/css" />');
+        if(ui.skin){
+            document.write('<link href="' + jsPath + '/skin/'+ui.skin+'/'+module+'.css" rel="stylesheet" type="text/css" />');
         }
     }
     /*引入模块插件包,用于打通ui的中间件*/
-    document.write('<script src="' + jsPath + '/base/js/'+simple.mode+'.plugin.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/'+ui.mode+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     /*初始化语言包*/
-    simple.lang = htmlSearch.lang;
-    if(!simple.lang){
-        simple.lang = jsSearch.lang;
+    ui.lang = htmlSearch.lang;
+    if(!ui.lang){
+        ui.lang = jsSearch.lang;
     }
-    if(!simple.lang){
-        simple.lang = "zh_CN";
+    if(!ui.lang){
+        ui.lang = "zh_CN";
     }
-    document.write('<script src="' + jsPath + '/lang/'+simple.lang+'.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/lang/'+ui.lang+'.js" type="text/javascript"></sc' + 'ript>');
+    win.simple = ui;
 })(window);
