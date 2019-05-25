@@ -35,8 +35,8 @@
             changeButton:function(){
                 this.buttons[1].text = "修改后按钮";
             },
-            buttonClick:function(){
-                alert("你点击了按钮");
+            buttonClick:function(e){
+                alert("你点击了"+e.base.getName());
             }
         }
     })

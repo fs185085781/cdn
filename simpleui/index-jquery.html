@@ -6,7 +6,7 @@
     <script src="./simpleui-1.0.0/simple.js?mode=jquery&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
 </head>
 <body>
-<div class="simple-button haha" name="第一个按钮" text="第一个按钮名称" eltextchange="textchange" elclick="buttonClick()"></div>
+<div class="simple-button haha" name="第一个按钮" text="第一个按钮名称" eltextchange="textchange" elclick="buttonClick"></div>
 <div id="simple-button" name="第二个按钮" class="simple-button bbb" text="第二个按钮名称" eltextchange="textchange" elclick="buttonClick"></div>
 <a onclick="changeButton()">点击我修改第二个按钮名称</a>
 <div id="message"></div>
@@ -22,7 +22,7 @@
         }
     }
     function buttonClick(e){
-        alert("你点击了按钮");
+        alert("你点击了"+e.base.getName());
     }
 </script>
 </html>
