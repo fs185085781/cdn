@@ -9,12 +9,10 @@
                 return word;
             }
         };
-
         var shared = {
             value: 'additional parameter',
             color: 'yellow'
         };
-
         app.NestComponent =
             ng.core.Component({
                 providers: [ng.core.ElementRef],
@@ -49,7 +47,6 @@
                         this.ref.nativeElement.style.backgroundColor = "yellow";
                     }]
                 });
-
         app.AppComponent =
             ng.core.Component({
                 selector: 'mainApp',
@@ -70,7 +67,6 @@
         });
 
     })(window.app || (window.app = {}));
-
 </script>
-<mainApp>Loading...</mainApp>
+<mainApp></mainApp>
 </body>
