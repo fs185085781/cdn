@@ -68,12 +68,13 @@
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular" && jsSearch.mode != "angular2"){
         return;
     }
-    /*加载mode文件 5种之一 jquery  vue  react  angular angular2*/
-    var ui = {prefix:"simple"};
-    ui.mode = jsSearch.mode;
+    /*加载jsx*/
     if(jsSearch.jsx=="true"){
         document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
+    /*加载mode文件 5种之一 jquery  vue  react  angular angular2*/
+    var ui = {prefix:"simple"};
+    ui.mode = jsSearch.mode;
     if(ui.mode == "react"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
     }else if(ui.mode == "angular2"){
@@ -82,7 +83,6 @@
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/Rx.umd.js" type="text/javascript"></sc' + 'ript>');
     }
     document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
-
     /*加载核心文件 提供基础组件和工具类*/
     document.write('<script src="' + jsPath + '/base/js/base.js" type="text/javascript"></sc' + 'ript>');
     /*加载模块和皮肤*/
