@@ -7,7 +7,7 @@
     <script>
         class Button extends SimpleUi {
             textchange(e){
-                e.base.react.props.changeButton("您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
+                e.base.react.props.changeMessage("您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
             }
             buttonClick(e){
                 alert("你点击了"+e.base.getName());
@@ -42,12 +42,12 @@
             }
         }
         btnClick = () => this.setState({btn_2:{text:"修改后按钮"}});
-        changeButton = message =>  this.setState({message:message});
+        changeMessage = message =>  this.setState({message:message});
         render() {
             return (
                 <div>
                     <Button options={this.state.btn_1} />
-                    <Button options={this.state.btn_2} changeButton={this.changeButton}/>
+                    <Button options={this.state.btn_2} changeMessage={this.changeMessage}/>
                     <a onClick={this.btnClick}>{this.state.a_btn.name}</a>
                     <div>{this.state.message}</div>
                 </div>

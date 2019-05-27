@@ -15,27 +15,46 @@
         buttons:[
             {
                 name:"第一个按钮",
-                text:"第一个按钮名称"
+                text:"第一个按钮名称",
+                elclick:"buttonClick"
             } ,
             {
                 name:"第二个按钮",
-                text:"第二个按钮名称"
+                text:"第二个按钮名称",
+                eltextchange:"mytextchange",
+                elclick:"buttonClick"
             }
         ],
         message:""
     };
+    var button = SimpleUiComponent("simple-button");
     app.AppComponent =
         ng.core.Component({
             selector: 'mainApp',
-            template: '<div [simpleUi]></div>' +
-            '<a>点击我修改第二个按钮名称</a>'+
+            template: '<div><div simple-button [simpleUiData]="data.buttons[0]"></div><div simple-button [simpleUiData]="data.buttons[1]"></div>' +
+            '<a (click)="changeButton()">点击我修改第二个按钮名称</a>'+
             '<div>{{data.message}}</div>',
-            directives: [SimpleUiComponent],
+            directives: [button],
             providers: [TestService],
         }).Class({
                 constructor: [TestService, function(service) {
                     this.data = pageData;
-                }]
+                    SimpleUiBindEvent(button,"mytextchange",this.mytextchange);
+                    SimpleUiBindEvent(button,"buttonClick",this.buttonClick);
+                }],
+                mytextchange:function(e){
+                    this.changeMessage( "您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'");
+                },
+                buttonClick:function(e){
+                    alert("你点击了"+e.base.getName());
+                },
+                changeButton:function(e){
+                    window.abcd = this;
+                    this.data.buttons[1].text = "修改后按钮";
+                },
+                changeMessage:function(val){
+                    this.data.message =val;
+                }
             });
     document.addEventListener('DOMContentLoaded', function() {
         ng.platform.browser.bootstrap(app.AppComponent);
