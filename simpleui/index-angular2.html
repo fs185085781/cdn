@@ -27,9 +27,10 @@
     app.AppComponent =
         ng.core.Component({
             selector: 'mainApp',
-            template: '<div *ngFor="#button of data.buttons" class="simple-button" [attr.name]="button.name" [attr.text]="button.text"></div>' +
+            template: '<div [simpleUi]></div>' +
             '<a>点击我修改第二个按钮名称</a>'+
-            '<div [simpleUi]>{{data.message}}</div>',
+            '<div>{{data.message}}</div>',
+            directives: [SimpleUiComponent],
             providers: [TestService],
         }).Class({
                 constructor: [TestService, function(service) {
