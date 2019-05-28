@@ -7,36 +7,44 @@
 </head>
 <body>
 <div ng-app="myApp" ng-controller="testCtrl">
-    <div ng-repeat="button in buttons">
-        <div class="simple-button" id="{{button.id}}" name="{{button.name}}" text="{{button.text}}" eltextchange="textchange" elclick="buttonClick"></div>
-    </div>
+    <simple-ui data="buttons[0]"></simple-ui>
+    <simple-ui data="buttons[1]"></simple-ui>
     <a ng-click="changeButton()">点击我修改第二个按钮名称</a>
-    <div>{{test_text}}</div>
+    <div>{{message}}</div>
 </div>
-
 <script>
     var app = angular.module('myApp', []);
-    app.controller('testCtrl', function($scope) {
-        $scope.$on('ngRepeatFinished', function(){
-            console.log("123132");
-        });
-        $scope.test_text = "测试"
+    app.controller('testCtrl', function ($scope) {
+        $scope.message = ""
         $scope.buttons = [
             {
-                name:"第一个按钮",
-                text:"第一个按钮名称",
-                id:"first-button"
-            } ,
+                name: "第一个按钮",
+                text: "第一个按钮名称",
+                class:"simple-button"
+            },
             {
-                name:"第二个按钮",
-                text:"第二个按钮名称",
-                id:"second-button"
+                name: "第二个按钮",
+                text: "第二个按钮名称",
+                class:"simple-button"
             }
         ];
-        $scope.changeButton = function() {
-            $scope.buttons[1].text="修改后按钮";
+        $scope.changeButton = function () {
+            $scope.buttons[1].text = "修改后按钮";
         };
-
+        $scope.$watch('name',  function(newValue, oldValue) {
+            if (newValue === oldValue) { return; } // AKA first run
+            $scope.updated++;
+        });
+    });
+    app.directive("simpleUi", function () {
+        return {
+            restrict: 'E',
+            // 定义student-info的Isolate scope
+            scope: {
+                uiInScope: '=data'
+            },
+            template: '<div name="{{uiInScope.name}}" text="{{uiInScope.text}}" class="{{uiInScope.class}}"></div>'
+        };
     });
 </script>
 </body>

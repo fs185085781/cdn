@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ui在angular中使用</title>
+    <script src="./simpleui-1.0.0/boot.js?mode=angular&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
+</head>
+<body ng-app="myApp" ng-controller="testCtrl">
+<div simple-ui data="buttons[0]"></div>
+<div simple-ui data="buttons[1]"></div>
+<a ng-click="changeButton()">点击我修改第二个按钮名称</a>
+<div>{{message}}</div>
+<script>
+    var app=angular.module('myApp', []);
+    app.controller('testCtrl', function ($scope) {
+        $scope.message = ""
+        $scope.buttons = [
+            {
+                name: "第一个按钮",
+                text: "第一个按钮名称",
+                class:"simple-button"
+            },
+            {
+                name: "第二个按钮",
+                text: "第二个按钮名称",
+                class:"simple-button"
+            }
+        ];
+        $scope.changeButton = function () {
+            $scope.buttons[1].text = "修改后按钮";
+        };
+    });
+</script>
+</body>
+</html>
