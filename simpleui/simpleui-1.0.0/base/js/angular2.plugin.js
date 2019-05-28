@@ -1,6 +1,9 @@
 (function(win){
     "use strict";
     var ui = win.simple;
+    win.angularEvent = function(e){
+        e.base.angular2.uiOutput.emit(e);
+    }
     win.SimpleUiComponent = function(clazz){
         if(!ui.angular2ModuleMap){
             ui.angular2ModuleMap = {};
@@ -22,18 +25,17 @@
         for(var field in fieldMap){
             template +=" [attr."+field+"]=\"uiInput."+field+"\"";
         }
-        /*for(var event in eventMap){
-            template +=" [attr.el"+event+"]=\"uiInput.el"+event+"\"";
-        }*/
         template +="></div>";
         var oneComponent= ng.core.Component({
             selector: selector,
             inputs: ['uiInput'],
+            outputs: ['uiOutput'],
             template: template,
             providers: [ng.core.ElementRef]
         }).Class({
             constructor: [ng.core.ElementRef, function(ref) {
                 this.el = ref.nativeElement;
+                this.uiOutput = new ng.core.EventEmitter();
             }],
             ngAfterViewChecked:function(){
                 var uiEl = iBase(this.el).find("."+clazz);
@@ -45,26 +47,19 @@
                 }
                 this.ui = uiObj;
                 uiObj.angular2 = this;
-                var allBindMap = ui.angular2ModuleMap[clazz].allBindMap;
-                if(allBindMap){
-                    for(var event in eventMap){
-                        var val = this.uiInput["el"+event];
-                        if(!val){
-                            continue;
-                        }
-                        var func = allBindMap[val];
-                        if(!func){
-                            continue;
-                        }
-                        var hasBindMap = uiObj.allBindEventMap;
-                        if(!hasBindMap){
-                            hasBindMap = {};
-                        }
-                        if(hasBindMap[event]){
-                            continue;
-                        }
-                        uiObj.on(event,func);
+                for(var event in eventMap){
+                    var val = this.uiInput["el"+event];
+                    if(!val){
+                        continue;
                     }
+                    var hasBindMap = uiObj.allBindEventMap;
+                    if(!hasBindMap){
+                        hasBindMap = {};
+                    }
+                    if(hasBindMap[event]){
+                        continue;
+                    }
+                    uiObj.on(event,angularEvent);
                 }
                 //处理数据变化
                 if(!this.oldDataMap){
@@ -91,13 +86,4 @@
         oneComponent.clazz = clazz;
         return oneComponent;
     }
-    win.SimpleUiBindEvent=function(module,methodName,func){
-        var clazz = module.clazz;
-        var allBindMap = ui.angular2ModuleMap[clazz].allBindMap;
-        if(!allBindMap){
-            allBindMap = {};
-            ui.angular2ModuleMap[clazz].allBindMap = allBindMap;
-        }
-        allBindMap[methodName] = func;
-    };
 })(window)
