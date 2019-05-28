@@ -20,15 +20,15 @@
         var template = "<div";
         template +=" class=\""+clazz+"\"";
         for(var field in fieldMap){
-            template +=" [attr."+field+"]=\"simpleUiData."+field+"\"";
+            template +=" [attr."+field+"]=\"uiInput."+field+"\"";
         }
         /*for(var event in eventMap){
-            template +=" [attr.el"+event+"]=\"simpleUiData.el"+event+"\"";
+            template +=" [attr.el"+event+"]=\"uiInput.el"+event+"\"";
         }*/
         template +="></div>";
         var oneComponent= ng.core.Component({
             selector: selector,
-            inputs: ['simpleUiData'],
+            inputs: ['uiInput'],
             template: template,
             providers: [ng.core.ElementRef]
         }).Class({
@@ -48,7 +48,7 @@
                 var allBindMap = ui.angular2ModuleMap[clazz].allBindMap;
                 if(allBindMap){
                     for(var event in eventMap){
-                        var val = this.simpleUiData["el"+event];
+                        var val = this.uiInput["el"+event];
                         if(!val){
                             continue;
                         }
@@ -72,7 +72,7 @@
                 }
                 var oldDataMap = this.oldDataMap;
                 for(var field in fieldMap){
-                    var val = this.simpleUiData[field];
+                    var val = this.uiInput[field];
                     var oldVal = oldDataMap[field];
                     if(oldVal == val){
                         continue;

@@ -31,7 +31,7 @@
     app.AppComponent =
         ng.core.Component({
             selector: 'mainApp',
-            template: '<div><div simple-button [simpleUiData]="data.buttons[0]"></div><div simple-button [simpleUiData]="data.buttons[1]"></div>' +
+            template: '<div><div simple-button [uiInput]="data.buttons[0]"></div><div simple-button [uiInput]="data.buttons[1]"></div>' +
             '<a (click)="changeButton()">点击我修改第二个按钮名称</a>'+
             '<div>{{data.message}}</div>',
             directives: [button],
