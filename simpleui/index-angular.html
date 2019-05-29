@@ -2,48 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ui在angular中使用</title>
+    <title>ui在angular1中使用</title>
     <script src="./simpleui-1.0.0/boot.js?mode=angular&modules=form&skin=blue&lang=zh_CN&profile=test"></script>
 </head>
-<body>
-<div ng-app="myApp" ng-controller="testCtrl">
-    <simple-ui data="buttons[0]"></simple-ui>
-    <simple-ui data="buttons[1]"></simple-ui>
-    <a ng-click="changeButton()">点击我修改第二个按钮名称</a>
-    <div>{{message}}</div>
-</div>
+<body ng-app="myApp" ng-controller="testCtrl">
+<div simple-ui data="buttons[0]" module="simple-button"></div>
+<div simple-ui data="buttons[1]" module="simple-button"></div>
+<a ng-click="changeButton()">点击我修改第二个按钮名称</a>
+<div>{{message}}</div>
 <script>
-    var app = angular.module('myApp', []);
+    var app=angular.module('myApp', []);
     app.controller('testCtrl', function ($scope) {
         $scope.message = ""
         $scope.buttons = [
             {
                 name: "第一个按钮",
                 text: "第一个按钮名称",
-                class:"simple-button"
+                class:"simple-button",
+                elclick:"buttonClick"
             },
             {
                 name: "第二个按钮",
                 text: "第二个按钮名称",
-                class:"simple-button"
+                class:"simple-button",
+                eltextchange:"textchange",
+                elclick:"buttonClick"
             }
         ];
         $scope.changeButton = function () {
             $scope.buttons[1].text = "修改后按钮";
         };
-        $scope.$watch('name',  function(newValue, oldValue) {
-            if (newValue === oldValue) { return; } // AKA first run
-            $scope.updated++;
-        });
-    });
-    app.directive("simpleUi", function () {
-        return {
-            restrict: 'E',
-            // 定义student-info的Isolate scope
-            scope: {
-                uiInScope: '=data'
-            },
-            template: '<div name="{{uiInScope.name}}" text="{{uiInScope.text}}" class="{{uiInScope.class}}"></div>'
+        $scope.textchange = function (e) {
+            $scope.message = "您刚才更改了"+e.base.getName()+"的按钮,修改前为'"+e.data.oldText+"',修改后为'"+e.data.text+"'";
+        };
+        $scope.buttonClick = function (e) {
+            alert("你点击了"+e.base.getName());
         };
     });
 </script>

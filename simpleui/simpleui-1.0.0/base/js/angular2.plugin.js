@@ -10,7 +10,8 @@
         }
         var module = ui.moduleMap[clazz];
         if(!module){
-            console.log("此模块不存在");
+            console.error(clazz +" no has the module")
+            return;
         }
         var oneComponent= ui.angular2ModuleMap[clazz];
         if(oneComponent){
@@ -38,29 +39,36 @@
                 this.uiOutput = new ng.core.EventEmitter();
             }],
             ngAfterViewChecked:function(){
-                var uiEl = iBase(this.el).find("."+clazz);
-                this.uiEl = uiEl;
-                ui.parse(uiEl);
-                var uiObj = ui.getBySelect(uiEl);
-                if(!uiObj){
-                    return;
+                if(!this.hasParse){
+                    var uiEl = iBase(this.el).find("."+clazz);
+                    this.uiEl = uiEl;
+                    ui.parse(uiEl);
+                    var uiObj = ui.getBySelect(uiEl);
+                    this.ui = uiObj;
+                    this.hasParse = true;
+                    if(!this.ui){
+                        return
+                    }
+                    uiObj.angular2 = this;
+                    for(var event in eventMap){
+                        var val = this.uiInput["el"+event];
+                        if(!val){
+                            continue;
+                        }
+                        var hasBindMap = uiObj.allBindEventMap;
+                        if(!hasBindMap){
+                            hasBindMap = {};
+                        }
+                        if(hasBindMap[event]){
+                            continue;
+                        }
+                        uiObj.on(event,angularEvent);
+                    }
                 }
-                this.ui = uiObj;
-                uiObj.angular2 = this;
-                for(var event in eventMap){
-                    var val = this.uiInput["el"+event];
-                    if(!val){
-                        continue;
-                    }
-                    var hasBindMap = uiObj.allBindEventMap;
-                    if(!hasBindMap){
-                        hasBindMap = {};
-                    }
-                    if(hasBindMap[event]){
-                        continue;
-                    }
-                    uiObj.on(event,angularEvent);
+                if(!this.ui){
+                    return
                 }
+                var uiObj = this.ui;
                 //处理数据变化
                 if(!this.oldDataMap){
                     this.oldDataMap = {};
