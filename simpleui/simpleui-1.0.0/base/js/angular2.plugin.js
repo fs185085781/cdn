@@ -46,6 +46,7 @@
                     var uiObj = ui.getBySelect(uiEl);
                     this.ui = uiObj;
                     this.hasParse = true;
+                    debugger
                     if(!this.ui){
                         return
                     }
@@ -77,6 +78,9 @@
                 for(var field in fieldMap){
                     var val = this.uiInput[field];
                     var oldVal = oldDataMap[field];
+                    if(!oldVal && !val){
+                        continue;
+                    }
                     if(oldVal == val){
                         continue;
                     }

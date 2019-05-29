@@ -10,6 +10,23 @@
     <div v-for="button in buttons" v-bind:name="button.name" class="simple-button" v-bind:text="button.text" v-on:eltextchange="textchange" v-on:elclick="buttonClick"></div>
     <a v-on:click="changeButton">点击我修改第二个按钮名称</a>
     <div>{{message}}</div>
+    <div>
+        <p>
+            1.兼容性:参照Vue兼容性
+        </p>
+        <p>
+            2.获取组件对象:simple.getBySelect(ele),simple.getByUid(uid),simple.getsBySelect(eles)
+        </p>
+        <p>
+            3.访问组件属性:直接设置vue的属性即可同步组件属性
+        </p>
+        <p>
+            4.调用组件方法:拿到组件对象后调用组件方法
+        </p>
+        <p>
+            5.组件事件反馈:事件e.base表示当前组件,e.type表示事件名称,e.base.vue表示vue对象
+        </p>
+    </div>
 </div>
 </body>
 <script>

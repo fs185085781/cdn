@@ -7,16 +7,13 @@
             this.myRef = React.createRef();
         }
         componentDidMount(){
-            var el = this.myRef.current;
-            ui.parse(el);
-            updateUiByReactNode(this,el);
+            updateUiByReactNode(this);
             if(this.didMount){
                 this.didMount();
             }
         }
         componentDidUpdate(){
-            var el = this.myRef.current;
-            updateUiByReactNode(this,el);
+            updateUiByReactNode(this);
             if(this.didUpdate){
                 this.didUpdate();
             }
@@ -27,49 +24,58 @@
         }
     }
     win.SimpleUi = SimpleUi;
-    function updateUiByReactNode(that,el){
-        var uiObj = ui.getBySelect(el);
-        if(!uiObj){
-            return;
+    function updateUiByReactNode(that){
+        if(!that.hasParse){
+            var uiEl = that.myRef.current;
+            ui.parse(uiEl);
+            uiObj = ui.getBySelect(uiEl);
+            that.ui = uiObj;
+            that.hasParse = true;
+            if(!that.ui){
+                return
+            }
+            that.ui.react = that;
+            //绑定事件
+            var eventMap = uiObj.eventMap;
+            for(var event in eventMap){
+                var val = that.props.options["el"+event];
+                if(!val){
+                    continue;
+                }
+                var hasBindMap = uiObj.allBindEventMap;
+                if(!hasBindMap){
+                    hasBindMap = {};
+                }
+                if(hasBindMap[event]){
+                    continue;
+                }
+                uiObj.on(event,that[val]);
+            }
         }
-        that.ui = uiObj;
-        var map = that.props.options;
-        for(var field in map){
-            if(field == "ref"){
+        if(!that.ui){
+            return
+        }
+        var uiObj = that.ui;
+        var fieldMap = uiObj.fieldMap;
+        var newData = that.props.options;
+        if(!that.oldData){
+            that.oldData = {};
+        }
+        var oldData = that.oldData;
+        for(var field in fieldMap){
+            if(!oldData[field] && !newData[field]){
                 continue;
             }
-            var hasEvent = true;
-            var eventType = "";
-            if(field.length <= 2){
-                //一定不是事件
-                hasEvent = false;
+            if(oldData[field] == newData[field]){
+                continue;
+            }
+            var value = newData[field];
+            oldData[field] = value;
+            var setFunctionName = "set"+ui.firstToUpperCase(field);
+            if(uiObj[setFunctionName]){
+                eval("uiObj."+setFunctionName+"(value)");
             }else{
-                eventType = field.substring(2);
-            }
-            if(!uiObj.fieldMap[field] && !hasEvent){
-                continue;
-            }
-            if(uiObj.fieldMap[field]){
-                var value = map[field];
-                var setFunctionName = "set"+ui.firstToUpperCase(field);
-                if(uiObj[setFunctionName]){
-                    eval("uiObj."+setFunctionName+"(value)");
-                }else{
-                    uiObj[field] = value;
-                }
-            }else if(hasEvent && uiObj.eventMap[eventType]){
-                var eventName = map[field];
-                if(!that[eventName]){
-                    continue;
-                }
-                if(!uiObj.allBindEventMap){
-                    uiObj.allBindEventMap = {};
-                }
-                if(uiObj.allBindEventMap[eventType]){
-                    continue;
-                }
-                uiObj.react = that;
-                uiObj.on(eventType,that[eventName]);
+                uiObj[field] = value;
             }
         }
     }

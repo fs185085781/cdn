@@ -10,6 +10,23 @@
 <div simple-ui data="buttons[1]" module="simple-button"></div>
 <a ng-click="changeButton()">点击我修改第二个按钮名称</a>
 <div>{{message}}</div>
+<div>
+    <p>
+        1.兼容性:参照Angular兼容性
+    </p>
+    <p>
+        2.获取组件对象:$scope.uiMap[exp],其中exp表示示例中data="buttons[0]"的buttons[0]部分
+    </p>
+    <p>
+        3.访问组件属性:修改$scope会同步设置组件属性
+    </p>
+    <p>
+        4.调用组件方法:拿到组件对象后调用组件方法
+    </p>
+    <p>
+        5.组件事件反馈:事件e.base表示当前组件,e.type表示事件名称
+    </p>
+</div>
 <script>
     var app=angular.module('myApp', []);
     app.controller('testCtrl', function ($scope) {
@@ -38,6 +55,7 @@
         $scope.buttonClick = function (e) {
             alert("你点击了"+e.base.getName());
         };
+        window.aaaaa=$scope;
     });
 </script>
 </body>

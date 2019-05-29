@@ -423,8 +423,8 @@
             l = iBase(l[0]);
             return this.getByUid(l.attr("uikey"));
         },
-        getsBySelect:function(ele){
-            var l = iBase(ele);
+        getsBySelect:function(eles){
+            var l = iBase(eles);
             if(l.length == 0){
                 return [];
             }

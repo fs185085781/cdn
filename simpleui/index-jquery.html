@@ -10,6 +10,23 @@
 <div id="simple-button" name="第二个按钮" class="simple-button bbb" text="第二个按钮名称" eltextchange="textchange" elclick="buttonClick"></div>
 <a onclick="changeButton()">点击我修改第二个按钮名称</a>
 <div id="message"></div>
+<div>
+    <p>
+        1.兼容性:Jquery兼容IE5
+    </p>
+    <p>
+        2.获取组件对象:simple.getBySelect(ele),simple.getByUid(uid),simple.getsBySelect(eles)
+    </p>
+    <p>
+        3.访问组件属性:拿到组件对象后调用属性set方法
+    </p>
+    <p>
+        4.调用组件方法:拿到组件对象后调用组件方法
+    </p>
+    <p>
+        5.组件事件反馈:事件e.base表示当前组件,e.type表示事件名称
+    </p>
+</div>
 </body>
 <script>
     function textchange(e){

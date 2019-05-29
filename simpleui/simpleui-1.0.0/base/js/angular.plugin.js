@@ -42,6 +42,7 @@
                         if(!this.ui){
                             return
                         }
+                        $scope.uiMap[that.exp] = this.ui;
                         var eventMap = this.ui.eventMap;
                         for(var event in eventMap){
                             var val = newValue["el"+event];
