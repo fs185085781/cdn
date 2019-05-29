@@ -6,7 +6,7 @@
     var button = {
         init:function(){
             var that = this;
-            var btn = iBase("<a class='btn btn-default' style='width:100%;height:100%'></a>");
+            var btn = iBase("<button class=\"btn btn-primary\"><label><i></i></label><span></span></button>");
             btn.appendTo(iBase(that.el));
             that._buttonEl = iBase(btn)[0];
             that.setWidth(120);
@@ -21,23 +21,25 @@
         },
         setText:function(val){
             var oldText = this.text;
-            iBase(this._buttonEl).html(val);
+            iBase(this._buttonEl).find("span").html(val);
             this.text = val;
             if(oldText != val){
                 this.fire("textchange",{oldText:oldText,text:val});
             }
         },
-        getHref:function(){
-            return this.href;
+        getIconCls:function(){
+            return this.iconCls;
         },
-        setHref:function(val){
+        setIconCls:function(val){
+            var that = this;
             if(!val){
-                val = null;
-                iBase(this._buttonEl).removeAttr("href");
+                iBase(that._buttonEl).removeClass("btn-label");
+                iBase(that._buttonEl).find("i").attr("class","");
             }else{
-                iBase(this._buttonEl).attr("href",val);
+                iBase(that._buttonEl).addClass("btn-label");
+                iBase(that._buttonEl).find("i").addClass("fa "+val);
             }
-            this.href = val;
+            that.iconCls = val;
         }
 
     }
@@ -45,7 +47,7 @@
     ui.regModule({
         clazz:ui.Button,
         useClass:ui.prefix+"-button",
-        fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
+        fields:["text","iconCls","moldType","plain","checked","checkOnClick","groupName"],
         events:["click","textchange"],
         parentClass:ui.BaseModule,
         thisClass:button,

@@ -97,6 +97,12 @@
     /*核心样式文件bootstrap*/
     document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
     document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
+    /*加载字体*/
+    document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />');
+    /*引用皮肤基础包*/
+    if(ui.skin){
+        document.write('<link href="' + jsPath + '/skin/'+ui.skin+'/base.css" rel="stylesheet" type="text/css" />');
+    }
     var modules = jsSearch.modules.split(",");
     for(var i=0;i<modules.length;i++){
         var module = modules[i];
