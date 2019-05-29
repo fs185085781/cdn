@@ -409,6 +409,12 @@
             }
             return true;
         },
+        parseObject:function(val){
+            if(typeof val != "string"){
+                return val;
+            }
+            return this.decode(val);
+        },
         getByUid:function(uid){
             if(!uid){
                 return null;
@@ -443,6 +449,47 @@
                 return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
             }
             return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+        },
+        list2tree:function(list,idField,parentField){
+            function addToList(one,list,idField,parentField){
+                for(var i=0;i<list.length;i++){
+                    var temp = list[i];
+                    if(!one[parentField]){
+                        /*说明是顶级,不处理*/
+                        continue;
+                    }
+                    if(one[idField] == temp[idField]){
+                        /*是当前自己,不处理*/
+                        continue;
+                    }
+                    if(one[parentField] == temp[idField]){
+                        /*说明one是temp的子集*/
+                        if(!temp.children || !(temp.children instanceof Array)){
+                            temp.children = [];
+                        }
+                        temp.children[temp.children.length] = one;
+                        return true;
+                    }else if(temp.children && (temp.children instanceof Array)){
+                        var flag = addToList(one,temp.children,idField,parentField);
+                        if(flag){
+                            return flag;
+                        }
+                    }
+                }
+                return false;
+            }
+            var removeList = [];
+           for(var i=0;i<list.length;i++){
+               var flag = addToList(list[i],list,idField,parentField);
+               removeList[i] = flag;
+           }
+           var dataTree = [];
+            for(var i=0;i<list.length;i++){
+                if(!removeList[i]){
+                    dataTree[dataTree.length] = list[i];
+                }
+            }
+            return dataTree;
         }
     };
     for(var key in tools){
