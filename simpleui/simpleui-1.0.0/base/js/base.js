@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
     /*兼容IE5不支持的属性*/
     /*重写string的trim方法*/
     if(typeof String.prototype.trim !== 'function') {

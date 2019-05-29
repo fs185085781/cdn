@@ -117,5 +117,6 @@
         ui.lang = "zh_CN";
     }
     document.write('<script src="' + jsPath + '/lang/'+ui.lang+'.js" type="text/javascript"></sc' + 'ript>');
-    win.simple = ui;
+    win[ui.prefix] = ui;
+    win.uiprefix = ui.prefix;
 })(window);

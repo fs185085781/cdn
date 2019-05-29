@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
     class SimpleUi extends React.Component {
         constructor(props) {
             super(props);

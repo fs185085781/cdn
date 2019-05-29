@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
    var module = angular.module;
     angular.module = function(name, requires, configFn){
         var app = module(name, requires, configFn);

@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
     /*表单组件*/
     /*按钮*/
     var button = {
@@ -44,7 +44,7 @@
     ui.Button = function(){}
     ui.regModule({
         clazz:ui.Button,
-        useClass:"simple-button",
+        useClass:ui.prefix+"-button",
         fields:["text","iconCls","iconStyle","href","plain","checked","checkOnClick","groupName"],
         events:["click","textchange"],
         parentClass:ui.BaseModule,

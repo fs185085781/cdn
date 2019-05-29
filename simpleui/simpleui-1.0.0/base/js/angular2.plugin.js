@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
     win.angularEvent = function(e){
         e.base.angular2.uiOutput.emit(e);
     }

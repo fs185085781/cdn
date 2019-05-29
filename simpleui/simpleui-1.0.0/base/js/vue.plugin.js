@@ -1,6 +1,6 @@
 (function(win){
     "use strict";
-    var ui = win.simple;
+    var ui = win[win.uiprefix];
     var tempVue = Vue;
     Vue = function(options){
         var oldUpdated = options.updated;
