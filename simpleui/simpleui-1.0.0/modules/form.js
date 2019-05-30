@@ -72,27 +72,38 @@
                     that.resultAsTree = flag;
                     that.data = obj;
                     if(flag){
-                        that.loadTreeData(obj);
+                        that.loadTreeData(obj,that.getIdField(),that.getTextField());
                     }else{
-                        that.loadListData(obj,that.getIdField(),that.getParentField());
+                        that.loadListData(obj,that.getIdField(),that.getParentField(),that.getTextField());
                     }
                 }
             });
         },
-        loadListData:function(list,idField,parentField){
-            this.loadTreeData(ui.list2tree(list,idField,parentField));
+        loadListData:function(list,idField,parentField,textField){
+            this.loadTreeData(ui.list2tree(list,idField,parentField),idField,textField);
         },
-        loadTreeData:function(tree){
+        loadTreeData:function(tree,idField,textField){
             if(!(tree instanceof Array)){
                 return;
             }
-            console.log(tree);
-            function createTreeByData(){
-
+            function createTreeByData(list,map,idField,textField){
+                map.str +="<ul>";
+                for(var i=0;i<list.length;i++){
+                    var one = list[i];
+                    map.str +="<li data-id=\""+one[idField]+"\">";
+                    map.str +=one[textField];
+                    var children = one.children;
+                    if(children && children instanceof Array){
+                        createTreeByData(children,map,idField,textField);
+                    }
+                    map.str +="</li>";
+                }
+                map.str += "</ul>";
+                //return str;
             }
-            var ul = "<ul>";
-
-            ul+="</ul>";
+            var map = {str:""};
+            createTreeByData(tree,map,idField,textField);
+            console.log(map.str);
 
         },
         getResultAsTree:function(){
@@ -116,13 +127,13 @@
             }
             that.data = ui.parseObject(data);
             if(that.getResultAsTree()){
-                that.loadTreeData(that.getData());
+                that.loadTreeData(that.getData(),that.getIdField(),that.getTextField());
             }else{
-                that.loadListData(that.getData(),that.getIdField(),that.getParentField());
+                that.loadListData(that.getData(),that.getIdField(),that.getParentField(),that.getTextField());
             }
         },
         getTextField:function(){
-
+            return "text";
         },
         setTextField:function(){
 
