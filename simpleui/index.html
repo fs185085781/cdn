@@ -8,14 +8,17 @@
 <body>
 <div class="container-fluid">
     <div class="row" style="margin-top:10px;">
-        <div class="col-xs-5">按钮</div>
-        <div class="col-xs-7">
+        <div class="col-xs-2">按钮</div>
+        <div class="col-xs-4">
             <div class="simple-button" text="测试按钮" elclick="function(e){alert('你点击了'+e.base.getText());}" moldType="5" iconCls="fa-search"></div>
         </div>
-        <div class="col-xs-5">按钮组</div>
-        <div class="col-xs-7">
-            <div class="simple-buttongroup" elmenuItemClick="function(e){console.log(e);}" elclick="function(e){console.log(e);}" data="[{id:'a1',text:'按钮1',moldType:'4'},{id:'a2',text:'按钮2',moldType:'3'}]" moldType="5" menuTreeData="[{id:'m1',text:'菜单1',children:[{id:'m3',text:'菜单3'}]},{id:'m2',text:'菜单2'}]"></div>
+        <div class="col-xs-2">按钮组</div>
+        <div class="col-xs-4">
+            <div class="simple-buttongroup" elmenuItemClick="function(e){alert('你点击了菜单'+e.data.text);}" elclick="function(e){alert('你点击了按钮'+e.data.text);}" data="[{id:'a1',text:'按钮1',moldType:'4'},{id:'a2',text:'按钮2',moldType:'3'}]" moldType="5" menuTreeData="[{id:'m1',text:'菜单1',children:[{id:'m3',text:'菜单3'}]},{id:'m2',text:'菜单2'}]"></div>
         </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+
     </div>
 </div>
 <script>
