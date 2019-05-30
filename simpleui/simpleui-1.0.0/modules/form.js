@@ -96,9 +96,13 @@
             if(!(tree instanceof Array)){
                 return;
             }
+            if(!that.dataMap){
+                that.dataMap = {};
+            }
             function createLevelByData(tree,index){
                 for(var i=0;i<tree.length;i++){
                     tree[i]._level = index;
+                    that.dataMap[tree[i][idField]] = tree[i];
                     if(tree[i].children && (tree[i].children instanceof Array)){
                         createLevelByData(tree[i].children,index+1);
                     }
