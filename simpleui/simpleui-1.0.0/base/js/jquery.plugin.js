@@ -1,7 +1,7 @@
 (function(win){
     "use strict";
     var ui = win[win.uiprefix];
-    iBase(function(){
+    jQuery(function(){
         ui.parse();
     });
 })(window)

@@ -304,9 +304,9 @@
         },
         parse:function(element){
             var that  = this;
-            var parentEle = iBase("body");
+            var parentEle = jQuery("body");
             if(element){
-                parentEle = iBase(element);
+                parentEle = jQuery(element);
             }
             if(parentEle.length == 0){
                 return;
@@ -329,7 +329,7 @@
             }
             for(var clazz in ui.moduleMap){
                 var module = ui.moduleMap[clazz];
-                var list = iBase(parentEle).find("."+clazz);
+                var list = jQuery(parentEle).find("."+clazz);
                 if(list == null || list.length == 0){
                     continue;
                 }
@@ -357,7 +357,7 @@
                 //设置属性
                 var fieldMap = moduleObj.fieldMap;
                 for(var field in fieldMap){
-                    var value = iBase(ele).attr(field);
+                    var value = jQuery(ele).attr(field);
                     if(!value){
                         continue;
                     }
@@ -368,11 +368,11 @@
                         moduleObj[field] = value;
                     }
                 }
-                iBase(moduleObj.el).attr("uikey",moduleObj.uikey);
+                jQuery(moduleObj.el).attr("uikey",moduleObj.uikey);
                 //绑定事件
                 var eventMap = moduleObj.eventMap;
                 for(var event in eventMap){
-                    var value = iBase(ele).attr("el"+event);
+                    var value = jQuery(ele).attr("el"+event);
                     if(!value){
                         continue;
                     }
@@ -422,21 +422,21 @@
             return ui.allSimple[uid];
         },
         getBySelect:function(ele){
-            var l = iBase(ele);
+            var l = jQuery(ele);
             if(l.length == 0){
                 return null;
             }
-            l = iBase(l[0]);
+            l = jQuery(l[0]);
             return this.getByUid(l.attr("uikey"));
         },
         getsBySelect:function(eles){
-            var l = iBase(eles);
+            var l = jQuery(eles);
             if(l.length == 0){
                 return [];
             }
             var list = [];
             for(var i=0;i<l.length;i++){
-                var one = this.getByUid(iBase(l[i]).attr("uikey"));
+                var one = this.getByUid(jQuery(l[i]).attr("uikey"));
                 if(one == null){
                     continue;
                 }
@@ -546,7 +546,7 @@
             }
         },
         destroy:function(){
-            iBase(this.el).remove();
+            jQuery(this.el).remove();
             this.fire("destroy");
             delete ui.allSimple[this.uikey];
         },
@@ -570,29 +570,29 @@
             if(value == this.useClass){
                 return;
             }
-            iBase(this.el).addClass(value);
+            jQuery(this.el).addClass(value);
         },
         removeCls:function(value){
             value = value.trim();
             if(value == this.useClass){
                 return;
             }
-            iBase(this.el).removeClass(value);
+            jQuery(this.el).removeClass(value);
         },
         mask:function(option){
             if(this._ismask){
                return;
             }
             this._ismask = true;
-            iBase(this.el).append("<div class='simple-mask'><div class='simple-mask-loading'></div></div>");
-            var loading = iBase(this.el).find(".simple-mask .simple-mask-loading");
+            jQuery(this.el).append("<div class='simple-mask'><div class='simple-mask-loading'></div></div>");
+            var loading = jQuery(this.el).find(".simple-mask .simple-mask-loading");
             var top = parseInt((this.getHeight()-loading.height())/2);
             var left = parseInt((this.getWidth()-loading.width())/2);
             loading.css({top:top+"px",left:left+"px"});
         },
         unmask:function(){
             this._ismask = false;
-            iBase(this.el).find(".simple-mask").remove();
+            jQuery(this.el).find(".simple-mask").remove();
         },
         getId:function(){
             return this.id;
@@ -600,10 +600,10 @@
         setId:function(value){
             if(!value){
                 value = null;
-                iBase(this.el).removeAttr("id");
+                jQuery(this.el).removeAttr("id");
             }else{
                 value = value.trim();
-                iBase(this.el).attr("id",value);
+                jQuery(this.el).attr("id",value);
             }
             this.id = value;
         },
@@ -613,10 +613,10 @@
         setName:function(value){
             if(!value){
                 value = null;
-                iBase(this.el).removeAttr("name");
+                jQuery(this.el).removeAttr("name");
             }else{
                 value = value.trim();
-                iBase(this.el).attr("name",value);
+                jQuery(this.el).attr("name",value);
             }
             this.name = value;
         },
@@ -629,9 +629,9 @@
         setVisible:function(value){
             this.visible = ui.parseBoolean(value);
             if(this.visible){
-                iBase(this.el).show();
+                jQuery(this.el).show();
             }else{
-                iBase(this.el).hide();
+                jQuery(this.el).hide();
             }
         },
         getEnabled:function(){
@@ -655,7 +655,7 @@
         },
         getCls:function(){
             if(!this.cls){
-                this.cls = iBase(this.el).attr("class").replace(this.useClass,"").trim();
+                this.cls = jQuery(this.el).attr("class").replace(this.useClass,"").trim();
             }
             return this.cls;
         },
@@ -665,17 +665,17 @@
             }
             value = value.trim().replace(this.useClass,"").trim();
             this.cls = value;
-            iBase(this.el).attr("class",this.useClass+" "+value);
+            jQuery(this.el).attr("class",this.useClass+" "+value);
         },
         getStyle:function(){
             if(!this.style){
-                this.style = iBase(this.el).attr("style");
+                this.style = jQuery(this.el).attr("style");
             }
             return this.style;
         },
         setStyle:function(value){
             if(!value){
-                iBase(this.el).attr("style","");
+                jQuery(this.el).attr("style","");
                 return;
             }
             var csss = value.split(";");
@@ -692,12 +692,12 @@
                     styleMap[key] = val;
                 }
             }
-            iBase(this.el).css(styleMap);
-            this.style = iBase(this.el).attr("style");
+            jQuery(this.el).css(styleMap);
+            this.style = jQuery(this.el).attr("style");
         },
         getWidth:function(){
             if(!this.width){
-                this.width = iBase(this.el).width();
+                this.width = jQuery(this.el).width();
             }
             return this.width;
         },
@@ -706,13 +706,13 @@
                 if(!isNaN(value)){
                     value = value+"px";
                 }
-                iBase(this.el).width(value);
+                jQuery(this.el).width(value);
             }
-            this.width = iBase(this.el).width();
+            this.width = jQuery(this.el).width();
         },
         getHeight:function(){
             if(!this.height){
-                this.height = iBase(this.el).height();
+                this.height = jQuery(this.el).height();
             }
             return this.height;
         },
@@ -721,9 +721,9 @@
                 if(!isNaN(value)){
                     value = value+"px";
                 }
-                iBase(this.el).height(value);
+                jQuery(this.el).height(value);
             }
-            this.height = iBase(this.el).height();
+            this.height = jQuery(this.el).height();
         },
         getTitle:function(){
             return this.title;
@@ -731,10 +731,10 @@
         setTitle:function(value){
             if(!value){
                 value = null;
-                iBase(this.el).removeAttr("title");
+                jQuery(this.el).removeAttr("title");
             }else{
                 value = value.trim();
-                iBase(this.el).attr("title",value);
+                jQuery(this.el).attr("title",value);
             }
             this.title = value;
         }

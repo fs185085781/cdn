@@ -6,25 +6,30 @@
     var menu={
         init:function(){
             var that = this;
-            var menu = iBase("<ul></ul>");
-            menu.appendTo(iBase(that.el));
-            that._menuEl = iBase(menu)[0];
-        },
-        setVertical:function(val){
-            var that = this;
-            that.vertical = ui.parseBoolean(val);
-            if(that.vertical){
-                iBase(that._menuEl).removeClass("simple-landscape");
-            }else{
-                iBase(that._menuEl).addClass("simple-landscape");
-            }
-        },
-        getVertical:function(){
-            var that = this;
-            if(that.vertical == null){
-                that.vertical = true;
-            }
-            return that.vertical;
+            jQuery(that.el).on("click","li",function(e){
+                e.stopPropagation();
+                var liid = jQuery(e.currentTarget).attr("data-id");
+                console.log(liid);
+            });
+            jQuery(that.el).on("mouseover","li",function(e){
+                if(jQuery(e.currentTarget).find("i.fa").length>0){
+                    var ul = jQuery(jQuery(e.currentTarget).find("ul")[0]);
+                    var top = e.currentTarget.offsetTop;
+                    var left = e.currentTarget.clientWidth;
+                    if(top == 0 && left == 0){
+                        return;
+                    }
+                    ul.show();
+                    ul.css({top:top+"px",left:left+"px"});
+                }
+            });
+            jQuery(that.el).on("mouseout","li",function(e){
+                e.stopPropagation();
+                if(jQuery(e.currentTarget).find("i.fa").length>0){
+                    var ul = jQuery(jQuery(e.currentTarget).find("ul")[0]);
+                    ul.hide();
+                }
+            });
         },
         setAllowSelectItem:function(val){
             var that = this;
@@ -44,7 +49,7 @@
             var that = this;
             that.url = url;
             if(!that.url){
-                iBase(that._menuEl).html("");
+                jQuery(that.el).html("");
                 return;
             }
             that.reload();
@@ -63,14 +68,18 @@
             if(!url){
                 return;
             }
-            iBase.ajax({
+            jQuery.ajax({
                 url:url,
-                type:"get",
                 dataType:"text",
                 success:function(ret){
-                    var obj = ui.decode(ret.responseText);
+                    ret = ui.decode(ret);
+                    var obj;
+                    if(that.getDataField()){
+                        obj = ret[that.getDataField()];
+                    }else{
+                        obj = ret;
+                    }
                     that.resultAsTree = flag;
-                    that.data = obj;
                     if(flag){
                         that.loadTreeData(obj,that.getIdField(),that.getTextField());
                     }else{
@@ -83,28 +92,45 @@
             this.loadTreeData(ui.list2tree(list,idField,parentField),idField,textField);
         },
         loadTreeData:function(tree,idField,textField){
+            var that = this;
             if(!(tree instanceof Array)){
                 return;
             }
+            function createLevelByData(tree,index){
+                for(var i=0;i<tree.length;i++){
+                    tree[i]._level = index;
+                    if(tree[i].children && (tree[i].children instanceof Array)){
+                        createLevelByData(tree[i].children,index+1);
+                    }
+                }
+            }
+            createLevelByData(tree,1);
+            this.data = tree;
             function createTreeByData(list,map,idField,textField){
-                map.str +="<ul>";
+                map.str +="<ul class=\"dropdown-menu\">";
                 for(var i=0;i<list.length;i++){
                     var one = list[i];
                     map.str +="<li data-id=\""+one[idField]+"\">";
-                    map.str +=one[textField];
+                    var icon = "";
+                    if(that.getIconClsField() && one[that.getIconClsField()]){
+                        icon = "fa "+one[that.getIconClsField()];
+                    }
+                    map.str +="<a><i class=\""+icon+"\" style=\"float:left;\"></i>"+one[textField];
                     var children = one.children;
                     if(children && children instanceof Array){
+                        map.str += "<i class=\"fa fa-chevron-right\" style=\"float:right;\"></i></a>";
                         createTreeByData(children,map,idField,textField);
+                    }else{
+                        map.str += "</a>";
                     }
                     map.str +="</li>";
                 }
                 map.str += "</ul>";
-                //return str;
             }
             var map = {str:""};
             createTreeByData(tree,map,idField,textField);
-            console.log(map.str);
-
+            jQuery(that.el).html(map.str);
+            that.menuEl = jQuery(that.el).find("ul")[0];
         },
         getResultAsTree:function(){
             if(this.resultAsTree == null){
@@ -125,39 +151,70 @@
             if(!data){
                 return;
             }
-            that.data = ui.parseObject(data);
+            var tempData = ui.parseObject(data);
             if(that.getResultAsTree()){
-                that.loadTreeData(that.getData(),that.getIdField(),that.getTextField());
+                that.loadTreeData(tempData,that.getIdField(),that.getTextField());
             }else{
-                that.loadListData(that.getData(),that.getIdField(),that.getParentField(),that.getTextField());
+                that.loadListData(tempData,that.getIdField(),that.getParentField(),that.getTextField());
             }
         },
         getTextField:function(){
-            return "text";
+            if(!this.textField){
+                this.textField = "text";
+            }
+            return this.textField;
         },
-        setTextField:function(){
-
+        setTextField:function(val){
+            this.textField = val;
+            this.reload();
         },
         getIdField:function(){
-            return "id";
+            if(!this.idField){
+                this.idField = "id";
+            }
+            return this.idField;
         },
-        setIdField:function(){
-
+        setIdField:function(val){
+            this.idField = val;
+            this.reload();
         },
         getParentField:function(){
-            return "pid";
+            if(!this.parentField){
+                this.parentField = "pid";
+            }
+            return this.parentField;
         },
-        setParentField:function(){
-
+        setParentField:function(val){
+            this.parentField = val;
+            this.reload();
+        },
+        getDataField:function(){
+            return this.dataField;
+        },
+        setDataField:function(val){
+            this.dataField = val;
+            this.reload();
+        },
+        getIconClsField:function(){
+            return this.iconClsField;
+        },
+        setIconClsField:function(val){
+            this.iconClsField = val;
+        },
+        openMenu:function(){
+            var that = this;
+            jQuery(that.menuEl).show();
+        },
+        closeMenu:function(){
+            var that = this;
+            jQuery(that.menuEl).hide();
         }
-
-
     }
     ui.Menu = function(){}
     ui.regModule({
         clazz:ui.Menu,
         useClass:ui.prefix+"-menu",
-        fields:["vertical","allowSelectItem","resultAsTree","url","data","textField","idField","parentField","dataField","iconClsField"],
+        fields:["allowSelectItem","resultAsTree","url","data","textField","idField","parentField","dataField","iconClsField"],
         events:["itemclick","itemselect"],
         parentClass:ui.BaseModule,
         thisClass:menu,
@@ -167,16 +224,16 @@
     var button = {
         init:function(){
             var that = this;
-            var group = iBase("<div class=\"btn-group\"></div>");
-            group.appendTo(iBase(that.el));
-            that._groupEl = iBase(group)[0];
-            var btn = iBase("<button class=\"btn btn-default\" style=\"width:100%;\"><label><i></i></label><span></span><ul class=\"dropdown-menu\"></ul></button>");
-            btn.appendTo(iBase(that._groupEl));
-            that._buttonEl = iBase(btn)[0];
-            that._menuEl = iBase(that._buttonEl).find("ul");
+            var group = jQuery("<div class=\"btn-group\"></div>");
+            group.appendTo(jQuery(that.el));
+            that._groupEl = jQuery(group)[0];
+            var btn = jQuery("<button class=\"btn btn-default\" style=\"width:100%;\"><label><i></i></label><span></span><ul class=\"dropdown-menu\"></ul></button>");
+            btn.appendTo(jQuery(that._groupEl));
+            that._buttonEl = jQuery(btn)[0];
+            that._menuEl = jQuery(that._buttonEl).find("ul");
             that.setWidth(120);
             that.setHeight(38);
-            iBase(that._buttonEl).click(function(e){
+            jQuery(that._buttonEl).click(function(e){
                 e.stopPropagation();
                 that.fire("click");
             });
@@ -186,7 +243,7 @@
         },
         setText:function(val){
             var oldText = this.text;
-            iBase(this._buttonEl).find("span").html(val);
+            jQuery(this._buttonEl).find("span").html(val);
             this.text = val;
             if(oldText != val){
                 this.fire("textchange",{oldText:oldText,text:val});
@@ -198,11 +255,11 @@
         setIconCls:function(val){
             var that = this;
             if(!val){
-                iBase(that._buttonEl).removeClass("btn-label");
-                iBase(that._buttonEl).find("i").attr("class","");
+                jQuery(that._buttonEl).removeClass("btn-label");
+                jQuery(that._buttonEl).find("i").attr("class","");
             }else{
-                iBase(that._buttonEl).addClass("btn-label");
-                iBase(that._buttonEl).find("i").addClass("fa "+val);
+                jQuery(that._buttonEl).addClass("btn-label");
+                jQuery(that._buttonEl).find("i").addClass("fa "+val);
             }
             that.iconCls = val;
         },
@@ -218,8 +275,8 @@
                 return;
             }
             var oldClass = map[that.getMoldType()];
-            iBase(that._buttonEl).removeClass(oldClass);
-            iBase(that._buttonEl).addClass(newClass);
+            jQuery(that._buttonEl).removeClass(oldClass);
+            jQuery(that._buttonEl).addClass(newClass);
             that.moldType = val;
         },
         getMoldType:function(){
@@ -243,9 +300,9 @@
             var that = this;
             that.plain = ui.parseBoolean(val);
             if(that.plain){
-                iBase(that._buttonEl).css({border:"none",background:"none"});
+                jQuery(that._buttonEl).css({border:"none",background:"none"});
             }else{
-                iBase(that._buttonEl).css({border:"",background:""});
+                jQuery(that._buttonEl).css({border:"",background:""});
             }
         }
     }

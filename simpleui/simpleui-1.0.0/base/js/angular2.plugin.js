@@ -40,7 +40,7 @@
             }],
             ngAfterViewChecked:function(){
                 if(!this.hasParse){
-                    var uiEl = iBase(this.el).find("."+clazz);
+                    var uiEl = jQuery(this.el).find("."+clazz);
                     this.uiEl = uiEl;
                     ui.parse(uiEl);
                     var uiObj = ui.getBySelect(uiEl);

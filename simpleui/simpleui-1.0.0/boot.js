@@ -64,7 +64,7 @@
         jsSearch.profile = "product";
     }
     /*加载简版jquery*/
-    document.write('<script src="' + jsPath + '/base/js/idocument.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/js/jquery.min.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular" && jsSearch.mode != "angular2"){
         return;
     }
@@ -80,7 +80,9 @@
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/angular2-polyfills.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/Rx.umd.js" type="text/javascript"></sc' + 'ript>');
     }
-    document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
+    if(ui.mode != "jquery"){
+        document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
+    }
     if(ui.mode == "react"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
     }
