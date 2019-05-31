@@ -36,6 +36,7 @@
         },
         setUrl:function(url){
             var that = this;
+            url = ui.parseString(url);
             that.url = url;
             if(!that.url){
                 jQuery(that.el).html("");
@@ -47,9 +48,11 @@
             this.loadUrl(this.getUrl(),this.getResultAsTree());
         },
         loadList:function(url){
+            url=ui.parseString(url);
             this.loadUrl(url,false);
         },
         loadTree:function(url){
+            url=ui.parseString(url);
             this.loadUrl(url,true);
         },
         loadUrl:function(url,flag){
@@ -165,6 +168,7 @@
             return this.textField;
         },
         setTextField:function(val){
+            val=ui.parseString(val);
             this.textField = val;
             this.reload();
         },
@@ -175,6 +179,7 @@
             return this.idField;
         },
         setIdField:function(val){
+            val=ui.parseString(val);
             this.idField = val;
             this.reload();
         },
@@ -185,6 +190,7 @@
             return this.parentField;
         },
         setParentField:function(val){
+            val=ui.parseString(val);
             this.parentField = val;
             this.reload();
         },
@@ -192,6 +198,7 @@
             return this.dataField;
         },
         setDataField:function(val){
+            val=ui.parseString(val);
             this.dataField = val;
             this.reload();
         },
@@ -239,6 +246,7 @@
             return this.text;
         },
         setText:function(val){
+            val=ui.parseString(val);
             var oldText = this.text;
             jQuery(this._buttonEl).find("span").html(val);
             this.text = val;
@@ -250,6 +258,7 @@
             return this.iconCls;
         },
         setIconCls:function(val){
+            val=ui.parseString(val);
             var that = this;
             if(!val){
                 jQuery(that._buttonEl).removeClass("btn-label");
@@ -261,12 +270,12 @@
             that.iconCls = val;
         },
         setMoldType:function(val){
+            val=ui.parseString(val);
             var that = this;
             var map = {"0":"btn-default","1":"btn-primary","2":"btn-success","3":"btn-info","4":"btn-warning","5":"btn-danger","6":"btn-secondary","7":"btn-dark","8":"btn-purple","9":"btn-pink","10":"btn-cyan","11":"btn-yellow","12":"btn-brown","13":"btn-link"}
             if(!val){
                 val = "0";
             }
-            val = val.trim();
             var newClass = map[val];
             if(!newClass){
                 return;
@@ -330,8 +339,14 @@
                     that.fire("click",that.buttonMap[btnId]);
                 }else{
                     if(jQuery(e.currentTarget).hasClass("dropdown-toggle")){
-                        that.menu.openMenu();
-                        jQuery(e.currentTarget).addClass("open")
+                        if(jQuery(e.currentTarget).hasClass("open")){
+                            that.menu.closeMenu();
+                            jQuery(e.currentTarget).removeClass("open")
+                        }else{
+                            that.menu.openMenu();
+                            jQuery(e.currentTarget).addClass("open")
+                        }
+
                     }
                 }
             });
@@ -350,6 +365,7 @@
             return this.idField;
         },
         setIdField:function(val){
+            val=ui.parseString(val);
             this.idField = val;
             this.reload();
         },
@@ -360,6 +376,7 @@
             return this.textField;
         },
         setTextField:function(val){
+            val=ui.parseString(val);
             this.textField = val;
             this.reload();
         },
@@ -370,6 +387,7 @@
             return this.moldTypeField;
         },
         setMoldTypeField:function(val){
+            val=ui.parseString(val);
             this.moldTypeField = val;
             this.reload();
         },
@@ -439,9 +457,6 @@
                     menu.on("itemclick",function(e){
                         that.fire("menuItemClick",e.data);
                     });
-                    ui.pushHidePopup(menu.uikey,function(){
-                        menu.closeMenu();
-                    });
                 }
             }else{
                delete that.menu;
@@ -454,6 +469,7 @@
             return this.menuIdField;
         },
         setMenuIdField:function(val){
+            val=ui.parseString(val);
             this.menuIdField = val;
             this.reloadMenu();
         },
@@ -464,6 +480,7 @@
             return this.menuTextField;
         },
         setMenuTextField:function(val){
+            val=ui.parseString(val);
             this.menuTextField = val;
             this.reloadMenu();
         },
@@ -471,6 +488,7 @@
             return this.menuIconField;
         },
         setMenuIconField:function(val){
+            val=ui.parseString(val);
             this.textField = val;
             this.reloadMenu();
         },

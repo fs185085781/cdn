@@ -314,15 +314,7 @@
             if(element){
                 /*父级也可能是组件*/
                 for(var clazz in ui.moduleMap){
-                   var clist = parentEle[0].classList;
-                   var has = false;
-                   for(var i=0;i<clist.length;i++){
-                       if(clist[0] == clazz){
-                           has = true;
-                           break;
-                       }
-                   }
-                    if(has){
+                    if(parentEle.hasClass(clazz)){
                         parseSimpleData(parentEle[0],ui.moduleMap[clazz]);
                     }
                 }
@@ -360,6 +352,11 @@
                     var value = jQuery(ele).attr(field);
                     if(!value){
                         continue;
+                    }
+                    try{
+                        value = eval(value);
+                    }catch (e) {
+
                     }
                     var setFunctionName = "set"+that.firstToUpperCase(field);
                     if(moduleObj[setFunctionName]){
@@ -402,6 +399,15 @@
                 }
             }
         },
+        parseString:function(val){
+            if(typeof val == "string"){
+                return val.trim();
+            }else if(val == null){
+                return "";
+            }else{
+                return String(val).trim();
+            }
+        },
         parseBoolean:function(val){
             if(typeof val == "boolean"){
                 return val;
@@ -413,6 +419,18 @@
                 return false;
             }
             return true;
+        },
+        parseNumber:function(val){
+            if(typeof val == "number"){
+                return val;
+            }else if(typeof val == "string"){
+                if(!isNaN(val)){
+                    return val*1;
+                }
+            }else if(val instanceof Date){
+                return val.getTime();
+            }
+            return 0;
         },
         parseObject:function(val){
             if(typeof val != "string"){
@@ -571,20 +589,20 @@
 
         },
         addCls:function(value){
-            value = value.trim();
+            value =ui.parseString(value);
             if(value == this.useClass){
                 return;
             }
             jQuery(this.el).addClass(value);
         },
         removeCls:function(value){
-            value = value.trim();
+            value = ui.parseString(value);
             if(value == this.useClass){
                 return;
             }
             jQuery(this.el).removeClass(value);
         },
-        mask:function(option){
+        mask:function(){
             if(this._ismask){
                return;
             }
@@ -603,11 +621,11 @@
             return this.id;
         },
         setId:function(value){
+            value = ui.parseString(value);
             if(!value){
                 value = null;
                 jQuery(this.el).removeAttr("id");
             }else{
-                value = value.trim();
                 jQuery(this.el).attr("id",value);
             }
             this.id = value;
@@ -616,11 +634,11 @@
             return this.name;
         },
         setName:function(value){
+            value = ui.parseString(value);
             if(!value){
                 value = null;
                 jQuery(this.el).removeAttr("name");
             }else{
-                value = value.trim();
                 jQuery(this.el).attr("name",value);
             }
             this.name = value;
@@ -665,10 +683,11 @@
             return this.cls;
         },
         setCls:function(value){
+            value = ui.parseString(value);
             if(!value){
                 value = "";
             }
-            value = value.trim().replace(this.useClass,"").trim();
+            value = value.replace(this.useClass,"").trim();
             this.cls = value;
             jQuery(this.el).attr("class",this.useClass+" "+value);
         },
@@ -679,6 +698,7 @@
             return this.style;
         },
         setStyle:function(value){
+            value = ui.parseString(value);
             if(!value){
                 jQuery(this.el).attr("style","");
                 return;
@@ -734,11 +754,11 @@
             return this.title;
         },
         setTitle:function(value){
+            value = ui.parseString(value);
             if(!value){
                 value = null;
                 jQuery(this.el).removeAttr("title");
             }else{
-                value = value.trim();
                 jQuery(this.el).attr("title",value);
             }
             this.title = value;
