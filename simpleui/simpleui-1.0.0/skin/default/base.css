@@ -123,7 +123,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     padding-bottom: 8px;
 }
 .dropdown-menu > li > a > i {
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .dropdown-menu>.active>a,
 .dropdown-menu>.active>a:focus,

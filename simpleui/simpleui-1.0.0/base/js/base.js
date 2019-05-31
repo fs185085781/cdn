@@ -314,15 +314,7 @@
             if(element){
                 /*父级也可能是组件*/
                 for(var clazz in ui.moduleMap){
-                   var clist = parentEle[0].classList;
-                   var has = false;
-                   for(var i=0;i<clist.length;i++){
-                       if(clist[0] == clazz){
-                           has = true;
-                           break;
-                       }
-                   }
-                    if(has){
+                    if(parentEle.hasClass(clazz)){
                         parseSimpleData(parentEle[0],ui.moduleMap[clazz]);
                     }
                 }
@@ -443,6 +435,25 @@
                 list[list.length] = one;
             }
             return list;
+        },
+        hideAllPopup:function(){
+          if(!this.closePopupMap){
+              this.closePopupMap = {};
+          }
+          var fMap = this.closePopupMap;
+          for(var key in fMap){
+              try{
+                  fMap[key]();
+              }catch (e) {
+                  delete fMap[key];
+              }
+          }
+        },
+        pushHidePopup:function(key,callBack){
+            if(!this.closePopupMap){
+                this.closePopupMap = {};
+            }
+            this.closePopupMap[key] = callBack;
         },
         guid:function(){
             function S4() {
@@ -749,5 +760,10 @@
         parentClass:null,
         thisClass:baseModule,
         init:baseModule.init
+    });
+    jQuery(function(){
+        jQuery("body").click(function(){
+            ui.hideAllPopup();
+        });
     });
 })(window);

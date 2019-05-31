@@ -330,14 +330,8 @@
                     that.fire("click",that.buttonMap[btnId]);
                 }else{
                     if(jQuery(e.currentTarget).hasClass("dropdown-toggle")){
-                        if(jQuery(e.currentTarget).hasClass("open")){
-                            that.menu.closeMenu();
-                            jQuery(e.currentTarget).removeClass("open")
-                        }else{
-                            that.menu.openMenu();
-                            jQuery(e.currentTarget).addClass("open")
-                        }
-
+                        that.menu.openMenu();
+                        jQuery(e.currentTarget).addClass("open")
                     }
                 }
             });
@@ -444,6 +438,9 @@
                     menu.setData(menuData);
                     menu.on("itemclick",function(e){
                         that.fire("menuItemClick",e.data);
+                    });
+                    ui.pushHidePopup(menu.uikey,function(){
+                        menu.closeMenu();
                     });
                 }
             }else{
