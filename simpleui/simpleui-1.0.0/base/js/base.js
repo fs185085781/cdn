@@ -314,7 +314,15 @@
             if(element){
                 /*父级也可能是组件*/
                 for(var clazz in ui.moduleMap){
-                    if(parentEle.hasClass(clazz)){
+                   var clist = parentEle[0].classList;
+                   var has = false;
+                   for(var i=0;i<clist.length;i++){
+                       if(clist[0] == clazz){
+                           has = true;
+                           break;
+                       }
+                   }
+                    if(has){
                         parseSimpleData(parentEle[0],ui.moduleMap[clazz]);
                     }
                 }
@@ -368,22 +376,27 @@
                     if(!value){
                         continue;
                     }
+                    value = value.trim();
                     if(win[value]){
                         moduleObj.on(event,win[value]);
-                    }else{
-                        if(typeof value == "function"){
-                            moduleObj.on(event,value);
+                    }else if(value.startsWith("function")){
+                        if(ui.lastEventId == null){
+                            ui.lastEventId = 1;
+                        }
+                        var eventName = ui.prefix+"_event_"+(ui.lastEventId++);
+                        eval("win."+eventName+"="+value);
+                        moduleObj.on(event,eval(eventName));
+                    }else if(value.indexOf("(")!=-1 && value.indexOf(")")!=-1){
+                        var z = value.indexOf("(");
+                        var m = value.indexOf(":");
+                        var method;
+                        if(m != -1 && m<z){
+                            method = value.substring(m+1,z);
                         }else{
-                            if(value.trim().startsWith("function")){
-                                if(ui.lastEventId == null){
-                                    ui.lastEventId = 1;
-                                }
-                                var eventName = ui.prefix+"_event_"+(ui.lastEventId++);
-                                eval("win."+eventName+"="+value);
-                                moduleObj.on(event,eval(eventName));
-                            }else{
-                                //moduleObj.on(event,Function(value));
-                            }
+                            method = value.substring(0,z);
+                        }
+                        if(method && win[method]){
+                            moduleObj.on(event,win[method]);
                         }
                     }
                 }
@@ -435,25 +448,6 @@
                 list[list.length] = one;
             }
             return list;
-        },
-        hideAllPopup:function(){
-          if(!this.closePopupMap){
-              this.closePopupMap = {};
-          }
-          var fMap = this.closePopupMap;
-          for(var key in fMap){
-              try{
-                  fMap[key]();
-              }catch (e) {
-                  delete fMap[key];
-              }
-          }
-        },
-        pushHidePopup:function(key,callBack){
-            if(!this.closePopupMap){
-                this.closePopupMap = {};
-            }
-            this.closePopupMap[key] = callBack;
         },
         guid:function(){
             function S4() {
@@ -760,10 +754,5 @@
         parentClass:null,
         thisClass:baseModule,
         init:baseModule.init
-    });
-    jQuery(function(){
-        jQuery("body").click(function(){
-            ui.hideAllPopup();
-        });
     });
 })(window);
