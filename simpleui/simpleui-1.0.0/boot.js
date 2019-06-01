@@ -63,7 +63,7 @@
     if(!jsSearch.profile){
         jsSearch.profile = "product";
     }
-    /*加载简版jquery*/
+    /*加载jquery*/
     document.write('<script src="' + jsPath + '/base/js/jquery.min.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular" && jsSearch.mode != "angular2"){
         return;
@@ -72,17 +72,26 @@
     if(jsSearch.jsx=="true"){
         document.write('<script src="' + jsPath + '/base/js/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
-    /*加载mode文件 5种之一 jquery  vue  react  angular angular2*/
+    if(!jsSearch.env){
+        jsSearch.env = "pc";
+    }
+    if(jsSearch.env != "m"){
+        jsSearch.env = "pc";
+    }
     var ui = {prefix:"simple"};
     ui.mode = jsSearch.mode;
+    ui.env = jsSearch.env;
+    /*如果是angular2 加载angular2的基础文件*/
     if(ui.mode == "angular2"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/es6-shim.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/angular2-polyfills.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/Rx.umd.js" type="text/javascript"></sc' + 'ript>');
     }
+    /*加载mode文件 4种之一 vue  react  angular angular2*/
     if(ui.mode != "jquery"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/'+ui.mode+'.js" type="text/javascript"></sc' + 'ript>');
     }
+    /*如果是react 加载react的必备文件*/
     if(ui.mode == "react"){
         document.write('<script src="' + jsPath + '/base/js/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
     }
@@ -93,24 +102,19 @@
     if(!ui.skin){
         ui.skin = jsSearch.skin;
     }
-    if(!jsSearch.modules){
-        return;
+    if(!ui.skin){
+        ui.skin = "default";
     }
     /*核心样式文件bootstrap*/
     document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
     document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
     /*加载字体*/
     document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />');
-    /*引用皮肤基础包*/
-    if(ui.skin){
-        document.write('<link href="' + jsPath + '/skin/'+ui.skin+'/base.css" rel="stylesheet" type="text/css" />');
-    }
-    var modules = jsSearch.modules.split(",");
-    for(var i=0;i<modules.length;i++){
-        var module = modules[i];
-        document.write('<script src="' + jsPath + '/modules/'+module+'.js" type="text/javascript"></sc' + 'ript>');
-        document.write('<link href="' + jsPath + '/skin/default/'+module+'.css" rel="stylesheet" type="text/css" />');
-        if(ui.skin){
+    if(jsSearch.modules){
+        var modules = jsSearch.modules.split(",");
+        for(var i=0;i<modules.length;i++){
+            var module = modules[i];
+            document.write('<script src="' + jsPath + '/modules/'+module+'.js" type="text/javascript"></sc' + 'ript>');
             document.write('<link href="' + jsPath + '/skin/'+ui.skin+'/'+module+'.css" rel="stylesheet" type="text/css" />');
         }
     }
@@ -125,6 +129,7 @@
         ui.lang = "zh_CN";
     }
     document.write('<script src="' + jsPath + '/lang/'+ui.lang+'.js" type="text/javascript"></sc' + 'ript>');
+    ui.jsPath = jsPath;
     win[ui.prefix] = ui;
     win.uiprefix = ui.prefix;
 })(window);

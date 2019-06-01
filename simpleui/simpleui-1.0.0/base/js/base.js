@@ -775,4 +775,15 @@
         thisClass:baseModule,
         init:baseModule.init
     });
+    if(ui.env == "pc"){
+        /*加载PC必备组件tools和nav*/
+        document.write('<script src="' + ui.jsPath + '/modules/tools.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/tools.css" rel="stylesheet" type="text/css" />');
+        document.write('<script src="' + ui.jsPath + '/modules/nav.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/nav.css" rel="stylesheet" type="text/css" />');
+    }else if(ui.env == "m"){
+        /*加载手机必备组件mobile*/
+        document.write('<script src="' + ui.jsPath + '/modules/mobile.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/mobile.css" rel="stylesheet" type="text/css" />');
+    }
 })(window);
