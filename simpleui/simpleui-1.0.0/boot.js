@@ -121,14 +121,14 @@
     /*引入模块插件包,用于打通ui的中间件*/
     document.write('<script src="' + jsPath + '/base/js/'+ui.mode+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     /*初始化语言包*/
-    ui.lang = htmlSearch.lang;
-    if(!ui.lang){
-        ui.lang = jsSearch.lang;
+    var lang = htmlSearch.lang;
+    if(!lang){
+        lang = jsSearch.lang;
     }
-    if(!ui.lang){
-        ui.lang = "zh_CN";
+    if(!lang){
+        lang = "zh_CN";
     }
-    document.write('<script src="' + jsPath + '/lang/'+ui.lang+'.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/lang/'+lang+'.js" type="text/javascript"></sc' + 'ript>');
     ui.jsPath = jsPath;
     win[ui.prefix] = ui;
     win.uiprefix = ui.prefix;

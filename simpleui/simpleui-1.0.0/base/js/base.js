@@ -92,10 +92,6 @@
                 format = "yyyy-MM-dd HH:mm:ss";
             }
             var formatMap ={};
-            var MMMMS = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
-            var MMMS = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
-            var dddds = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-            var ddds = ["日","一","二","三","四","五","六"];
             var year = date.getFullYear();//yyyy
             var month = date.getMonth();
             var day = date.getDate();
@@ -110,15 +106,15 @@
             if( formatMap.y<10){
                 formatMap.y = String( formatMap.y*1);
             }
-            formatMap.MMMM = MMMMS[month];
-            formatMap.MMM = MMMS[month];
+            formatMap.MMMM = ui.lang.MMMMS[month];
+            formatMap.MMM = ui.lang.MMMS[month];
             formatMap.M = String(month+1);
             formatMap.MM =  formatMap.M;
             if( formatMap.MM < 10){
                 formatMap.MM = "0"+ formatMap.MM;
             }
-            formatMap.dddd = dddds[week];
-            formatMap.ddd = ddds[week];
+            formatMap.dddd = ui.lang.dddds[week];
+            formatMap.ddd = ui.lang.ddds[week];
             formatMap.d = String(day);
             formatMap.dd =  formatMap.d;
             if( formatMap.dd < 10){
@@ -163,14 +159,24 @@
                 formatMap.hh = "0"+ formatMap.hh;
             }
             var arrs = ["yyyy","yy","y","MMMM","MMM","MM","M","dddd","ddd","dd","d","HH","H","hh","h","mm","m","ss","s","SSS","S","aa"];
+            var tempFormat = format+"";
+            function toZero(str){
+                var temp = "";
+                var length = str.length;
+                for(var i=0;i<length;i++){
+                    temp +="0";
+                }
+                return temp;
+            }
             for(var i=0;i<arrs.length;i++){
                 var arr = arrs[i];
                 var c;
                 while((c = format.indexOf(arr)) !=-1){
-                    format = format.substring(0,c)+formatMap[arr]+format.substring(c+arr.length);
+                    format = format.substring(0,c)+toZero(formatMap[arr])+format.substring(c+arr.length);
+                    tempFormat = tempFormat.substring(0,c)+formatMap[arr]+tempFormat.substring(c+arr.length);
                 }
             }
-            return format;
+            return tempFormat;
         },
         parseDate:function(str,format){
             if(!str){
@@ -781,6 +787,7 @@
         document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/tools.css" rel="stylesheet" type="text/css" />');
         document.write('<script src="' + ui.jsPath + '/modules/nav.js" type="text/javascript"></sc' + 'ript>');
         document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/nav.css" rel="stylesheet" type="text/css" />');
+        document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/base.css" rel="stylesheet" type="text/css" />');
     }else if(ui.env == "m"){
         /*加载手机必备组件mobile*/
         document.write('<script src="' + ui.jsPath + '/modules/mobile.js" type="text/javascript"></sc' + 'ript>');
