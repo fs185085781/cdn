@@ -63,6 +63,9 @@
     if(!jsSearch.profile){
         jsSearch.profile = "product";
     }
+    /*核心样式文件bootstrap*/
+    document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
     /*加载jquery*/
     document.write('<script src="' + jsPath + '/base/js/jquery.min.js" type="text/javascript"></sc' + 'ript>');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular" && jsSearch.mode != "angular2"){
@@ -105,9 +108,6 @@
     if(!ui.skin){
         ui.skin = "default";
     }
-    /*核心样式文件bootstrap*/
-    document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
-    document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
     /*加载字体*/
     document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />');
     if(jsSearch.modules){
