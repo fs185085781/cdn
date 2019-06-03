@@ -6,7 +6,7 @@
         init:function(){
             var that = this;
             jQuery(that.el).append("<input style=\"width:100%;height:100%\" class=\"form-control\" type=\"text\" placeholder=\"\">");
-            that._inputEl = jQuery(that.el).find(":input");
+            that._inputEl = jQuery(that.el).find(":input")[0];
         },
         validate:function(){
 
@@ -19,8 +19,10 @@
         },
         doValueChanged:function(){
 
-        }
+        },
+        setEmptyText:function(val){
 
+        }
     };
     ui.TextBox = function(){};
     ui.regModule({

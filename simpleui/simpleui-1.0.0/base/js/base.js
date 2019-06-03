@@ -46,7 +46,7 @@
                     result += ']';
                     return result;
                 case '[object Date]':
-                    return '"' + (jsonObj.toJSON ? jsonObj.toJSON() : jsonObj.toString()) + '"';
+                    return '"' + that.formatDate(jsonObj,"yyyy-MM-dd HH:mm:ss") + '"';
                 case '[object RegExp]':
                     return "{}";
                 case '[object Object]':
@@ -407,6 +407,12 @@
         },
         parseString:function(val){
             if(typeof val == "string"){
+                try{
+                   var temp = eval(val);
+                   if(typeof temp =="string"){
+                       return temp.trim();
+                   }
+                }catch (e) {}
                 return val.trim();
             }else if(val == null){
                 return "";
@@ -425,6 +431,15 @@
                 return Boolean(Number(val));
             }else if(val == null){
                 return false;
+            }else if(typeof val == "string"){
+                try{
+                    val = eval(val);
+                }catch (e) {}
+                if(val){
+                    return true;
+                }else{
+                    return false;
+                }
             }
             return true;
         },
@@ -434,6 +449,13 @@
             }else if(typeof val == "string"){
                 if(!isNaN(val)){
                     return val*1;
+                }else{
+                    try{
+                        val = eval(val);
+                    }catch (e) {}
+                    if(!isNaN(val)){
+                        return val*1;
+                    }
                 }
             }else if(val instanceof Date){
                 return val.getTime();
