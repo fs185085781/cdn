@@ -4,7 +4,9 @@
     /*输入框*/
     var textbox = {
         init:function(){
-
+            var that = this;
+            jQuery(that.el).append("<input style=\"width:100%;height:100%\" class=\"form-control\" type=\"text\" placeholder=\"\">");
+            that._inputEl = jQuery(that.el).find(":input");
         },
         validate:function(){
 
@@ -13,6 +15,9 @@
 
         },
         setIsValid:function(){
+
+        },
+        doValueChanged:function(){
 
         }
 

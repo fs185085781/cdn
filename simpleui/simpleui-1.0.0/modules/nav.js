@@ -232,7 +232,7 @@
     var button = {
         init:function(){
             var that = this;
-            var btn = jQuery("<button class=\"btn btn-default\" style=\"width:100%;\"><label><i></i></label><span></span></button>");
+            var btn = jQuery("<button class=\"btn btn-default\" style=\"width:100%;height:100%;\"><label><i></i></label><span></span></button>");
             btn.appendTo(jQuery(that.el));
             that._buttonEl = jQuery(btn)[0];
             that.setWidth(120);
@@ -327,7 +327,7 @@
         init:function(){
             /**/
             var that = this;
-            var group = jQuery("<div class=\"btn-group\"></div>");
+            var group = jQuery("<div class=\"btn-group\" style=\"height:100%;width:100%;\"></div>");
             group.appendTo(jQuery(that.el));
             that._groupEl = jQuery(group)[0];
             that.setWidth(200);
@@ -407,6 +407,10 @@
             if(!that.buttonMap){
                 that.buttonMap = {}
             }
+            if(data.length == 0){
+                return;
+            }
+            var width = (90/data.length).toFixed(0);
             for(var i=0;i<data.length;i++){
                 var mtc = "";
                 if(that.getMoldTypeField()){
@@ -421,9 +425,9 @@
                     }
                 }
                 that.buttonMap[data[i][that.getIdField()]] = data[i];
-                str += "<button type=\"button\" data-id=\""+data[i][that.getIdField()]+"\" class=\"btn"+mtc+"\">"+data[i][that.getTextField()]+"</button>";
+                str += "<button style=\"width:"+width+"%;height:100%;\" type=\"button\" data-id=\""+data[i][that.getIdField()]+"\" class=\"btn"+mtc+"\">"+data[i][that.getTextField()]+"</button>";
                 if(i==data.length-1){
-                    lastBtn = "<button type=\"button\" class=\"btn"+mtc+" dropdown-toggle\"><span class=\"caret\"></span></button>";
+                    lastBtn = "<button style=\"width:"+(95-width*data.length)+"%;height:100%\" type=\"button\" class=\"btn"+mtc+" dropdown-toggle\"><span class=\"caret\"></span></button>";
                 }
             }
             var menuData = that.getMenuTreeData();
