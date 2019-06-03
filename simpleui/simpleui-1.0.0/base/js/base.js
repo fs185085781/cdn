@@ -410,8 +410,10 @@
                 return val.trim();
             }else if(val == null){
                 return "";
+            }else if(typeof val == "function"){
+                return String(val);
             }else{
-                return String(val).trim();
+                return this.encode(val);
             }
         },
         parseBoolean:function(val){
