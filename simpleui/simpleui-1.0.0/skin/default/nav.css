@@ -1,3 +1,7 @@
 .simple-menu .dropdown-menu .fa{
     line-height:20px;
 }
+.simple-button,.simple-buttongroup{
+    height:38px;
+    width:120px;
+}

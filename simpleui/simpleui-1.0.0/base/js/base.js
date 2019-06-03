@@ -468,6 +468,26 @@
             }
             return this.decode(val);
         },
+        validate:function(val,vtype,error){
+            var map = {"email":"[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?"};
+            var mapMsg = {"email":"邮箱号不符合规则"};
+            var result = {flag:false,msg:"未找到正则表达式或错误信息"};
+            var needReg = map[vtype];
+            var needMsg = mapMsg[vtype];
+            if(!needReg){
+                needReg = vtype;
+                needMsg = error;
+            }
+            if(!needReg || !needMsg){
+                return result;
+            }
+            try{
+                var reg = new RegExp(needReg);
+            }catch (e) {
+                result.msg = "正则表达式不合法";
+            }
+            return result;
+        },
         getByUid:function(uid){
             if(!uid){
                 return null;

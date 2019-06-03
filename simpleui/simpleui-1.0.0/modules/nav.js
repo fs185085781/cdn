@@ -235,8 +235,6 @@
             var btn = jQuery("<button class=\"btn btn-default\" style=\"width:100%;height:100%;\"><label><i></i></label><span></span></button>");
             btn.appendTo(jQuery(that.el));
             that._buttonEl = jQuery(btn)[0];
-            that.setWidth(120);
-            that.setHeight(38);
             jQuery(that._buttonEl).click(function(e){
                 e.stopPropagation();
                 that.fire("click");
@@ -330,8 +328,6 @@
             var group = jQuery("<div class=\"btn-group\" style=\"height:100%;width:100%;\"></div>");
             group.appendTo(jQuery(that.el));
             that._groupEl = jQuery(group)[0];
-            that.setWidth(200);
-            that.setHeight(38);
             jQuery(that._groupEl).on("click","button",function(e){
                 e.stopPropagation();
                 var btnId=jQuery(e.currentTarget).attr("data-id");
