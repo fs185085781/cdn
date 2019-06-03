@@ -1892,7 +1892,7 @@ fieldset[disabled] .btn-dark:hover {
 }
 .btn-label {
     position: relative;
-    padding-left: 52px;
+    padding-left: 50px;
     overflow: hidden;
 }
 .btn-label label {
