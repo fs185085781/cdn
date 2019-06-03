@@ -473,6 +473,25 @@
             }
             return list;
         },
+        hideAllPopup:function(){
+            if(!this.closePopupMap){
+                this.closePopupMap = {};
+            }
+            var fMap = this.closePopupMap;
+            for(var key in fMap){
+                try{
+                    fMap[key]();
+                }catch (e) {
+                    delete fMap[key];
+                }
+            }
+        },
+        pushHidePopup:function(key,callBack){
+            if(!this.closePopupMap){
+                this.closePopupMap = {};
+            }
+            this.closePopupMap[key] = callBack;
+        },
         guid:function(){
             function S4() {
                 return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -793,4 +812,9 @@
         document.write('<script src="' + ui.jsPath + '/modules/mobile.js" type="text/javascript"></sc' + 'ript>');
         document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/mobile.css" rel="stylesheet" type="text/css" />');
     }
+    jQuery(function(){
+        jQuery("body").click(function(){
+            ui.hideAllPopup();
+        });
+    });
 })(window);
