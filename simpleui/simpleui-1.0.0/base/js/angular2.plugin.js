@@ -46,7 +46,6 @@
                     var uiObj = ui.getBySelect(uiEl);
                     this.ui = uiObj;
                     this.hasParse = true;
-                    debugger
                     if(!this.ui){
                         return
                     }
