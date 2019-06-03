@@ -10,10 +10,8 @@
 
         },
         validate:function(){
-            //测试易
         },
         isValid:function(){
-            //测试为
         },
         setIsValid:function(){
 
