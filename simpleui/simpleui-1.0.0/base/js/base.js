@@ -469,21 +469,54 @@
             return this.decode(val);
         },
         validate:function(val,vtype,error){
-            var map = {"email":"[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?"};
-            var mapMsg = {"email":"邮箱号不符合规则"};
-            var result = {flag:false,msg:"未找到正则表达式或错误信息"};
+            var map = {
+                "email":"^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?$",
+                "url":"^[a-zA-z]+://[^\\s]*$",
+                "int":"^-?[1-9]\\d*$",
+                "float":"^-?[1-9]\\d*\\.\\d*|-0\\.\\d*[1-9]\\d*$"
+            };
+            var mapMsg = {
+                "email":"请输入正确的邮箱",
+                "url":"请输入正确的网址",
+                "int":"请输入整数",
+                "float":"请输入小数"
+            };
+            var result = {flag:true};
+            if(val == null){
+                result.flag = false;
+            }
+            val = (val+"").trim();
+            if(val == ""){
+                result.flag = false;
+            }
+            if(vtype =="required"){
+                if(!result.flag){
+                    result.msg = "不能为空";
+                }
+                return result;
+            }
+            var spmap = ["^maxLength:[1-9]\\d*$"];
+
             var needReg = map[vtype];
             var needMsg = mapMsg[vtype];
             if(!needReg){
                 needReg = vtype;
+            }
+            if(error){
                 needMsg = error;
             }
             if(!needReg || !needMsg){
+                result.msg = "未找到正则表达式或错误信息";
                 return result;
             }
             try{
-                var reg = new RegExp(needReg);
+                var flag = new RegExp(needReg).test(val);
+                result.flag = flag;
+                if(!flag){
+                    result.msg = needMsg;
+                }
             }catch (e) {
+                result.flag = false;
                 result.msg = "正则表达式不合法";
             }
             return result;
