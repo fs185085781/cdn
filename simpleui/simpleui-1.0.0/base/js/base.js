@@ -473,13 +473,23 @@
                 "email":"^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?$",
                 "url":"^[a-zA-z]+://[^\\s]*$",
                 "int":"^-?[1-9]\\d*$",
-                "float":"^-?[1-9]\\d*\\.\\d*|-0\\.\\d*[1-9]\\d*$"
+                "float":"^-?[1-9]\\d*\\.\\d*|-0\\.\\d*[1-9]\\d*$",
+                "chinese":"^[\\u4e00-\\u9fa5]*$",
+                "pocode":"^[1-9]\\d{5}(?!\\d)$",
+                "idcard":"^(\\d{6})(\\d{4})(\\d{2})(\\d{2})(\\d{3})([0-9]|X)$",
+                "phone":"^[1]{1}[3|4|5|6|7|8|9]{1}\\d{9}$",
+                "english":"^[\\w| |,|.|?|\"|'|:]+$",
             };
             var mapMsg = {
                 "email":"请输入正确的邮箱",
                 "url":"请输入正确的网址",
                 "int":"请输入整数",
-                "float":"请输入小数"
+                "float":"请输入小数",
+                "chinese":"请输入中文",
+                "pocode":"请输入正确的邮编",
+                "idcard":"请输入正确的身份证号",
+                "phone":"请输入正确的手机号",
+                "english":"请输入英文"
             };
             var result = {flag:true};
             if(val == null){
@@ -489,14 +499,65 @@
             if(val == ""){
                 result.flag = false;
             }
-            if(vtype =="required"){
+            if(!result.flag){
+                result.msg = "不能为空";
+                return result;
+            }
+            if(!this.specialList){
+                this.specialList = [];
+                var spList = ["^maxLength:[1-9]\\d*$","^minLength:[1-9]\\d*$","^rangeLength:[1-9]\\d*,[1-9]\\d*$","^rangeChar:[1-9]\\d*,[1-9]\\d*$","^range:[1-9]\\d*,[1-9]\\d*$"];
+                var spMs = ["maxLength","minLength","rangeLength","rangeChar","range"];
+                var spListMasg = ["不能超过$1个字符串","不能少于$1个字符串","字符串长度必须在$1到$2之间","字符个数必须在$1到$2之间","数值范围必须在$1到$2之间"];
+                for(var i=0;i<spList.length;i++){
+                    this.specialList[this.specialList.length]={reg:new RegExp(spList[i]),msg:spListMasg[i],m:spMs[i]}
+                }
+            }
+            for(var i=0;i<this.specialList.length;i++){
+                var spMap = this.specialList[i];
+                if(!spMap.reg.test(vtype)){
+                    continue;
+                }
+                var spError = "";
+                if(spMap.m == "maxLength"){
+                    var l = vtype.replace("maxLength:","")*1;
+                    spError = spMap.msg.replace("$1",l);
+                    result.flag = val.length<=l;
+                }else if(spMap.m == "minLength"){
+                    var l = vtype.replace("minLength:","")*1;
+                    spError = spMap.msg.replace("$1",l);
+                    result.flag = val.length>=l;
+                }else if(spMap.m == "rangeLength"){
+                    var ls = vtype.replace("rangeLength:","").split(",");
+                    spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
+                    result.flag = val.length>=ls[0] && val.length<=ls[1];
+                }else if(spMap.m == "rangeChar"){
+                    var ls = vtype.replace("rangeChar:","").split(",");
+                    spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
+                    var count = 0;
+                    for(var n=0;n<val.length;n++){
+                        var index = val.charCodeAt(n);
+                        count += index>128?2:1;
+                    }
+                    result.flag = count>=ls[0] && count<=ls[1];
+                }else if(spMap.m == "range"){
+                    var ls = vtype.replace("range:","").split(",");
+                    spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
+                    if(isNaN(val)){
+                        spError = "不是数字";
+                        result.flag = false;
+                    }else{
+                        result.flag = val>=ls[0] && val<=ls[1];
+                    }
+                }
                 if(!result.flag){
-                    result.msg = "不能为空";
+                    if(error){
+                        result.msg = error;
+                    }else{
+                        result.msg = spError;
+                    }
                 }
                 return result;
             }
-            var spmap = ["^maxLength:[1-9]\\d*$"];
-
             var needReg = map[vtype];
             var needMsg = mapMsg[vtype];
             if(!needReg){
