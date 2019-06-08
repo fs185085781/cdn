@@ -500,7 +500,11 @@
                 result.flag = false;
             }
             if(!result.flag){
-                result.msg = ui.lang.validate.required;
+                if(vtype == "required" && error){
+                    result.msg = error;
+                }else{
+                    result.msg = ui.lang.validate.required;
+                }
                 return result;
             }
             if(vtype == "required"){
@@ -810,9 +814,8 @@
             this.name = value;
         },
         getVisible:function(){
-            if(typeof this.visible != "boolean"){
-                this.setVisible(true);
-            }
+            var flag = jQuery("[uikey='"+this.uikey+"']:visible").length>0;
+            this.setVisible(flag);
             return this.visible;
         },
         setVisible:function(value){
