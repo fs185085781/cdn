@@ -106,15 +106,15 @@
             if( formatMap.y<10){
                 formatMap.y = String( formatMap.y*1);
             }
-            formatMap.MMMM = ui.lang.MMMMS[month];
-            formatMap.MMM = ui.lang.MMMS[month];
+            formatMap.MMMM = ui.lang.formatDate.formate.MMMMS[month];
+            formatMap.MMM = ui.lang.formatDate.MMMS[month];
             formatMap.M = String(month+1);
             formatMap.MM =  formatMap.M;
             if( formatMap.MM < 10){
                 formatMap.MM = "0"+ formatMap.MM;
             }
-            formatMap.dddd = ui.lang.dddds[week];
-            formatMap.ddd = ui.lang.ddds[week];
+            formatMap.dddd = ui.lang.formatDate.dddds[week];
+            formatMap.ddd = ui.lang.formatDate.ddds[week];
             formatMap.d = String(day);
             formatMap.dd =  formatMap.d;
             if( formatMap.dd < 10){
@@ -481,15 +481,15 @@
                 "english":"^[\\w| |,|.|?|\"|'|:]+$",
             };
             var mapMsg = {
-                "email":"请输入正确的邮箱",
-                "url":"请输入正确的网址",
-                "int":"请输入整数",
-                "float":"请输入小数",
-                "chinese":"请输入中文",
-                "pocode":"请输入正确的邮编",
-                "idcard":"请输入正确的身份证号",
-                "phone":"请输入正确的手机号",
-                "english":"请输入英文"
+                "email":ui.lang.validate.email,
+                "url":ui.lang.validate.url,
+                "int":ui.lang.validate.int,
+                "float":ui.lang.validate.float,
+                "chinese":ui.lang.validate.chinese,
+                "pocode":ui.lang.validate.pocode,
+                "idcard":ui.lang.validate.idcard,
+                "phone":ui.lang.validate.phone,
+                "english":ui.lang.validate.english
             };
             var result = {flag:true};
             if(val == null){
@@ -500,14 +500,14 @@
                 result.flag = false;
             }
             if(!result.flag){
-                result.msg = "不能为空";
+                result.msg = ui.lang.validate.required;
                 return result;
             }
             if(!this.specialList){
                 this.specialList = [];
                 var spList = ["^maxLength:[1-9]\\d*$","^minLength:[1-9]\\d*$","^rangeLength:[1-9]\\d*,[1-9]\\d*$","^rangeChar:[1-9]\\d*,[1-9]\\d*$","^range:[1-9]\\d*,[1-9]\\d*$"];
                 var spMs = ["maxLength","minLength","rangeLength","rangeChar","range"];
-                var spListMasg = ["不能超过$1个字符串","不能少于$1个字符串","字符串长度必须在$1到$2之间","字符个数必须在$1到$2之间","数值范围必须在$1到$2之间"];
+                var spListMasg = [ui.lang.validate.maxLength,ui.lang.validate.minLength,ui.lang.validate.rangeLength,ui.lang.validate.rangeChar,ui.lang.validate.range];
                 for(var i=0;i<spList.length;i++){
                     this.specialList[this.specialList.length]={reg:new RegExp(spList[i]),msg:spListMasg[i],m:spMs[i]}
                 }
@@ -543,7 +543,7 @@
                     var ls = vtype.replace("range:","").split(",");
                     spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
                     if(isNaN(val)){
-                        spError = "不是数字";
+                        spError = ui.lang.validate.isNaN;
                         result.flag = false;
                     }else{
                         result.flag = val>=ls[0] && val<=ls[1];
@@ -567,7 +567,7 @@
                 needMsg = error;
             }
             if(!needReg || !needMsg){
-                result.msg = "未找到正则表达式或错误信息";
+                result.msg = ui.lang.validate.noVtype;
                 return result;
             }
             try{
@@ -578,7 +578,7 @@
                 }
             }catch (e) {
                 result.flag = false;
-                result.msg = "正则表达式不合法";
+                result.msg = ui.lang.validate.vtypeError;
             }
             return result;
         },
