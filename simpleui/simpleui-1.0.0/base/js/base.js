@@ -503,6 +503,9 @@
                 result.msg = ui.lang.validate.required;
                 return result;
             }
+            if(vtype == "required"){
+                return result;
+            }
             if(!this.specialList){
                 this.specialList = [];
                 var spList = ["^maxLength:[1-9]\\d*$","^minLength:[1-9]\\d*$","^rangeLength:[1-9]\\d*,[1-9]\\d*$","^rangeChar:[1-9]\\d*,[1-9]\\d*$","^range:[1-9]\\d*,[1-9]\\d*$"];
