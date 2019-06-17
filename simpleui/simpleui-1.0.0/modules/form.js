@@ -12,16 +12,10 @@
                     this.selectionStart = 0;
                     this.selectionEnd = this.value.length;
                 }
-                if(that.getValidateOnLeave()){
-                    that.validate();
-                }
                 that.fire("focus");
             });
             jQuery(that.el).on("change",":input",function(e){
-                var length = that.getMaxLength();
-                if(this.value.length>length){
-                    this.value = this.value.substring(0,length);
-                }
+                that.setValue(this.value);
                 if(that.getValidateOnChanged()){
                     that.validate();
                 }
@@ -31,6 +25,21 @@
                 if(this.value.length>length){
                     this.value = this.value.substring(0,length);
                 }
+            });
+            jQuery(that.el).on("enter",":input",function(e){
+                that.fire("enter");
+            });
+            jQuery(that.el).on("keydown",":input",function(e){
+                that.fire("keydown");
+            });
+            jQuery(that.el).on("keyup",":input",function(e){
+                that.fire("keyup");
+            });
+            jQuery(that.el).on("blur",":input",function(e){
+                if(that.getValidateOnLeave()){
+                    that.validate();
+                }
+                that.fire("blur");
             });
         },
         validate:function(){
@@ -79,15 +88,14 @@
         },
         isValid:function(){
             var that = this;
-            if(that.isValid == null){
-                that.isValid = true;
+            if(that.valid == null){
+                that.valid = true;
             }
-            return that.isValid;
+            return that.valid;
         },
         setIsValid:function(val){
-            var that = this;
-            that.isValid = ui.parseBoolean(val);
-            if(that.isValid){
+            this.valid = ui.parseBoolean(val);
+            if(this.valid){
 
             }else{
 
@@ -107,18 +115,22 @@
         },
         setValue:function(val){
             var that = this;
-            val = ui.parseString(val);
-            var oldValue = that.value;
-            that.value = val;
-            jQuery(that._inputEl).val(that.value);
-            if(oldValue != that.value){
-                that.fire("valuechanged",{oldValue:oldValue,value:that.value});
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var length = that.getMaxLength();
+            if(newVal.length>length){
+                newVal = newVal.substring(0,length);
+            }
+            var oldVal = that.getValue();
+            jQuery(that._inputEl).val(newVal);
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
             }
         },
         getValue:function(){
-            var that = this;
-            that.value = jQuery(that._inputEl).val();
-            return that.value;
+            return this.value;
         },
         setAllowInput:function(val){
             var that = this;
@@ -158,10 +170,6 @@
             var that = this;
             that.maxLength = ui.parseNumber(val);
         },
-        setValidateOnChanged:function(val){
-            var that = this;
-            that.validateOnChanged = ui.parseBoolean(val);
-        },
         getValidateOnChanged:function(){
             var that = this;
             if(that.validateOnChanged == null){
@@ -169,9 +177,9 @@
             }
             return that.validateOnChanged;
         },
-        setValidateOnLeave:function(val){
+        setValidateOnChanged:function(val){
             var that = this;
-            that.validateOnLeave = ui.parseBoolean(val);
+            that.validateOnChanged = ui.parseBoolean(val);
         },
         getValidateOnLeave:function(){
             var that = this;
@@ -180,9 +188,9 @@
             }
             return that.validateOnLeave;
         },
-        setForceValidate:function(val){
+        setValidateOnLeave:function(val){
             var that = this;
-            that.forceValidate = ui.parseBoolean(val);
+            that.validateOnLeave = ui.parseBoolean(val);
         },
         getForceValidate:function(){
             var that = this;
@@ -191,21 +199,25 @@
             }
             return that.forceValidate;
         },
-        setVtype:function(val){
+        setForceValidate:function(val){
             var that = this;
-            that.vtype = ui.parseString(val);
+            that.forceValidate = ui.parseBoolean(val);
         },
         getVtype:function(){
             var that = this;
             return that.vtype;
         },
-        setVtypeErrorText:function(val){
+        setVtype:function(val){
             var that = this;
-            that.vtypeErrorText = ui.parseString(val);
+            that.vtype = ui.parseString(val);
         },
         getVtypeErrorText:function(){
             var that = this;
             return that.vtypeErrorText;
+        },
+        setVtypeErrorText:function(val){
+            var that = this;
+            that.vtypeErrorText = ui.parseString(val);
         }
     };
     ui.TextBox = function(){};
