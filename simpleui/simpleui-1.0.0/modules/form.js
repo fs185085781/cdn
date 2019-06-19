@@ -96,9 +96,9 @@
         setIsValid:function(val){
             this.valid = ui.parseBoolean(val);
             if(this.valid){
-
+                jQuery(this._inputEl).css({"border":""});
             }else{
-
+                jQuery(this._inputEl).css({"border":"1px solid red"});
             }
         },
         doValueChanged:function(){
