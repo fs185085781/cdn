@@ -26,14 +26,16 @@
                     this.value = this.value.substring(0,length);
                 }
             });
-            jQuery(that.el).on("enter",":input",function(e){
-                that.fire("enter");
-            });
             jQuery(that.el).on("keydown",":input",function(e){
-                that.fire("keydown");
+                var data = {keyCode:e.keyCode,key:e.key};
+                if(e.keyCode == 13){
+                    that.fire("enter");
+                }
+                that.fire("keydown",data);
             });
             jQuery(that.el).on("keyup",":input",function(e){
-                that.fire("keyup");
+                var data = {keyCode:e.keyCode,key:e.key};
+                that.fire("keyup",data);
             });
             jQuery(that.el).on("blur",":input",function(e){
                 if(that.getValidateOnLeave()){
@@ -44,17 +46,18 @@
         },
         validate:function(){
             var that = this;
-            if(!that.getForceValidate()){
-                if(!that.getVisible()){
-                    /*元素不可见 且 不强制校验*/
-                    that.vtypeMsg = null;
-                    that.setIsValid(true);
-                    that.fire("validation",{flag:true});
-                    return true;
-                }
+            if(!that.getForceValidate() && !that.getVisible()){
+                /*元素不可见 且 不强制校验*/
+                that.vtypeMsg = null;
+                that.setIsValid(true);
+                that.fire("validation",{flag:true});
+                return true;
             }
             var vtype = that.getVtype();
             var vtypeErrorText = that.getVtypeErrorText();
+            if(!vtypeErrorText){
+                vtypeErrorText = "";
+            }
             if(!vtype){
                 that.vtypeMsg = null;
                 that.setIsValid(true);
@@ -125,6 +128,7 @@
             }
             var oldVal = that.getValue();
             jQuery(that._inputEl).val(newVal);
+            that.value = newVal;
             if(oldVal != newVal){
                 that.fire("valuechanged",{oldValue:oldVal,value:newVal});
             }

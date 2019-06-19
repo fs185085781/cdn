@@ -512,7 +512,7 @@
             }
             if(!this.specialList){
                 this.specialList = [];
-                var spList = ["^maxLength:[1-9]\\d*$","^minLength:[1-9]\\d*$","^rangeLength:[1-9]\\d*,[1-9]\\d*$","^rangeChar:[1-9]\\d*,[1-9]\\d*$","^range:[1-9]\\d*,[1-9]\\d*$"];
+                var spList = ["^maxLength:[0-9]*$","^minLength:[0-9]*$","^rangeLength:[0-9]*,[0-9]*$","^rangeChar:[0-9]*,[0-9]*$","^range:[0-9.]*,[0-9.]*$"];
                 var spMs = ["maxLength","minLength","rangeLength","rangeChar","range"];
                 var spListMasg = [ui.lang.validate.maxLength,ui.lang.validate.minLength,ui.lang.validate.rangeLength,ui.lang.validate.rangeChar,ui.lang.validate.range];
                 for(var i=0;i<spList.length;i++){
@@ -575,6 +575,7 @@
             }
             if(!needReg || !needMsg){
                 result.msg = ui.lang.validate.noVtype;
+                result.flag = false;
                 return result;
             }
             try{
