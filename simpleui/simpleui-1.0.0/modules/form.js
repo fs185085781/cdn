@@ -8,6 +8,7 @@
             jQuery(that.el).append("<input style=\"width:100%;height:100%\" class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
             jQuery(that.el).on("focus",":input",function(e){
+                that.setIsValid(true);
                 if(that.getSelectOnFocus()){
                     this.selectionStart = 0;
                     this.selectionEnd = this.value.length;
@@ -99,9 +100,9 @@
         setIsValid:function(val){
             this.valid = ui.parseBoolean(val);
             if(this.valid){
-                jQuery(this._inputEl).css({"border":""});
+                jQuery(this.el).css({"border":""});
             }else{
-                jQuery(this._inputEl).css({"border":"1px solid red"});
+                jQuery(this.el).css({"border":"1px solid red"});
             }
         },
         doValueChanged:function(){
@@ -134,6 +135,9 @@
             }
         },
         getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
             return this.value;
         },
         setAllowInput:function(val){
@@ -173,6 +177,7 @@
         setMaxLength:function(val){
             var that = this;
             that.maxLength = ui.parseNumber(val);
+            that.setValue(that.getValue());
         },
         getValidateOnChanged:function(){
             var that = this;
@@ -234,4 +239,54 @@
         thisClass:textbox,
         init:textbox.init
     });
+    /*输入框组*/
+    var textboxgroup = {
+        init:function(){
+            var that = this;
+            jQuery(that.el).addClass("input-group");
+            var afterSpanEl = jQuery("<span class=\"input-group-addon\"></span>");
+            jQuery(that._inputEl).after(afterSpanEl[0]);
+            that._AfterSpanEl =afterSpanEl[0];
+            var beforeSpanEl = jQuery("<span class=\"input-group-addon\"></span>");
+            jQuery(that._inputEl).before(beforeSpanEl[0]);
+            that._BeforeSpanEl =beforeSpanEl[0];
+            jQuery(this._BeforeSpanEl).hide();
+            jQuery(this._AfterSpanEl).hide();
+        },
+        setBeforeText:function(val){
+            this.beforeText = ui.parseString(val);
+            jQuery(this._BeforeSpanEl).html(this.beforeText);
+            if(this.beforeText){
+                jQuery(this._BeforeSpanEl).show();
+            }else{
+                jQuery(this._BeforeSpanEl).hide();
+            }
+        },
+        getBeforeText:function(){
+            return ui.parseString(this.beforeText);
+        },
+        setAfterText:function(val){
+            this.afterText = ui.parseString(val);
+            jQuery(this._AfterSpanEl).html(this.afterText);
+            if(this.afterText){
+                jQuery(this._AfterSpanEl).show();
+            }else{
+                jQuery(this._AfterSpanEl).hide();
+            }
+        },
+        getAfterText:function(){
+            return ui.parseString(this.afterText);
+        }
+    }
+    ui.TextBoxGroup = function(){};
+    ui.regModule({
+        clazz:ui.TextBoxGroup,
+        useClass:ui.prefix+"-textboxgroup",
+        fields:["beforeText","afterText"],
+        events:[],
+        parentClass:ui.TextBox,
+        thisClass:textboxgroup,
+        init:textboxgroup.init
+    });
+
 })(window);

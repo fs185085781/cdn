@@ -277,7 +277,7 @@
                 m.prototype.eventMap[options.events[i]] = 1;
             }
             if(options.parentClass){
-                var parentThat = new options.parentClass();
+                var parentThat = options.parentClass.prototype;
                 for(var key in parentThat){
                     if(m.prototype[key]){
                         continue;
@@ -298,12 +298,17 @@
                     }
                     m.prototype.eventMap[event] = 1;
                 }
+                m.prototype.initOwnHtml = options.init;
+                m.prototype.initParentHtml = parentThat.initOwnHtml;
                 m.prototype.initHtml = function(){
-                    parentThat.initHtml();
-                    this.init();
+                    this.initParentHtml();
+                    this.initOwnHtml();
                 }
             }else{
-                m.prototype.initHtml = options.init;
+                m.prototype.initOwnHtml = options.init;
+                m.prototype.initHtml = function(){
+                    this.initOwnHtml();
+                };
             }
             moduleMap[options.useClass] = m;
             ui.moduleMap = moduleMap;
@@ -407,12 +412,6 @@
         },
         parseString:function(val){
             if(typeof val == "string"){
-                try{
-                   var temp = eval(val);
-                   if(typeof temp =="string"){
-                       return temp.trim();
-                   }
-                }catch (e) {}
                 return val.trim();
             }else if(val == null){
                 return "";
@@ -432,9 +431,7 @@
             }else if(val == null){
                 return false;
             }else if(typeof val == "string"){
-                try{
-                    val = eval(val);
-                }catch (e) {}
+                val = val.trim();
                 if(val){
                     return true;
                 }else{
@@ -447,15 +444,9 @@
             if(typeof val == "number"){
                 return val;
             }else if(typeof val == "string"){
+                val = val.trim();
                 if(!isNaN(val)){
                     return val*1;
-                }else{
-                    try{
-                        val = eval(val);
-                    }catch (e) {}
-                    if(!isNaN(val)){
-                        return val*1;
-                    }
                 }
             }else if(val instanceof Date){
                 return val.getTime();
@@ -469,6 +460,7 @@
             return this.decode(val);
         },
         validate:function(val,vtype,error){
+            var that = this;
             var map = {
                 "email":"^[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?$",
                 "url":"^[a-zA-z]+://[^\\s]*$",
@@ -493,19 +485,25 @@
             };
             var result = {flag:true};
             if(val == null){
+                val = "";
                 result.flag = false;
             }
-            val = (val+"").trim();
+            val = val.trim();
             if(val == ""){
                 result.flag = false;
             }
             if(!result.flag){
-                if(vtype == "required" && error){
-                    result.msg = error;
+                if(vtype == "required"){
+                    if(vtype == "required" && error){
+                        result.msg = error;
+                    }else{
+                        result.msg = ui.lang.validate.required;
+                    }
+                    return result;
                 }else{
-                    result.msg = ui.lang.validate.required;
+                    result.flag = true;
+                    return result;
                 }
-                return result;
             }
             if(vtype == "required"){
                 return result;
@@ -528,15 +526,15 @@
                 if(spMap.m == "maxLength"){
                     var l = vtype.replace("maxLength:","")*1;
                     spError = spMap.msg.replace("$1",l);
-                    result.flag = val.length<=l;
+                    result.flag = val.length<=that.parseNumber(l);
                 }else if(spMap.m == "minLength"){
                     var l = vtype.replace("minLength:","")*1;
                     spError = spMap.msg.replace("$1",l);
-                    result.flag = val.length>=l;
+                    result.flag = val.length>=that.parseNumber(l);
                 }else if(spMap.m == "rangeLength"){
                     var ls = vtype.replace("rangeLength:","").split(",");
                     spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
-                    result.flag = val.length>=ls[0] && val.length<=ls[1];
+                    result.flag = val.length>=that.parseNumber(ls[0]) && val.length<=that.parseNumber(ls[1]);
                 }else if(spMap.m == "rangeChar"){
                     var ls = vtype.replace("rangeChar:","").split(",");
                     spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
@@ -545,7 +543,7 @@
                         var index = val.charCodeAt(n);
                         count += index>128?2:1;
                     }
-                    result.flag = count>=ls[0] && count<=ls[1];
+                    result.flag = count>=that.parseNumber(ls[0]) && count<=that.parseNumber(ls[1]);
                 }else if(spMap.m == "range"){
                     var ls = vtype.replace("range:","").split(",");
                     spError = spMap.msg.replace("$1",ls[0]).replace("$2",ls[1]);
@@ -553,7 +551,8 @@
                         spError = ui.lang.validate.isNaN;
                         result.flag = false;
                     }else{
-                        result.flag = val>=ls[0] && val<=ls[1];
+                        val = val*1;
+                        result.flag = val>=that.parseNumber(ls[0]) && val<=that.parseNumber(ls[1]);
                     }
                 }
                 if(!result.flag){

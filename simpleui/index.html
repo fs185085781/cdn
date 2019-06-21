@@ -20,13 +20,18 @@
     <div class="row" style="margin-top:10px;">
         <div class="col-xs-2">TextBox</div>
         <div class="col-xs-4">
-            <div class="simple-textbox" emptyText="请输入你的姓名" value="范饭" allowInput="true"
+            <div class="simple-textbox" emptyText="请输入你的体重" value="范饭" allowInput="true"
                  elvaluechanged="allEvent" elvalidation="allEvent" elenter="allEvent" elkeydown="allEvent"
-                 elkeyup="allEvent" elfocus="allEvent" elblur="allEvent" vtype="required;range:0.01,18.99;"
+                 elkeyup="allEvent" elfocus="allEvent" elblur="allEvent" vtype="required;range:10.00,200.00;"
             ></div>
         </div>
-        <div class="col-xs-2"></div>
+        <div class="col-xs-2">TextBoxGroup</div>
         <div class="col-xs-4">
+            <div class="simple-textboxgroup" emptyText="例如www.baidu.com" value="" allowInput="true"
+                 elvaluechanged="allEvent" elvalidation="allEvent" elenter="allEvent" elkeydown="allEvent"
+                 elkeyup="allEvent" elfocus="allEvent" elblur="allEvent" vtype="url;"
+                 beforeText="请输入你的网址"
+            ></div>
         </div>
     </div>
 </div>
