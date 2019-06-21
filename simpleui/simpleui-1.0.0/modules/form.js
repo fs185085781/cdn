@@ -5,8 +5,22 @@
     var textbox = {
         init:function(){
             var that = this;
-            jQuery(that.el).append("<input style=\"width:100%;height:100%\" class=\"form-control\" type=\"text\" placeholder=\"\" />");
+            jQuery(that.el).addClass("input-group");
+            /*插入输入框*/
+            jQuery(that.el).append("<input style=\"width:100%;\" class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
+            /*插入错误提示*/
+            var errorSpanEl = jQuery("<span class=\"simple-error-span fa fa-exclamation-circle\" style=\"display:none;\"></span>");
+            jQuery(that._inputEl).after(errorSpanEl[0]);
+            that._ErrorSpanEl =errorSpanEl[0];
+            /*插入后置文本*/
+            var afterSpanEl = jQuery("<span class=\"input-group-addon\" style=\"display:none;\"></span>");
+            jQuery(that._inputEl).after(afterSpanEl[0]);
+            that._AfterSpanEl =afterSpanEl[0];
+            /*插入前置文本*/
+            var beforeSpanEl = jQuery("<span class=\"input-group-addon\" style=\"display:none;\"></span>");
+            jQuery(that._inputEl).before(beforeSpanEl[0]);
+            that._BeforeSpanEl =beforeSpanEl[0];
             jQuery(that.el).on("focus",":input",function(e){
                 that.setIsValid(true);
                 if(that.getSelectOnFocus()){
@@ -99,10 +113,16 @@
         },
         setIsValid:function(val){
             this.valid = ui.parseBoolean(val);
-            if(this.valid){
-                jQuery(this.el).css({"border":""});
-            }else{
-                jQuery(this.el).css({"border":"1px solid red"});
+            jQuery(this.el).css({"border":""});
+            jQuery(this._ErrorSpanEl).hide();
+            if(!this.valid){
+                if(this.getValidateMode() == "title"){
+                    jQuery(this.el).css({"border":"1px solid red"});
+                    jQuery(this._ErrorSpanEl).attr("title",this.vtypeMsg);
+                    jQuery(this._ErrorSpanEl).show();
+                }else if(this.getValidateMode() == "border"){
+                    jQuery(this.el).css({"border":"1px solid red"});
+                }
             }
         },
         doValueChanged:function(){
@@ -227,31 +247,6 @@
         setVtypeErrorText:function(val){
             var that = this;
             that.vtypeErrorText = ui.parseString(val);
-        }
-    };
-    ui.TextBox = function(){};
-    ui.regModule({
-        clazz:ui.TextBox,
-        useClass:ui.prefix+"-textbox",
-        fields:["emptyText","value","allowInput","selectOnFocus","maxLength","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText"],
-        events:["valuechanged","validation","enter","keydown","keyup","focus","blur"],
-        parentClass:ui.BaseModule,
-        thisClass:textbox,
-        init:textbox.init
-    });
-    /*输入框组*/
-    var textboxgroup = {
-        init:function(){
-            var that = this;
-            jQuery(that.el).addClass("input-group");
-            var afterSpanEl = jQuery("<span class=\"input-group-addon\"></span>");
-            jQuery(that._inputEl).after(afterSpanEl[0]);
-            that._AfterSpanEl =afterSpanEl[0];
-            var beforeSpanEl = jQuery("<span class=\"input-group-addon\"></span>");
-            jQuery(that._inputEl).before(beforeSpanEl[0]);
-            that._BeforeSpanEl =beforeSpanEl[0];
-            jQuery(this._BeforeSpanEl).hide();
-            jQuery(this._AfterSpanEl).hide();
         },
         setBeforeText:function(val){
             this.beforeText = ui.parseString(val);
@@ -276,17 +271,25 @@
         },
         getAfterText:function(){
             return ui.parseString(this.afterText);
+        },
+        getValidateMode:function(){
+            if(!this.validateMode){
+                this.validateMode = "title";
+            }
+            return this.validateMode;
+        },
+        setValidateMode:function(val){
+            this.validateMode = ui.parseString(val);
         }
-    }
-    ui.TextBoxGroup = function(){};
+    };
+    ui.TextBox = function(){};
     ui.regModule({
-        clazz:ui.TextBoxGroup,
-        useClass:ui.prefix+"-textboxgroup",
-        fields:["beforeText","afterText"],
-        events:[],
-        parentClass:ui.TextBox,
-        thisClass:textboxgroup,
-        init:textboxgroup.init
+        clazz:ui.TextBox,
+        useClass:ui.prefix+"-textbox",
+        fields:["emptyText","value","allowInput","selectOnFocus","maxLength","validateMode","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText","beforeText","afterText"],
+        events:["valuechanged","validation","enter","keydown","keyup","focus","blur"],
+        parentClass:ui.BaseModule,
+        thisClass:textbox,
+        init:textbox.init
     });
-
 })(window);

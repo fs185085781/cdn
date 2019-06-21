@@ -63,6 +63,8 @@
     if(!jsSearch.profile){
         jsSearch.profile = "product";
     }
+    /*加载字体*/
+    document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />');
     /*核心样式文件bootstrap*/
     document.write('<link href="' + jsPath + '/base/css/bootstrap.min.css" rel="stylesheet" type="text/css" />');
     document.write('<link href="' + jsPath + '/base/css/base.css" rel="stylesheet" type="text/css" />');
@@ -108,8 +110,6 @@
     if(!ui.skin){
         ui.skin = "default";
     }
-    /*加载字体*/
-    document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />');
     if(jsSearch.modules){
         var modules = jsSearch.modules.split(",");
         for(var i=0;i<modules.length;i++){

@@ -12,3 +12,11 @@
     background:url("./images/loading.gif") no-repeat scroll 5px 50%;
     position: absolute;
 }
+.simple-error-span{
+    display: table-cell;
+    color: red;
+    font-size: 18px;
+    text-align: center;
+    vertical-align: middle;
+    width: 24px;
+}
