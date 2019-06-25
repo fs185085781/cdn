@@ -8,6 +8,11 @@
 <body>
 <div class="container-fluid">
     <div class="row" style="margin-top:10px;">
+        <div class="col-xs-12">
+            本组件样式参照光年后台管理制作,<a href="http://lyear.itshubao.com/" target="_blank">点击进入</a>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
         <div class="col-xs-2">Button</div>
         <div class="col-xs-4">
             <div class="simple-button" text="测试按钮" elclick="function(e){alert('你点击了'+e.base.getText());}" moldType="5" iconCls="fa-search"></div>
@@ -31,6 +36,13 @@
                  elvaluechanged="allEvent" elvalidation="allEvent" elenter="allEvent" elkeydown="allEvent"
                  elkeyup="allEvent" elfocus="allEvent" elblur="allEvent" vtype="url;"
                  beforeText="请输入你的网址"
+            ></div>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div class="col-xs-2">Hidden</div>
+        <div class="col-xs-4">
+            <div class="simple-hidden" value="你好啊" elvaluechanged="allEvent"
             ></div>
         </div>
     </div>

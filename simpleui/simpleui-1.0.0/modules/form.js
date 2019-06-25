@@ -137,6 +137,14 @@
         getEmptyText:function(){
             return this.emptyText;
         },
+        setName:function(val){
+            var that = this;
+            that.name = ui.parseString(val);
+            jQuery(that._inputEl).attr("name",that.name);
+        },
+        getName:function(){
+            return this.name;
+        },
         setValue:function(val){
             var that = this;
             var newVal = ui.parseString(val);
@@ -286,10 +294,103 @@
     ui.regModule({
         clazz:ui.TextBox,
         useClass:ui.prefix+"-textbox",
-        fields:["emptyText","value","allowInput","selectOnFocus","maxLength","validateMode","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText","beforeText","afterText"],
+        fields:["emptyText","name","value","allowInput","selectOnFocus","maxLength","validateMode","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText","beforeText","afterText"],
         events:["valuechanged","validation","enter","keydown","keyup","focus","blur"],
         parentClass:ui.BaseModule,
         thisClass:textbox,
         init:textbox.init
     });
+    var hiddenbox = {
+        init:function(){
+            var that = this;
+            /*插入输入框*/
+            jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
+            that._inputEl = jQuery(that.el).find(":input")[0];
+            jQuery(that.el).hide();
+        },
+        setName:function(val){
+            var that = this;
+            that.name = ui.parseString(val);
+            jQuery(that._inputEl).attr("name",that.name);
+        },
+        getName:function(){
+            return this.name;
+        },
+        setValue:function(val){
+            var that = this;
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var oldVal = that.getValue();
+            jQuery(that._inputEl).val(newVal);
+            that.value = newVal;
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
+            }
+        },
+        getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
+            return this.value;
+        }
+    }
+    ui.HiddenBox = function(){};
+    ui.regModule({
+        clazz:ui.HiddenBox,
+        useClass:ui.prefix+"-hidden",
+        fields:["value","name"],
+        events:["valuechanged"],
+        parentClass:ui.BaseModule,
+        thisClass:hiddenbox,
+        init:hiddenbox.init
+    });
+    var slider = {
+        init:function(){
+            var that = this;
+            /*插入输入框*/
+            jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
+            that._inputEl = jQuery(that.el).find(":input")[0];
+            jQuery(that.el).hide();
+        },
+        setName:function(val){
+            var that = this;
+            that.name = ui.parseString(val);
+            jQuery(that._inputEl).attr("name",that.name);
+        },
+        getName:function(){
+            return this.name;
+        },
+        setValue:function(val){
+            var that = this;
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var oldVal = that.getValue();
+            jQuery(that._inputEl).val(newVal);
+            that.value = newVal;
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
+            }
+        },
+        getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
+            return this.value;
+        }
+    }
+    ui.Slider = function(){};
+    ui.regModule({
+        clazz:ui.Slider,
+        useClass:ui.prefix+"-slider",
+        fields:["value","name","mode","reversed","showTip","min","max","step","rule"],
+        events:["valuechanged","sliderstart","sliderend"],
+        parentClass:ui.BaseModule,
+        thisClass:slider,
+        init:slider.init
+    });
+
 })(window);
