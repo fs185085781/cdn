@@ -352,7 +352,27 @@
             /*插入输入框*/
             jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
-            jQuery(that.el).hide();
+            jQuery(that._inputEl).hide();
+            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"></div>");
+            that._sliderBarEl = jQuery(that.el).find(".progress-bar")[0];
+            jQuery(that.el).append("<span class=\"slider-btn fa fa-circle-o\" style=\"left:10px;\"></span>");
+            that._sliderBtnEl = jQuery(that.el).find(".slider-btn")[0];
+            //that.clientX
+            jQuery(that.el).on("mousedown",".slider-btn",function(e){
+                that.isDrag = true;
+                console.log("开始移动");
+            });
+            jQuery(that.el).on("mouseup",".slider-btn",function(e){
+                that.isDrag = false;
+                console.log("结束移动");
+            });
+            jQuery(that.el).on("mousemove",".slider-btn",function(e){
+                if(!that.isDrag){
+                    return;
+                }
+                jQuery(that._sliderBtnEl).css("left",e.offsetX+"px");
+                console.log(e);
+            });
         },
         setName:function(val){
             var that = this;
