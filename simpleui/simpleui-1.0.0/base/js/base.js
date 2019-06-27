@@ -356,6 +356,7 @@
                 }
                 moduleObj.el = ele;
                 ui.allSimple[moduleObj.uikey] = moduleObj;
+                jQuery(moduleObj.el).attr("uikey",moduleObj.uikey);
                 moduleObj.initHtml();
                 //设置属性
                 var fieldMap = moduleObj.fieldMap;
@@ -376,7 +377,6 @@
                         moduleObj[field] = value;
                     }
                 }
-                jQuery(moduleObj.el).attr("uikey",moduleObj.uikey);
                 //绑定事件
                 var eventMap = moduleObj.eventMap;
                 for(var event in eventMap){
@@ -618,24 +618,62 @@
             }
             return list;
         },
-        hideAllPopup:function(){
-            if(!this.closePopupMap){
-                this.closePopupMap = {};
+        doBodyClick:function(e){
+            if(!this.allBodyClickMap){
+                this.allBodyClickMap = {};
             }
-            var fMap = this.closePopupMap;
+            var fMap = this.allBodyClickMap;
             for(var key in fMap){
                 try{
-                    fMap[key]();
+                    fMap[key](e);
                 }catch (e) {
                     delete fMap[key];
                 }
             }
         },
-        pushHidePopup:function(key,callBack){
-            if(!this.closePopupMap){
-                this.closePopupMap = {};
+        pushBodyClick:function(key,callBack){
+            if(!this.allBodyClickMap){
+                this.allBodyClickMap = {};
             }
-            this.closePopupMap[key] = callBack;
+            this.allBodyClickMap[key] = callBack;
+        },
+        doBodyMouseup:function(e){
+            if(!this.allBodyMouseupMap){
+                this.allBodyMouseupMap = {};
+            }
+            var fMap = this.allBodyMouseupMap;
+            for(var key in fMap){
+                try{
+                    fMap[key](e);
+                }catch (e) {
+                    delete fMap[key];
+                }
+            }
+        },
+        pushBodyMouseup:function(key,callBack){
+            if(!this.allBodyMouseupMap){
+                this.allBodyMouseupMap = {};
+            }
+            this.allBodyMouseupMap[key] = callBack;
+        },
+        doBodyMousemove:function(e){
+            if(!this.allBodyMousemoveMap){
+                this.allBodyMousemoveMap = {};
+            }
+            var fMap = this.allBodyMousemoveMap;
+            for(var key in fMap){
+                try{
+                    fMap[key](e);
+                }catch (e) {
+                    delete fMap[key];
+                }
+            }
+        },
+        pushBodyMousemove:function(key,callBack){
+            if(!this.allBodyMousemoveMap){
+                this.allBodyMousemoveMap = {};
+            }
+            this.allBodyMousemoveMap[key] = callBack;
         },
         guid:function(){
             function S4() {
@@ -957,8 +995,14 @@
         document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/mobile.css" rel="stylesheet" type="text/css" />');
     }
     jQuery(function(){
-        jQuery("body").click(function(){
-            ui.hideAllPopup();
+        jQuery("body").click(function(e){
+            ui.doBodyClick(e);
+        });
+        jQuery("body").mouseup(function(e){
+            ui.doBodyMouseup(e);
+        });
+        jQuery("body").mousemove(function(e){
+            ui.doBodyMousemove(e);
         });
     });
 })(window);

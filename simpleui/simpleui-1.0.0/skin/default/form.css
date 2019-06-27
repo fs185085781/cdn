@@ -9,6 +9,8 @@
     height:10px;
 }
 .simple-slider span.slider-btn{
+    color:#33cabb;
+    background-color:#ffffff;
     display: block;
     position: absolute;
     line-height: 10px;

@@ -353,25 +353,27 @@
             jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
             jQuery(that._inputEl).hide();
-            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"></div>");
+            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"><span class=\"slider-btn fa fa-circle-o\" style=\"left:10px;\"></span></div>");
             that._sliderBarEl = jQuery(that.el).find(".progress-bar")[0];
-            jQuery(that.el).append("<span class=\"slider-btn fa fa-circle-o\" style=\"left:10px;\"></span>");
-            that._sliderBtnEl = jQuery(that.el).find(".slider-btn")[0];
+            that._sliderBtnEl = jQuery(that._sliderBarEl).find(".slider-btn")[0];
             //that.clientX
             jQuery(that.el).on("mousedown",".slider-btn",function(e){
                 that.isDrag = true;
                 console.log("开始移动");
             });
-            jQuery(that.el).on("mouseup",".slider-btn",function(e){
-                that.isDrag = false;
-                console.log("结束移动");
+            ui.pushBodyMouseup(that.uikey,function(e){
+                if(that.isDrag){
+                    that.isDrag = false;
+                }
             });
-            jQuery(that.el).on("mousemove",".slider-btn",function(e){
+            ui.pushBodyMousemove(that.uikey,function(e){
                 if(!that.isDrag){
                     return;
                 }
-                jQuery(that._sliderBtnEl).css("left",e.offsetX+"px");
-                console.log(e);
+                var left = e.clientX - jQuery(that._sliderBarEl).offset().left;
+                jQuery(that._sliderBtnEl).css("left",left+"px");
+                console.log("鼠标",e.clientX);
+                console.log("读条",jQuery(that._sliderBarEl).offset().left);
             });
         },
         setName:function(val){

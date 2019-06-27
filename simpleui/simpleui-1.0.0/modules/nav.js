@@ -450,7 +450,7 @@
                     menu.on("itemclick",function(e){
                         that.fire("menuItemClick",e.data);
                     });
-                    ui.pushHidePopup(menu.uikey,function(){
+                    ui.pushBodyClick(menu.uikey,function(){
                         menu.closeMenu();
                     });
                 }
