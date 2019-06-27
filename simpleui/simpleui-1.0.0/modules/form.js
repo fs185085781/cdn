@@ -353,10 +353,13 @@
             jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
             jQuery(that._inputEl).hide();
-            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"><span class=\"slider-btn fa fa-circle-o\" style=\"left:10px;\"></span></div>");
+            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"><span class=\"slider-btn fa fa-circle-o\"></span></div>");
             that._sliderBarEl = jQuery(that.el).find(".progress-bar")[0];
             that._sliderBtnEl = jQuery(that._sliderBarEl).find(".slider-btn")[0];
-            //that.clientX
+            jQuery(that.el).append("<div class=\"slider-rule\"></div>");
+            that._sliderRuleEl = jQuery(that.el).find(".slider-rule")[0];
+            jQuery(that.el).append("<div class=\"slider-rulelabel\"></div>");
+            that._sliderRuleLabelEl = jQuery(that.el).find(".slider-rulelabel")[0];
             jQuery(that.el).on("mousedown",".slider-btn",function(e){
                 that.isDrag = true;
                 console.log("开始移动");
@@ -371,9 +374,10 @@
                     return;
                 }
                 var left = e.clientX - jQuery(that._sliderBarEl).offset().left;
-                jQuery(that._sliderBtnEl).css("left",left+"px");
-                console.log("鼠标",e.clientX);
-                console.log("读条",jQuery(that._sliderBarEl).offset().left);
+                if(left>=0 && left <= jQuery(that._sliderBarEl).width()){
+                    jQuery(that._sliderBtnEl).css("left",left+"px");
+                }
+                console.log(e);
             });
         },
         setName:function(val){
@@ -402,13 +406,61 @@
                 this.value = "";
             }
             return this.value;
+        },
+        setMode:function(val){
+
+        },
+        getMode:function(){
+
+        },
+        setReversed:function(val){
+
+        },
+        getReversed:function(){
+
+        },
+        setShowTip:function(val){
+
+        },
+        getShowTip:function(){
+
+        },
+        setMin:function(val){
+            this.min = ui.parseNumber(val);
+        },
+        getMin:function(){
+            if(this.min == null){
+                this.min = 0;
+            }
+            return this.min;
+        },
+        setMax:function(val){
+            this.max = ui.parseNumber(val);
+        },
+        getMax:function(){
+            if(this.max == null){
+                this.max = 0;
+            }
+            return this.max;
+        },
+        setRules:function(val){
+            this.rules = ui.parseNumber(val);
+        },
+        getRules:function(){
+            if(this.rules == null){
+                this.rules = 4;
+            }
+            return this.rules;
+        },
+        updateRuleData:function(){
+
         }
     }
     ui.Slider = function(){};
     ui.regModule({
         clazz:ui.Slider,
         useClass:ui.prefix+"-slider",
-        fields:["value","name","mode","reversed","showTip","min","max","step","rule"],
+        fields:["value","name","mode","reversed","showTip","min","max","rules"],
         events:["valuechanged","sliderstart","sliderend"],
         parentClass:ui.BaseModule,
         thisClass:slider,
