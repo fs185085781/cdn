@@ -10,6 +10,13 @@
     position: relative;
     border-radius: 10px;
 }
+.simple-slider .slider-tip{
+    position: absolute;
+    display: inline-block;
+    margin-top: -20px;
+    color: #4d5259;
+    font-size: 14px;
+}
 .simple-slider span.slider-btn{
     color:#33cabb;
     background-color:#ffffff;
@@ -33,5 +40,19 @@
 }
 .simple-slider .slider-rule{
     position: relative;
-    top: 15px;
+    top: 16px;
+}
+.simple-slider .slider-rulelabel{
+    position: relative;
+    top: 20px;
+}
+.simple-slider .slider-rulelabel span {
+    position: absolute;
+    display: inline-block;
+}
+.simple-slider-portrait{
+    transform: rotate(-90deg);
+}
+.simple-slider-portrait .slider-rulelabel span,.simple-slider-portrait .slider-tip{
+    transform: rotate(90deg);
 }

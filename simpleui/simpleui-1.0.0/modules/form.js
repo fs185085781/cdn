@@ -353,31 +353,66 @@
             jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
             that._inputEl = jQuery(that.el).find(":input")[0];
             jQuery(that._inputEl).hide();
-            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"><span class=\"slider-btn fa fa-circle-o\"></span></div>");
+            jQuery(that.el).append("<div class=\"progress-bar\" style=\"width:100%\"><span class=\"slider-tip\" ></span><span class=\"slider-btn fa fa-circle-o\"></span></div>");
             that._sliderBarEl = jQuery(that.el).find(".progress-bar")[0];
             that._sliderBtnEl = jQuery(that._sliderBarEl).find(".slider-btn")[0];
+            that._sliderTipEl = jQuery(that._sliderBarEl).find(".slider-tip")[0];
             jQuery(that.el).append("<div class=\"slider-rule\"></div>");
             that._sliderRuleEl = jQuery(that.el).find(".slider-rule")[0];
             jQuery(that.el).append("<div class=\"slider-rulelabel\"></div>");
             that._sliderRuleLabelEl = jQuery(that.el).find(".slider-rulelabel")[0];
             jQuery(that.el).on("mousedown",".slider-btn",function(e){
                 that.isDrag = true;
-                console.log("开始移动");
+                that.fire("sliderstart");
+            });
+            jQuery(that.el).on("selectstart",function(e){
+                return !that.isDrag;
             });
             ui.pushBodyMouseup(that.uikey,function(e){
-                if(that.isDrag){
-                    that.isDrag = false;
+                if(!that.isDrag){
+                    return;
                 }
+                that.isDrag = false;
+                var left;
+                if(jQuery(that.el).css("transform").indexOf("matrix") != -1){
+                    left =jQuery(that._sliderBarEl).width()+ jQuery(that._sliderBarEl).offset().top - e.clientY;
+                }else{
+                    left= e.clientX - jQuery(that._sliderBarEl).offset().left;
+                }
+                if(left<0){
+                    left = 0;
+                }
+                if(left > jQuery(that._sliderBarEl).width()){
+                    left = jQuery(that._sliderBarEl).width();
+                }
+                var allWidth = jQuery(that._sliderBarEl).width();
+                var val = left/allWidth*(that.getMax()-that.getMin())+that.getMin();
+                that.setValue(val.toFixed(0));
+                that.fire("sliderend");
             });
             ui.pushBodyMousemove(that.uikey,function(e){
                 if(!that.isDrag){
                     return;
                 }
-                var left = e.clientX - jQuery(that._sliderBarEl).offset().left;
-                if(left>=0 && left <= jQuery(that._sliderBarEl).width()){
-                    jQuery(that._sliderBtnEl).css("left",left+"px");
+                var left;
+                if(jQuery(that.el).css("transform").indexOf("matrix") != -1){
+                    left =jQuery(that._sliderBarEl).width()+ jQuery(that._sliderBarEl).offset().top - e.clientY;
+                }else{
+                    left= e.clientX - jQuery(that._sliderBarEl).offset().left;
                 }
-                console.log(e);
+                if(left<0){
+                    left = 0;
+                }
+                if(left > jQuery(that._sliderBarEl).width()){
+                    left = jQuery(that._sliderBarEl).width();
+                }
+                jQuery(that._sliderBtnEl).css("left",left+"px");
+                jQuery(that._sliderTipEl).css("left",left+"px");
+                var allWidth = jQuery(that._sliderBarEl).width();
+                var val = left/allWidth*(that.getMax()-that.getMin())+that.getMin();
+                val = val.toFixed(0);
+                jQuery(that._sliderTipEl).css("margin-left","-"+(val.length*4)+"px");
+                jQuery(that._sliderTipEl).html(val);
             });
         },
         setName:function(val){
@@ -390,13 +425,28 @@
         },
         setValue:function(val){
             var that = this;
-            var newVal = ui.parseString(val);
+            var newVal = ui.parseNumber(val);
             if(!newVal){
-                newVal = "";
+                newVal = 0;
             }
             var oldVal = that.getValue();
+            if(newVal<that.getMin()){
+                newVal = that.getMin()*1;
+            }
+            if(newVal>that.getMax()){
+                newVal = that.getMax()*1;
+            }
             jQuery(that._inputEl).val(newVal);
             that.value = newVal;
+            var str =newVal+"";
+            jQuery(that._sliderTipEl).css("margin-left","-"+(str.length*4)+"px");
+            jQuery(that._sliderTipEl).html(str);
+            if(that._hasUpdateRuleData){
+                var allWidth = jQuery(that._sliderBarEl).width();
+                var left = (that.value-that.getMin())*allWidth/(that.getMax()-that.getMin());
+                jQuery(that._sliderBtnEl).css("left",left+"px");
+                jQuery(that._sliderTipEl).css("left",left+"px");
+            }
             if(oldVal != newVal){
                 that.fire("valuechanged",{oldValue:oldVal,value:newVal});
             }
@@ -408,25 +458,39 @@
             return this.value;
         },
         setMode:function(val){
-
+            this.mode = ui.parseString(val);
+            if(this.mode != "landscape" && this.mode != "portrait"){
+                this.mode= "landscape";
+            }
+            if(this.mode == "portrait"){
+                jQuery(this.el).addClass("simple-slider-portrait");
+            }else{
+                jQuery(this.el).removeClass("simple-slider-portrait");
+            }
         },
         getMode:function(){
-
-        },
-        setReversed:function(val){
-
-        },
-        getReversed:function(){
-
+            if(this.mode == null){
+                this.mode = "landscape";
+            }
+            return this.mode;
         },
         setShowTip:function(val){
-
+            this.showTip = ui.parseBoolean(val);
+            if(this.showTip){
+                jQuery(this._sliderTipEl).show();
+            }else{
+                jQuery(this._sliderTipEl).hide();
+            }
         },
         getShowTip:function(){
-
+            if(this.showTip == null){
+                this.showTip = true;
+            }
+            return this.showTip;
         },
         setMin:function(val){
             this.min = ui.parseNumber(val);
+            this.updateRuleData();
         },
         getMin:function(){
             if(this.min == null){
@@ -436,15 +500,17 @@
         },
         setMax:function(val){
             this.max = ui.parseNumber(val);
+            this.updateRuleData();
         },
         getMax:function(){
             if(this.max == null){
-                this.max = 0;
+                this.max = 100;
             }
             return this.max;
         },
         setRules:function(val){
             this.rules = ui.parseNumber(val);
+            this.updateRuleData();
         },
         getRules:function(){
             if(this.rules == null){
@@ -453,14 +519,40 @@
             return this.rules;
         },
         updateRuleData:function(){
-
+            var that = this;
+            var rules = that.getRules();
+            var min = that.getMin();
+            var max = that.getMax();
+            var stepLabel = (max-min)/rules;
+            var stepPerc = 100/rules;
+            stepPerc = stepPerc.toFixed(2);
+            var rspans = "";
+            var rspansLabel = "";
+            for(var i=0;i<=rules;i++){
+                rspans +="<span style=\"left:"+(i*stepPerc)+"%;\"></span>";
+                if(rules%2 == 0 && i!=rules){
+                    rspans += "<span style=\"left:"+((i+0.5)*stepPerc)+"%;\"></span>";
+                }
+                var label = (min+i*stepLabel).toFixed(0)*1;
+                if(label>max){
+                    label = max*1;
+                }
+                if(label<min){
+                    label = min*1;
+                }
+                label = label +"";
+                rspansLabel +="<span style=\"left:"+(i*stepPerc)+"%;margin-left:-"+(label.length*4)+"px;\">"+label+"</span>";
+            }
+            jQuery(that._sliderRuleEl).html(rspans);
+            jQuery(that._sliderRuleLabelEl).html(rspansLabel);
+            that._hasUpdateRuleData = true;
         }
     }
     ui.Slider = function(){};
     ui.regModule({
         clazz:ui.Slider,
         useClass:ui.prefix+"-slider",
-        fields:["value","name","mode","reversed","showTip","min","max","rules"],
+        fields:["name","mode","showTip","min","max","rules","value"],
         events:["valuechanged","sliderstart","sliderend"],
         parentClass:ui.BaseModule,
         thisClass:slider,
