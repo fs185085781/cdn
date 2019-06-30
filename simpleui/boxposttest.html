@@ -7,6 +7,7 @@
     <!-- 引入组件库 -->
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -51,9 +52,15 @@
         },
         methods:{
             postSaveData:function(e){
-                console.log(this.form);
-                //这里就是ajax代码了，我就不写了
-                this.dialogFormVisible = false;
+                var that = this;
+                //这个是接口地址
+                var url = "/post/save";
+                axios.post(url,that.form).then(function(res){
+                    alert("请求成功");
+                },function(){
+                    alert("请求失败");
+                });
+                that.dialogFormVisible = false;
             }
         }
     })

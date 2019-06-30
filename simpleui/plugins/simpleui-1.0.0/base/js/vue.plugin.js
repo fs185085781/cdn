@@ -1,8 +1,8 @@
 (function(win){
     "use strict";
     var ui = win[win.uiprefix];
-    var tempVue = Vue;
-    Vue = function(options){
+    Vue.prototype._oldInit = Vue.prototype._init;
+    Vue.prototype._init = function(options){
         var oldUpdated = options.updated;
         var oldMounted = options.mounted;
         var oldDestroyed = options.destroyed;
@@ -29,8 +29,7 @@
                 that.oldDestroyed();
             }
         }
-        var vueObj = new tempVue(options);
-        return vueObj;
+        this._oldInit(options);
     }
     function updateUiByVueNode(that,eventName){
         var _vnode = that._vnode;
