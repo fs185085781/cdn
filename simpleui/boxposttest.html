@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>弹出层提交</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-button type="text" @click="dialogFormVisible = true">报名</el-button>
+    <el-dialog title="旅游报名" :visible.sync="dialogFormVisible">
+        <el-form :model="form">
+            <el-form-item label="时间" :label-width="formLabelWidth">
+                <el-date-picker
+                        v-model="form.time"
+                        type="date"
+                        placeholder="选择日期">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="出发城市" :label-width="formLabelWidth">
+                <el-select v-model="form.region" placeholder="请选择出发城市">
+                    <el-option label="上海市" value="shanghai"></el-option>
+                    <el-option label="北京市" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="人数" :label-width="formLabelWidth">
+                <el-input v-model="form.persons" autocomplete="off"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="postSaveData">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            dialogFormVisible: false,
+            form: {
+                time: '',
+                region: '',
+                persons: ''
+            },
+            formLabelWidth: '120px'
+        },
+        methods:{
+            postSaveData:function(e){
+                console.log(this.form);
+                //这里就是ajax代码了，我就不写了
+                this.dialogFormVisible = false;
+            }
+        }
+    })
+</script>
+</html>

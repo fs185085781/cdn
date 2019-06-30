@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>弹出层提交</title>
-    <script src="./static/js/utils.js" simpleui="mode=vue&profile=test" plugins="element"></script>
+    <script src="./plugins/simpleui-1.0.0/boot.js?mode=vue&modules=form&skin=default&lang=zh_CN&profile=test"></script>
+    <script src="./static/js/utils.js" plugins="element"></script>
 </head>
 <body>
 <div id="app">
-    <el-button type="text" @click="dialogFormVisible = true">活动报名</el-button>
-
+    <!--<el-button type="text" @click="dialogFormVisible = true">打开嵌套表单的 Dialog</el-button>
     <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
         <el-form :model="form">
             <el-form-item label="活动名称" :label-width="formLabelWidth">
@@ -25,7 +25,7 @@
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
         </div>
-    </el-dialog>
+    </el-dialog>-->
 </div>
 </body>
 <script>

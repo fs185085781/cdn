@@ -241,13 +241,10 @@ var utils = {
 };
 //取得系统路径
 utils.host = utils.getHost();
-var simpleui = utils.getAttr("simpleui");
-if(simpleui){
-    document.write("<script src=\""+utils.host+"/plugins/simpleui-1.0.0/boot.js?"+simpleui+"\"></script>");
-}
 var plugins = utils.getAttr("plugins");
 if(plugins.indexOf("element") != -1){
-    document.write("<link rel=\"stylesheet\" href=\""+utils.host+"/plugins/element-ui-2.6.1/index.css\">");
+    document.write("<link rel=\"stylesheet\" href=\""+utils.host+"/plugins/element-ui-2.10.0/index.css\">");
+    document.write("<script src=\""+utils.host+"/plugins/element-ui-2.10.0/index.js\"></script>");
 }else if(plugins.indexOf("swiper") != -1){
     document.write("<link rel=\"stylesheet\" href=\""+utils.host+"/plugins/swiper-3.4.2/swiper.css\">");
     document.write("<script src=\""+utils.host+"/plugins/swiper-3.4.2/swiper.js\"></script>");
