@@ -576,16 +576,7 @@
             jQuery(that._inputEl).after("<input style=\"width:100%;\" class=\"form-control maskbox-input\" type=\"text\" placeholder=\"\" />");
             that._maskInputEl = jQuery(that.el).find(":input.maskbox-input")[0];
             jQuery(that._inputEl).hide();
-            jQuery(that._maskInputEl).on("change",function(e){
-                console.log(e);
-                var val = this.value;
-                if(that.getFormat()){
-                    val = maskToValue(val,that.getFormat());
-                }
-                that.setValue(val);
-            });
             jQuery(that._maskInputEl).on("input",function(e){
-                console.log(e);
                 var val = this.value;
                 if(that.getFormat()){
                     val = maskToValue(val,that.getFormat());
@@ -593,16 +584,18 @@
                 that.setValue(val);
             });
             function maskToValue(maskVal,format){
-                maskVal = "(010)256-123";
-                format = "(###)###-####";
                 var tempVal = "";
                 var length = format.length;
                 for(var i=0;i<length;i++){
                     var str = format.substring(i,i+1);
                     if(str=="#"){
-                        tempVal +=maskVal.substring(i,i+1);
+                        var temp = maskVal.substring(i,i+1);
+                        if(temp){
+                            tempVal +=temp;
+                        }
                     }
                 }
+                return tempVal;
             }
         },
         setFormat:function(val){
@@ -642,8 +635,28 @@
             var format = that.getFormat();
             if(!format){
                 that.format="";
+                jQuery(that._maskInputEl).val(that.getValue());
+                return;
             }
-
+            var val = that.getValue();
+            var tempVal = "";
+            var length = format.length;
+            var count = 0;
+            for(var i=0;i<length;i++){
+                var str = format.substring(i,i+1);
+                if(str=="#"){
+                    var temp = val.substring(count,count+1);
+                    count++;
+                    if(temp){
+                        tempVal +=temp;
+                    }else{
+                        tempVal +="_";
+                    }
+                }else{
+                    tempVal += str;
+                }
+            }
+            jQuery(that._maskInputEl).val(tempVal);
         }
     }
     ui.MaskBox = function(){};
