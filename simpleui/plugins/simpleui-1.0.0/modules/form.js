@@ -374,7 +374,11 @@
                 }
                 that.isDrag = false;
                 var left;
-                if(jQuery(that.el).css("transform").indexOf("matrix") != -1){
+                var transform = jQuery(that.el).css("transform");
+                if(transform == null){
+                    transform = "";
+                }
+                if(transform.indexOf("matrix") != -1){
                     left =jQuery(that._sliderBarEl).width()+ jQuery(that._sliderBarEl).offset().top - e.clientY;
                 }else{
                     left= e.clientX - jQuery(that._sliderBarEl).offset().left;
@@ -395,7 +399,11 @@
                     return;
                 }
                 var left;
-                if(jQuery(that.el).css("transform").indexOf("matrix") != -1){
+                var transform = jQuery(that.el).css("transform");
+                if(transform == null){
+                    transform = "";
+                }
+                if(transform.indexOf("matrix") != -1){
                     left =jQuery(that._sliderBarEl).width()+ jQuery(that._sliderBarEl).offset().top - e.clientY;
                 }else{
                     left= e.clientX - jQuery(that._sliderBarEl).offset().left;

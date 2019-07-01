@@ -995,13 +995,13 @@
         document.write('<link href="' + ui.jsPath + '/skin/'+ui.skin+'/mobile.css" rel="stylesheet" type="text/css" />');
     }
     jQuery(function(){
-        jQuery("body").click(function(e){
+        jQuery("body").on("click",function(e){
             ui.doBodyClick(e);
         });
-        jQuery("body").mouseup(function(e){
+        jQuery("body").on("mouseup",function(e){
             ui.doBodyMouseup(e);
         });
-        jQuery("body").mousemove(function(e){
+        jQuery("body").on("mousemove",function(e){
             ui.doBodyMousemove(e);
         });
     });
