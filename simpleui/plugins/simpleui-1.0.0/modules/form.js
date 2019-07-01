@@ -576,27 +576,35 @@
             jQuery(that._inputEl).after("<input style=\"width:100%;\" class=\"form-control maskbox-input\" type=\"text\" placeholder=\"\" />");
             that._maskInputEl = jQuery(that.el).find(":input.maskbox-input")[0];
             jQuery(that._inputEl).hide();
-            jQuery(that._maskInputEl).on("input",function(e){
-                var val = this.value;
-                if(that.getFormat()){
-                    val = maskToValue(val,that.getFormat());
-                }
-                that.setValue(val);
-            });
-            function maskToValue(maskVal,format){
-                var tempVal = "";
-                var length = format.length;
-                for(var i=0;i<length;i++){
-                    var str = format.substring(i,i+1);
-                    if(str=="#"){
-                        var temp = maskVal.substring(i,i+1);
-                        if(temp){
-                            tempVal +=temp;
-                        }
+            jQuery(that._maskInputEl).on("keydown",function(e){
+                var keyCode = e.keyCode;
+                var input = this;
+                var count;
+                if("selectionStart" in input) {
+                    count = input.selectionStart;
+                }else if(document.selection){
+                    var range = document.selection.createRange();
+                    var range_all = input.createTextRange();
+                    for (count=0; range_all.compareEndPoints("StartToStart", range) < 0; count++){
+                        range_all.moveStart('character', 1);
                     }
                 }
-                return tempVal;
-            }
+                console.log(count);
+            });
+            /*jQuery(that._maskInputEl).on("focus",function(e){
+                var input = this;
+                var count;
+                if("selectionStart" in input) {
+                    count = input.selectionStart;
+                }else if(document.selection){
+                    var range = document.selection.createRange();
+                    var range_all = input.createTextRange();
+                    for (count=0; range_all.compareEndPoints("StartToStart", range) < 0; count++){
+                        range_all.moveStart('character', 1);
+                    }
+                }
+                console.log(count);
+            });*/
         },
         setFormat:function(val){
             var that = this;
@@ -669,4 +677,23 @@
         thisClass:maskbox,
         init:maskbox.init
     });
+    win.getWz = function(the){
+        var getCurPos = '';
+        var curCurPos;
+        if ( navigator.userAgent.indexOf("MSIE") > -1 ) {  // IE
+            // 创建一个textRange,并让textRange范围包含元素里所有内容
+            var all_range = document.body.createTextRange();all_range.moveToElementText($(the).get(0));$(the).focus();
+            // 获取当前的textRange,如果当前的textRange是一个具体位置而不是范围,则此时textRange的范围是start到end.此时start等于end
+            var cur_range = document.selection.createRange();
+            // 将当前textRange的start,移动到之前创建的textRange的start处,这时,当前textRange范围就变成了从整个内容的start处,到当前范围end处
+            cur_range.setEndPoint("StartToStart",all_range);
+            // 此时当前textRange的Start到End的长度,就是光标的位置
+            curCurPos = cur_range.text.length;
+        } else {
+            // 获取当前元素光标位置
+            curCurPos = $(the).get(0).selectionStart;
+        }
+        // 返回光标位置
+        return curCurPos;
+    }
 })(window);
