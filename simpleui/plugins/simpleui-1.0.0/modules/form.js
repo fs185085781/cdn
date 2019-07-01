@@ -1,7 +1,7 @@
 (function(win){
     "use strict";
     var ui = win[win.uiprefix];
-    /*输入框*/
+    /*文本框*/
     var textbox = {
         init:function(){
             var that = this;
@@ -21,7 +21,7 @@
             var beforeSpanEl = jQuery("<span class=\"input-group-addon\" style=\"display:none;\"></span>");
             jQuery(that._inputEl).before(beforeSpanEl[0]);
             that._BeforeSpanEl =beforeSpanEl[0];
-            jQuery(that.el).on("focus",":input",function(e){
+            jQuery(that._inputEl).on("focus",function(e){
                 that.setIsValid(true);
                 if(that.getSelectOnFocus()){
                     this.selectionStart = 0;
@@ -29,30 +29,30 @@
                 }
                 that.fire("focus");
             });
-            jQuery(that.el).on("change",":input",function(e){
+            jQuery(that._inputEl).on("change",function(e){
                 that.setValue(this.value);
                 if(that.getValidateOnChanged()){
                     that.validate();
                 }
             });
-            jQuery(that.el).on("input",":input",function(e){
+            jQuery(that._inputEl).on("input",function(e){
                 var length = that.getMaxLength();
                 if(this.value.length>length){
                     this.value = this.value.substring(0,length);
                 }
             });
-            jQuery(that.el).on("keydown",":input",function(e){
+            jQuery(that._inputEl).on("keydown",function(e){
                 var data = {keyCode:e.keyCode,key:e.key};
                 if(e.keyCode == 13){
                     that.fire("enter");
                 }
                 that.fire("keydown",data);
             });
-            jQuery(that.el).on("keyup",":input",function(e){
+            jQuery(that._inputEl).on("keyup",function(e){
                 var data = {keyCode:e.keyCode,key:e.key};
                 that.fire("keyup",data);
             });
-            jQuery(that.el).on("blur",":input",function(e){
+            jQuery(that._inputEl).on("blur",function(e){
                 if(that.getValidateOnLeave()){
                     that.validate();
                 }
@@ -77,6 +77,7 @@
                 that.vtypeMsg = null;
                 that.setIsValid(true);
                 that.fire("validation",{flag:true});
+                console.log("不校验11");
                 return true;
             }
             var vtypeSz = vtype.split(";");
@@ -300,6 +301,7 @@
         thisClass:textbox,
         init:textbox.init
     });
+    /*隐藏框*/
     var hiddenbox = {
         init:function(){
             var that = this;
@@ -346,6 +348,7 @@
         thisClass:hiddenbox,
         init:hiddenbox.init
     });
+    /*滑块*/
     var slider = {
         init:function(){
             var that = this;
@@ -566,5 +569,91 @@
         thisClass:slider,
         init:slider.init
     });
+    /*掩码框*/
+    var maskbox = {
+        init:function(){
+            var that = this;
+            jQuery(that._inputEl).after("<input style=\"width:100%;\" class=\"form-control maskbox-input\" type=\"text\" placeholder=\"\" />");
+            that._maskInputEl = jQuery(that.el).find(":input.maskbox-input")[0];
+            jQuery(that._inputEl).hide();
+            jQuery(that._maskInputEl).on("change",function(e){
+                console.log(e);
+                var val = this.value;
+                if(that.getFormat()){
+                    val = maskToValue(val,that.getFormat());
+                }
+                that.setValue(val);
+            });
+            jQuery(that._maskInputEl).on("input",function(e){
+                console.log(e);
+                var val = this.value;
+                if(that.getFormat()){
+                    val = maskToValue(val,that.getFormat());
+                }
+                that.setValue(val);
+            });
+            function maskToValue(maskVal,format){
+                maskVal = "(010)256-123";
+                format = "(###)###-####";
+                var tempVal = "";
+                var length = format.length;
+                for(var i=0;i<length;i++){
+                    var str = format.substring(i,i+1);
+                    if(str=="#"){
+                        tempVal +=maskVal.substring(i,i+1);
+                    }
+                }
+            }
+        },
+        setFormat:function(val){
+            var that = this;
+            that.format = ui.parseString(val);
+            that.updateInputByValOrFormat();
+        },
+        getFormat:function(){
+            return this.format;
+        },
+        getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
+            return this.value;
+        },
+        setValue:function(val){
+            var that = this;
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var length = that.getMaxLength();
+            if(newVal.length>length){
+                newVal = newVal.substring(0,length);
+            }
+            var oldVal = that.getValue();
+            jQuery(that._inputEl).val(newVal);
+            that.value = newVal;
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
+                that.updateInputByValOrFormat();
+            }
+        },
+        updateInputByValOrFormat:function(){
+            var that = this;
+            var format = that.getFormat();
+            if(!format){
+                that.format="";
+            }
 
+        }
+    }
+    ui.MaskBox = function(){};
+    ui.regModule({
+        clazz:ui.MaskBox,
+        useClass:ui.prefix+"-maskbox",
+        fields:["format"],
+        events:[],
+        parentClass:ui.TextBox,
+        thisClass:maskbox,
+        init:maskbox.init
+    });
 })(window);

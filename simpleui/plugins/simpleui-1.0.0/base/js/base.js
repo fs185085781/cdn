@@ -366,7 +366,11 @@
                         continue;
                     }
                     try{
-                        value = eval(value);
+                        if(eval(value) instanceof HTMLInputElement){
+
+                        }else{
+                            value = eval(value);
+                        }
                     }catch (e) {
 
                     }

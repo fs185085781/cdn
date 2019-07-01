@@ -2,6 +2,9 @@
     height:38px;
     width:300px;
 }
+.simple-textbox{
+    border:1px solid transparent;
+}
 .simple-slider{
     width:300px;
 }
