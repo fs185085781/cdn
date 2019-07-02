@@ -774,4 +774,19 @@
         thisClass:maskbox,
         init:maskbox.init
     });
+    var buttonedit = {
+        init:function(){
+
+        }
+    };
+    ui.ButtonEdit = function(){};
+    ui.regModule({
+        clazz:ui.ButtonEdit,
+        useClass:ui.prefix+"-buttonedit",
+        fields:[],
+        events:[],
+        parentClass:ui.TextBox,
+        thisClass:buttonedit,
+        init:buttonedit.init
+    });
 })(window);
