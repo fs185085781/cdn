@@ -572,10 +572,7 @@
     var maskbox = {
         init:function(){
             var that = this;
-            jQuery(that._inputEl).after("<input style=\"width:100%;\" class=\"form-control maskbox-input\" type=\"text\" placeholder=\"\" />");
-            that._maskInputEl = jQuery(that.el).find(":input.maskbox-input")[0];
-            jQuery(that._inputEl).hide();
-            jQuery(that._maskInputEl).on("keydown",function(e){
+            jQuery(that._inputEl).on("keydown",function(e){
                 var keyCode = e.keyCode;
                 var target = e.currentTarget;
                 if(target.value.length != that.getFormat().length){
@@ -713,7 +710,7 @@
             return this.format;
         },
         getFormatValue:function(){
-            return jQuery(this._maskInputEl).val();
+            return jQuery(this._inputEl).val();
         },
         getValue:function(){
             if(this.value == null){
@@ -732,7 +729,6 @@
                 newVal = newVal.substring(0,length);
             }
             var oldVal = that.getValue();
-            jQuery(that._inputEl).val(newVal);
             that.value = newVal;
             if(oldVal != newVal){
                 that.fire("valuechanged",{oldValue:oldVal,value:newVal});
@@ -744,7 +740,7 @@
             var format = that.getFormat();
             if(!format){
                 that.format="";
-                jQuery(that._maskInputEl).val(that.getValue());
+                jQuery(that._inputEl).val(that.getValue());
                 return;
             }
             var val = that.getValue();
@@ -765,7 +761,7 @@
                     tempVal += str;
                 }
             }
-            jQuery(that._maskInputEl).val(tempVal);
+            jQuery(that._inputEl).val(tempVal);
         }
     }
     ui.MaskBox = function(){};
