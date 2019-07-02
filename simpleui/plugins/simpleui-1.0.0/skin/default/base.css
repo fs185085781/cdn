@@ -1920,7 +1920,7 @@ fieldset[disabled] .btn-dark:hover {
     font-size: 16px;
     position: relative;
     top: 50%;
-    margin-top: -4px;
+    margin-top: -8px;
 }
 .btn-group-xs>.btn,
 .btn-xs {

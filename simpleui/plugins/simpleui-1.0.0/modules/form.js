@@ -579,7 +579,7 @@
                     that.setValue("");
                     setCursorPos(target, 0);
                 }
-                var noNeedBtns = [9, 13, 35, 36, 37, 39];
+                var noNeedBtns = [9, 13,16, 35, 36, 37, 39];
                 if (jQuery.inArray(keyCode, noNeedBtns) != -1) {
                     return true;
                 }
