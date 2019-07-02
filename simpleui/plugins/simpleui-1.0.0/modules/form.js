@@ -688,6 +688,11 @@
                 }
                 return false;
             });
+            jQuery(that._inputEl).on("keyup",function(e){
+                if(/[\u4e00-\u9fa5]/g.test(this.value)){
+                    this.value=this.value.replace(/[\u4e00-\u9fa5]/g,'');
+                }
+            });
         },
         setFormat:function(val){
             var that = this;
