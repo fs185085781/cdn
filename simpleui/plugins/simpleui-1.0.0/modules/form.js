@@ -77,7 +77,6 @@
                 that.vtypeMsg = null;
                 that.setIsValid(true);
                 that.fire("validation",{flag:true});
-                console.log("不校验11");
                 return true;
             }
             var vtypeSz = vtype.split(";");
@@ -578,41 +577,143 @@
             jQuery(that._inputEl).hide();
             jQuery(that._maskInputEl).on("keydown",function(e){
                 var keyCode = e.keyCode;
-                var input = this;
-                var count;
-                if("selectionStart" in input) {
-                    count = input.selectionStart;
-                }else if(document.selection){
-                    var range = document.selection.createRange();
-                    var range_all = input.createTextRange();
-                    for (count=0; range_all.compareEndPoints("StartToStart", range) < 0; count++){
-                        range_all.moveStart('character', 1);
+                var target = e.currentTarget;
+                if(target.value.length != that.getFormat().length){
+                    that.setValue("");
+                    setCursorPos(target, 0);
+                }
+                var noNeedBtns = [9, 13, 35, 36, 37, 39];
+                if (jQuery.inArray(keyCode, noNeedBtns) != -1) {
+                    return true;
+                }
+                /*数值键盘码转换一下*/
+                if (keyCode >= 96 && keyCode <= 105) {
+                    keyCode -= 48;
+                }
+                var c = String.fromCharCode(keyCode);
+                if (keyCode >= 65 && keyCode <= 90 && !e.shiftKey) {
+                    c = c.toLowerCase();
+                } else {
+                    if (keyCode == 189 || keyCode == 187 || keyCode == 190) {
+                        var map = {"189":"-","187":"+","190":"."}
+                        c = map[keyCode+""];
                     }
                 }
-                console.log(count);
+                var addDataFlag = false;
+                if (keyCode == 8) {
+                    addDataFlag=deleteData(target, true);
+                }else {
+                    if (keyCode == 46) {
+                        addDataFlag=deleteData(target, false);
+                    } else {
+                        if("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-+.".indexOf(c) != -1){
+                            var pos = getCursorPos(target);
+                            addDataFlag=addData(pos,target, c,false);
+                        }
+                    }
+                }
+                if(addDataFlag){
+                    var format = that.getFormat();
+                    var val = "";
+                    for(var i=0;i<format.length;i++){
+                        var str = format.substring(i,i+1);
+                        if(str=="#"){
+                            val += that.currentValue.substring(i,i+1);
+                        }
+                    }
+                    that.setValue(val);
+                    setCursorPos(target, that.currentPos);
+                }
+                function deleteData(target,isLeft){
+                    var pos = getCursorPos(target);
+                    if(isLeft){
+                        pos -=1;
+                    }
+                    if(isLeft && pos==-1){
+                        return false;
+                    }
+                    return addData(pos,target,"_",isLeft);
+                }
+                function addData(pos,target,str,isLeft){
+                    var flag = false;
+                    if(pos == null){
+                        return flag;
+                    }
+                    if(!that.formatArray){
+                        that.formatArray = [];
+                    }
+                    if(!isLeft){
+                        while(true){
+                            if(jQuery.inArray(pos, that.formatArray) != -1 || pos>=that.getFormat().length) {
+                                break;
+                            }else{
+                                pos +=1;
+                            }
+                        }
+                    }
+                    if(jQuery.inArray(pos, that.formatArray) != -1) {
+                        var tempValue =target.value;
+                        tempValue = tempValue.substring(0,pos)+str+tempValue.substring(pos+1,tempValue.length);
+                        that.currentValue =tempValue;
+                        flag = true;
+                    }
+                    if(!isLeft){
+                        pos += 1;
+                    }else {
+                        flag = true;
+                    }
+                    that.currentPos = pos;
+                    return flag;
+                }
+                function getCursorPos(input){
+                    var pos;
+                    if("selectionStart" in input) {
+                        pos = input.selectionStart;
+                    }else if(document.selection){
+                        var range = document.selection.createRange();
+                        var range_all = input.createTextRange();
+                        for (pos=0; range_all.compareEndPoints("StartToStart", range) < 0; pos++){
+                            range_all.moveStart('character', 1);
+                        }
+                    }
+                    return pos;
+                }
+                function setCursorPos(input, pos) {
+                    if(input.setSelectionRange) {
+                        input.setSelectionRange(pos, pos);
+                    } else if(input.createTextRange) {
+                        var range = input.createTextRange();
+                        range.collapse(true);
+                        range.moveEnd('character', pos);
+                        range.moveStart('character', pos);
+                        range.select();
+                    }
+                }
+                return false;
             });
-            /*jQuery(that._maskInputEl).on("focus",function(e){
-                var input = this;
-                var count;
-                if("selectionStart" in input) {
-                    count = input.selectionStart;
-                }else if(document.selection){
-                    var range = document.selection.createRange();
-                    var range_all = input.createTextRange();
-                    for (count=0; range_all.compareEndPoints("StartToStart", range) < 0; count++){
-                        range_all.moveStart('character', 1);
-                    }
-                }
-                console.log(count);
-            });*/
         },
         setFormat:function(val){
             var that = this;
             that.format = ui.parseString(val);
+            that.formatArray = [];
+            if(that.format){
+                for(var i=0;i<that.format.length;i++){
+                    var str = that.format.substring(i,i+1);
+                    if(str=="#"){
+                        that.formatArray[that.formatArray.length] = i;
+                    }
+                }
+            }
             that.updateInputByValOrFormat();
         },
         getFormat:function(){
+            if(this.format == null){
+                this.format = "";
+            }
             return this.format;
+        },
+        getFormatValue:function(){
+            return jQuery(this._maskInputEl).val();
         },
         getValue:function(){
             if(this.value == null){
@@ -677,23 +778,4 @@
         thisClass:maskbox,
         init:maskbox.init
     });
-    win.getWz = function(the){
-        var getCurPos = '';
-        var curCurPos;
-        if ( navigator.userAgent.indexOf("MSIE") > -1 ) {  // IE
-            // 创建一个textRange,并让textRange范围包含元素里所有内容
-            var all_range = document.body.createTextRange();all_range.moveToElementText($(the).get(0));$(the).focus();
-            // 获取当前的textRange,如果当前的textRange是一个具体位置而不是范围,则此时textRange的范围是start到end.此时start等于end
-            var cur_range = document.selection.createRange();
-            // 将当前textRange的start,移动到之前创建的textRange的start处,这时,当前textRange范围就变成了从整个内容的start处,到当前范围end处
-            cur_range.setEndPoint("StartToStart",all_range);
-            // 此时当前textRange的Start到End的长度,就是光标的位置
-            curCurPos = cur_range.text.length;
-        } else {
-            // 获取当前元素光标位置
-            curCurPos = $(the).get(0).selectionStart;
-        }
-        // 返回光标位置
-        return curCurPos;
-    }
 })(window);
