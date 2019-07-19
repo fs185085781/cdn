@@ -1,3 +1,4 @@
+/*文本框*/
 .simple-textbox{
     height:38px;
     width:300px;
@@ -5,6 +6,7 @@
 .simple-textbox{
     border:1px solid transparent;
 }
+/*滑块*/
 .simple-slider{
     width:300px;
 }
@@ -58,4 +60,8 @@
 }
 .simple-slider-portrait .slider-rulelabel span,.simple-slider-portrait .slider-tip{
     transform: rotate(90deg);
+}
+/*掩码框*/
+.simple-maskbox{
+    width:300px;
 }

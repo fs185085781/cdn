@@ -797,9 +797,6 @@
         disable:function(){
             this.setEnabled(false);
         },
-        doLayout:function(){
-
-        },
         addCls:function(value){
             value =ui.parseString(value);
             if(value == this.useClass){

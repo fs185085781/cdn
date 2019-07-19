@@ -300,53 +300,6 @@
         thisClass:textbox,
         init:textbox.init
     });
-    /*隐藏框*/
-    var hiddenbox = {
-        init:function(){
-            var that = this;
-            /*插入输入框*/
-            jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" />");
-            that._inputEl = jQuery(that.el).find(":input")[0];
-            jQuery(that.el).hide();
-        },
-        setName:function(val){
-            var that = this;
-            that.name = ui.parseString(val);
-            jQuery(that._inputEl).attr("name",that.name);
-        },
-        getName:function(){
-            return this.name;
-        },
-        setValue:function(val){
-            var that = this;
-            var newVal = ui.parseString(val);
-            if(!newVal){
-                newVal = "";
-            }
-            var oldVal = that.getValue();
-            jQuery(that._inputEl).val(newVal);
-            that.value = newVal;
-            if(oldVal != newVal){
-                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
-            }
-        },
-        getValue:function(){
-            if(this.value == null){
-                this.value = "";
-            }
-            return this.value;
-        }
-    }
-    ui.HiddenBox = function(){};
-    ui.regModule({
-        clazz:ui.HiddenBox,
-        useClass:ui.prefix+"-hidden",
-        fields:["value","name"],
-        events:["valuechanged"],
-        parentClass:ui.BaseModule,
-        thisClass:hiddenbox,
-        init:hiddenbox.init
-    });
     /*滑块*/
     var slider = {
         init:function(){
@@ -567,6 +520,109 @@
         parentClass:ui.BaseModule,
         thisClass:slider,
         init:slider.init
+    });
+    /*隐藏框*/
+    var hiddenbox = {
+        init:function(){
+            var that = this;
+            /*插入输入框*/
+            jQuery(that.el).append("<input class=\"form-control\" type=\"hidden\" placeholder=\"\" />");
+            that._inputEl = jQuery(that.el).find(":input")[0];
+        },
+        setName:function(val){
+            var that = this;
+            that.name = ui.parseString(val);
+            jQuery(that._inputEl).attr("name",that.name);
+        },
+        getName:function(){
+            return this.name;
+        },
+        setValue:function(val){
+            var that = this;
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var oldVal = that.getValue();
+            jQuery(that._inputEl).val(newVal);
+            that.value = newVal;
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
+            }
+        },
+        getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
+            return this.value;
+        }
+    }
+    ui.HiddenBox = function(){};
+    ui.regModule({
+        clazz:ui.HiddenBox,
+        useClass:ui.prefix+"-hidden",
+        fields:["value","name"],
+        events:["valuechanged"],
+        parentClass:ui.BaseModule,
+        thisClass:hiddenbox,
+        init:hiddenbox.init
+    });
+    /*实体框,由两个输入框完成,一个是外界显示,一个是真实的值*/
+    var entitybox = {
+        init:function(){
+            var that = this;
+            /*插入输入框*/
+            jQuery(that.el).append("<input class=\"form-control\" type=\"text\" placeholder=\"\" /><input class=\"form-control\" type=\"hidden\" />");
+            that._textInputEl = jQuery(that.el).find(":input[type='text']")[0];
+            that._valueInputEl = jQuery(that.el).find(":input[type='hidden']")[0];
+        },
+        setName:function(val){
+            var that = this;
+            that.name = ui.parseString(val);
+            jQuery(that._valueInputEl).attr("name",that.name);
+        },
+        getName:function(){
+            return this.name;
+        },
+        setValue:function(val){
+            var that = this;
+            var newVal = ui.parseString(val);
+            if(!newVal){
+                newVal = "";
+            }
+            var oldVal = that.getValue();
+            jQuery(that._valueInputEl).val(newVal);
+            that.value = newVal;
+            if(oldVal != newVal){
+                that.fire("valuechanged",{oldValue:oldVal,value:newVal});
+            }
+        },
+        getValue:function(){
+            if(this.value == null){
+                this.value = "";
+            }
+            return this.value;
+        },
+        setText:function(val){
+            var that = this;
+            that.text = ui.parseString(val);
+            jQuery(that._textInputEl).val(that.text);
+        },
+        getText:function(){
+            return this.text;
+        }
+    }
+    ui.EntityBox = function(){};
+    ui.regModule({
+        clazz:ui.EntityBox,
+        useClass:ui.prefix+"-entitybox",
+        /*fields:["value","text","name"],
+        events:["valuechanged"],*/
+        fields:["emptyText","name","value","allowInput","selectOnFocus","maxLength","validateMode","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText","beforeText","afterText"],
+        events:["valuechanged","validation","enter","keydown","keyup","focus","blur"],
+        parentClass:ui.BaseModule,
+        thisClass:entitybox,
+        init:entitybox.init
     });
     /*掩码框*/
     var maskbox = {
