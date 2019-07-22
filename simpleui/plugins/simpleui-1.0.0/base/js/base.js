@@ -52,6 +52,7 @@
                 case '[object Object]':
                     result += '{';
                     for (i in jsonObj) {
+                        console.log(jsonObj);
                         if (jsonObj.hasOwnProperty(i)) {
                             curVal = that.encode(jsonObj[i]);
                             if (curVal !== undefined) {
@@ -358,6 +359,29 @@
                 ui.allSimple[moduleObj.uikey] = moduleObj;
                 jQuery(moduleObj.el).attr("uikey",moduleObj.uikey);
                 moduleObj.initHtml();
+                /*获取真实值,因为页面上传递的值,有可能包含变量*/
+                function getRealValue(val){
+                    try{
+                        /*IE浏览器下eval执行到不包含的变量不会抛异常返回undefined*/
+                        if(eval(val) == eval(eval(val))){
+                            /*当前是数值或是对象*/
+                        }else{
+                            try{
+                                val = eval(val);
+                            }catch (e2) {
+                                /*无法使用eval的不处理*/
+                            }
+                        }
+                    }catch (e) {
+                        /*谷歌浏览器下eval执行到不包含的变量会抛异常进这里*/
+                        try{
+                            val = eval(val);
+                        }catch (e2) {
+                            /*无法使用eval的不处理*/
+                        }
+                    }
+                    return val;
+                }
                 //设置属性
                 var fieldMap = moduleObj.fieldMap;
                 for(var field in fieldMap){
@@ -365,15 +389,7 @@
                     if(!value){
                         continue;
                     }
-                    try{
-                        if(eval(value) instanceof HTMLInputElement){
-
-                        }else{
-                            value = eval(value);
-                        }
-                    }catch (e) {
-
-                    }
+                    value = getRealValue(value);
                     var setFunctionName = "set"+that.firstToUpperCase(field);
                     if(moduleObj[setFunctionName]){
                         eval("moduleObj."+setFunctionName+"(value)");

@@ -609,6 +609,9 @@
             jQuery(that._textInputEl).val(that.text);
         },
         getText:function(){
+            if(this.text == null){
+                this.text = "";
+            }
             return this.text;
         }
     }
@@ -616,10 +619,8 @@
     ui.regModule({
         clazz:ui.EntityBox,
         useClass:ui.prefix+"-entitybox",
-        /*fields:["value","text","name"],
-        events:["valuechanged"],*/
-        fields:["emptyText","name","value","allowInput","selectOnFocus","maxLength","validateMode","validateOnChanged","validateOnLeave","forceValidate","vtype","vtypeErrorText","beforeText","afterText"],
-        events:["valuechanged","validation","enter","keydown","keyup","focus","blur"],
+        fields:["value","text","name"],
+        events:["valuechanged"],
         parentClass:ui.BaseModule,
         thisClass:entitybox,
         init:entitybox.init
