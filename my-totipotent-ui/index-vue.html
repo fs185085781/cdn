@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全能UI</title>
+    <script src="./totipotent-ui-1.0.0/boot.js?mode=vue&skin=metro-orange&lang=zh_CN&profile=test&jsx=false"></script>
+</head>
+<body>
+<div id="app">
+    <div class="totipotent-textbox" v-bind:value="textbox.value" v-on:elvaluechanged="testEvent"></div>
+    <div class="totipotent-button" v-bind:text="button.text" v-on:elclick="btnClick"></div>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            textbox:{
+                value:"你好"
+            },
+            button:{
+                text:"修改输入框文字"
+            }
+        },
+        methods:{
+            testEvent:function(e){
+                console.log(e);
+            },
+            btnClick:function(){
+                this.textbox.value = "修改一下输入框";
+            }
+        }
+    })
+</script>
+</html>

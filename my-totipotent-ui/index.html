@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全能UI</title>
+    <script src="./totipotent-ui-1.0.0/boot.js?mode=jquery&skin=metro-orange&lang=zh_CN&profile=test&jsx=false"></script>
+</head>
+<body>
+<div id="input-id" class="totipotent-textbox" value="你好" elvaluechanged="testEvent"></div>
+<div class="totipotent-button" text="修改输入框文字" elclick="btnClick"></div>
+</body>
+<script>
+    function testEvent(e) {
+        console.log(e);
+    }
+    function btnClick() {
+        totipUi.getBySelect("#input-id").setValue("修改一下输入框");
+    }
+</script>
+</html>
