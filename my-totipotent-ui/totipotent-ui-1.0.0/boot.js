@@ -89,7 +89,7 @@
     }
     /*如果是react 加载react的必备文件*/
     if(jsSearch.mode == "react"){
-        document.write('<script src="' + jsPath + '/base//'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jsPath + '/base/'+jsSearch.profile+'/react-dom.js" type="text/javascript"></sc' + 'ript>');
     }
     /*加载模块和皮肤*/
     var skin = htmlSearch.skin;

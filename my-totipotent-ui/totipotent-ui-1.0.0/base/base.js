@@ -1,5 +1,6 @@
 (function (win) {
-    win.totipUi = {
+    win.tot=win.mini;
+   var temp = {
         firstToUpperCase: function (str) {
             if (!str) {
                 return str;
@@ -56,7 +57,7 @@
         regCtrls:function(){
             var that = this;
             that.ctrlMap = {};
-            var parentCtrl = mini.Control.prototype;
+            var parentCtrl = win.tot.Control.prototype;
             var noNeedFieldList = [];
             var parentCtrlFields = ["id","name","visible","enabled","cls","style","borderStyle","width","height","tooltip"];
             jQuery.each(parentCtrl,function(key,val){
@@ -77,15 +78,15 @@
                 noNeedFieldList[noNeedFieldList.length] = realField;
             });
            var ctrls = [];
-           jQuery.each(mini,function(key,val){
-               if(eval("mini."+key) && eval("mini."+key+".prototype") && eval("mini."+key+".prototype.uiCls")){
+           jQuery.each(tot,function(key,val){
+               if(eval("tot."+key) && eval("tot."+key+".prototype") && eval("tot."+key+".prototype.uiCls")){
                    ctrls[ctrls.length] = key;
                }
            });
            jQuery.each(ctrls,function(i,item){
-               var uiCls = eval("mini."+item+".prototype.uiCls");
+               var uiCls = eval("tot."+item+".prototype.uiCls");
                uiCls = uiCls.replace("mini-","");
-               var ctrl = eval("mini."+item+".prototype");
+               var ctrl = eval("tot."+item+".prototype");
                var fieldList = [];
                jQuery.each(ctrl,function(key,val){
                    if(typeof val != "function"){
@@ -104,10 +105,10 @@
                    }
                    fieldList[fieldList.length] = realField;
                });
-               that.ctrlMap[uiCls] = {fieldList:fieldList,ctrlClass:eval("mini."+item)};
+               that.ctrlMap[uiCls] = {fieldList:fieldList,ctrlClass:eval("tot."+item)};
            });
         },
-        parse: function () {
+       parse: function () {
             var that = this;
             if (that.lastKeyId == null) {
                 that.lastKeyId = 1;
@@ -190,5 +191,8 @@
             return this.uiMap[key];
         }
     }
-    win.totipUi.regCtrls();
+    for(var key in temp){
+        win.tot[key] = temp[key];
+    }
+    win.tot.regCtrls();
 })(window);
