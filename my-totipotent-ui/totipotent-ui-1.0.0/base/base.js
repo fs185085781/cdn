@@ -8,6 +8,29 @@
             str = str.substring(0, 1).toUpperCase() + str.substring(1);
             return str;
         },
+        firstToLowerCase: function (str) {
+            if (!str) {
+                return str;
+            }
+            str = str + "";
+            str = str.substring(0, 1).toLowerCase() + str.substring(1);
+            return str;
+        },
+        underlineToHump:function(str){
+            while(true){
+                var has = str.indexOf("_");
+                if(has == -1){
+                    break;
+                }
+                var next = str.substring(has+1,has+2);
+                if(next == ""){
+                    str = str.substring(0,has);
+                }else{
+                    str = str.substring(0,has)+next.toUpperCase()+str.substring(has+2);
+                }
+            }
+            return str;
+        },
         getRealValue: function (val) {
             try {
                 /*IE浏览器下eval执行到不包含的变量不会抛异常返回undefined*/
@@ -30,6 +53,60 @@
             }
             return val;
         },
+        regCtrls:function(){
+            var that = this;
+            that.ctrlMap = {};
+            var parentCtrl = mini.Control.prototype;
+            var noNeedFieldList = [];
+            var parentCtrlFields = ["id","name","visible","enabled","cls","style","borderStyle","width","height","tooltip"];
+            jQuery.each(parentCtrl,function(key,val){
+                if(typeof val != "function"){
+                    return true;
+                }
+                if(key.length <=3 || key.substring(0,3) != "get"){
+                    return true;
+                }
+                var set = "set"+key.substring(3);
+                if(!parentCtrl[set] || typeof parentCtrl[set] != "function"){
+                    return true;
+                }
+                var realField = that.firstToLowerCase(key.substring(3));
+                if(parentCtrlFields.contains(realField)){
+                    return true;
+                }
+                noNeedFieldList[noNeedFieldList.length] = realField;
+            });
+           var ctrls = [];
+           jQuery.each(mini,function(key,val){
+               if(eval("mini."+key) && eval("mini."+key+".prototype") && eval("mini."+key+".prototype.uiCls")){
+                   ctrls[ctrls.length] = key;
+               }
+           });
+           jQuery.each(ctrls,function(i,item){
+               var uiCls = eval("mini."+item+".prototype.uiCls");
+               uiCls = uiCls.replace("mini-","");
+               var ctrl = eval("mini."+item+".prototype");
+               var fieldList = [];
+               jQuery.each(ctrl,function(key,val){
+                   if(typeof val != "function"){
+                       return true;
+                   }
+                   if(key.length <=3 || key.substring(0,3) != "get"){
+                       return true;
+                   }
+                   var set = "set"+key.substring(3);
+                   if(!ctrl[set] || typeof ctrl[set] != "function"){
+                       return true;
+                   }
+                   var realField = that.firstToLowerCase(key.substring(3));
+                   if(noNeedFieldList.contains(realField)){
+                       return true;
+                   }
+                   fieldList[fieldList.length] = realField;
+               });
+               that.ctrlMap[uiCls] = {fieldList:fieldList,ctrlClass:eval("mini."+item)};
+           });
+        },
         parse: function () {
             var that = this;
             if (that.lastKeyId == null) {
@@ -38,46 +115,39 @@
             if (that.uiMap == null) {
                 that.uiMap = {};
             }
-            var fields = ["progressbar", "textbox", "combobox", "textboxlist", "button", "listbox", "checkboxlist", "radiobuttonlist", "calendar", "buttonedit", "filteredit", "password", "textarea", "datepicker", "monthpicker", "spinner", "timespinner", "treeselect", "lookup", "htmlfile", "hidden", "datagrid", "tree", "treegrid", "fit", "panel", "window", "splitter", "pager", "outlookbar", "outlookmenu", "outlooktree", "tabs", "menu", "menubar", "toolbar"];
-            jQuery.each(fields, function (i, field) {
+            jQuery.each(that.ctrlMap,function (field,ctrl) {
                 jQuery(".totipotent-" + field).each(function (n, item) {
                     if (item.getAttribute("uikey")) {
                         return true;
                     }
-                    jQuery(item).html("<div class='mini-" + field + "'></div>");
-                });
-            });
-            mini.parse();
-            jQuery.each(fields, function (i, field) {
-                jQuery(".totipotent-" + field).each(function (n, item) {
-                    if (item.getAttribute("uikey")) {
-                        return true;
-                    }
-                    var el = jQuery(item).find(":first-child")[0];
-                    var obj = mini.get(el);
-                    if (obj == null) {
+                    var div =$("<div class='mini-" + field + "'></div>");
+                    div.appendTo(item);
+                    var obj = new ctrl.ctrlClass(div[0]);
+                    if(obj == null){
                         return true;
                     }
                     var key = "totipkey-" + (that.lastKeyId++);
                     jQuery(item).attr("uikey", key);
                     obj.totipUiEl = item;
                     that.uiMap[key] = obj;
-                    var options = {};
                     var events = {};
                     jQuery.each(item.attributes, function (i, attr) {
                         if (!attr.specified) {
                             return true;
                         }
-                        if (attr.name.indexOf("sizzle") != -1) {
+                        if(attr.name.indexOf("sizzle") != -1) {
                             return true;
                         }
                         if (attr.name == "class" || attr.name == "uikey" || attr.name == "id") {
                             return true;
                         }
-                        if (attr.name.length > 2 && attr.name.substring(0, 2) == "el") {
-                            events[attr.name.substring(2)] = attr.value;
-                        } else {
-                            options[attr.name] = that.getRealValue(attr.value);
+                        if(ctrl.fieldList.contains(attr.name)){
+                            var value = that.getRealValue(attr.value);
+                            eval("obj.set"+that.firstToUpperCase(attr.name)+"(value)");
+                        }else{
+                            if (attr.name.length > 2 && attr.name.substring(0, 2) == "el") {
+                                events[attr.name.substring(2)] = attr.value;
+                            }
                         }
                     });
                     obj.allBindEventMap = {};
@@ -109,7 +179,6 @@
                         }
                         obj.allBindEventMap[key] = key;
                     });
-                    obj.set(options);
                 });
             });
         },
@@ -121,4 +190,5 @@
             return this.uiMap[key];
         }
     }
+    win.totipUi.regCtrls();
 })(window);
