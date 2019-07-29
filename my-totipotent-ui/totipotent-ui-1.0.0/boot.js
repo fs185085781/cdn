@@ -1,5 +1,8 @@
 (function(win){
     "use strict";
+    win.alert=function(msg){
+        console.log("阻止系统弹窗:"+msg);
+    }
     /*提供js的引入机制*/
     var t={
         getJsPath:function(js){
