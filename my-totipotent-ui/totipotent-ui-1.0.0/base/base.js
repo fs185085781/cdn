@@ -1,5 +1,6 @@
 (function (win) {
     win.tot=win.mini;
+    win.tot.parse = function(){};
    var temp = {
         firstToUpperCase: function (str) {
             if (!str) {
@@ -57,26 +58,6 @@
         regCtrls:function(){
             var that = this;
             that.ctrlMap = {};
-            var parentCtrl = win.tot.Control.prototype;
-            var noNeedFieldList = [];
-            var parentCtrlFields = ["id","name","visible","enabled","cls","style","borderStyle","width","height","tooltip"];
-            jQuery.each(parentCtrl,function(key,val){
-                if(typeof val != "function"){
-                    return true;
-                }
-                if(key.length <=3 || key.substring(0,3) != "get"){
-                    return true;
-                }
-                var set = "set"+key.substring(3);
-                if(!parentCtrl[set] || typeof parentCtrl[set] != "function"){
-                    return true;
-                }
-                var realField = that.firstToLowerCase(key.substring(3));
-                if(parentCtrlFields.contains(realField)){
-                    return true;
-                }
-                noNeedFieldList[noNeedFieldList.length] = realField;
-            });
            var ctrls = [];
            jQuery.each(tot,function(key,val){
                if(eval("tot."+key) && eval("tot."+key+".prototype") && eval("tot."+key+".prototype.uiCls")){
@@ -100,15 +81,12 @@
                        return true;
                    }
                    var realField = that.firstToLowerCase(key.substring(3));
-                   if(noNeedFieldList.contains(realField)){
-                       return true;
-                   }
                    fieldList[fieldList.length] = realField;
                });
                that.ctrlMap[uiCls] = {fieldList:fieldList,ctrlClass:eval("tot."+item)};
            });
         },
-       parse: function () {
+       parseUi: function () {
             var that = this;
             if (that.lastKeyId == null) {
                 that.lastKeyId = 1;

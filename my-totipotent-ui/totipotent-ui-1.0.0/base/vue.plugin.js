@@ -33,7 +33,7 @@
     function updateUiByVueNode(that,eventName){
         var _vnode = that._vnode;
         if(eventName == "mounted"){
-            totipUi.parse();
+            tot.parseUi();
         }
         if(!_vnode){
             return;
@@ -44,7 +44,7 @@
         }
         for(var i=0;i<children.length;i++){
             var node = children[i];
-            var uiObj = totipUi.getBySelect(node.elm);
+            var uiObj = tot.getBySelect(node.elm);
             if(!uiObj){
                 continue;
             }
@@ -61,7 +61,7 @@
             }
             for(var field in fieldMap){
                 var value = fieldMap[field];
-                var setFunctionName = "set"+totipUi.firstToUpperCase(field);
+                var setFunctionName = "set"+tot.firstToUpperCase(field);
                 if(uiObj[setFunctionName]){
                     eval("uiObj."+setFunctionName+"(value)");
                 }
