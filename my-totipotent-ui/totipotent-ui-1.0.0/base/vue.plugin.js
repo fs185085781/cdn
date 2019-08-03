@@ -4,7 +4,7 @@
     Vue.prototype.oldMounted = function(){};
     Vue.prototype.oldUpdated = function(){};
     Vue.prototype.oldDestroyed = function(){};
-    Vue.prototype.oldBeforeCreate = function(){};
+    Vue.prototype.oldCreated = function(){};
     Vue.prototype._init = function(options){
         if(options.mounted){
             Vue.prototype.oldMounted = options.mounted;
@@ -15,8 +15,8 @@
         if(options.destroyed){
             Vue.prototype.oldDestroyed = options.destroyed;
         }
-        if(options.beforeCreate){
-            Vue.prototype.oldBeforeCreate = options.beforeCreate;
+        if(options.created){
+            Vue.prototype.oldCreated = options.created;
         }
         options.updated = function(){
             var that = this;
@@ -33,10 +33,10 @@
             that.destroyedUiByVue();
             that.oldDestroyed();
         }
-        options.beforeCreate = function(){
+        options.created = function(){
             var that = this;
-            that.beforeCreateUiByVue();
-            that.oldBeforeCreate();
+            that.createdUiByVue();
+            that.oldCreated();
         }
         this.totipUiMap = {};
         this._oldInit(options);
@@ -53,13 +53,13 @@
     Vue.prototype.destroyedUiByVue = function(){
         var that = this;
     }
-    Vue.prototype.beforeCreateUiByVue = function(){
+    Vue.prototype.createdUiByVue = function(){
         var that = this;
         jQuery.each(tot.valueChangedCtrls,function(i,cls){
             var divClass = tot.prefixClass+cls;
             jQuery("."+divClass).each(function(i,div){
                 var valueProp = jQuery(div).attr("v-bind:value");
-                jQuery(div).attr("v-on:updatevaluechange",";if($event.target.value !== undefined){"+valueProp+"=$event.target.value}");
+                jQuery(div).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
             });
         });
     }
