@@ -1,7 +1,7 @@
 (function (win) {
     win.tot=win.mini;
-    win.tot.parse = function(){};
-   var temp = {
+    win.tot.prefixClass = "totipotent-";
+    var temp = {
         firstToUpperCase: function (str) {
             if (!str) {
                 return str;
@@ -58,6 +58,7 @@
         regCtrls:function(){
             var that = this;
             that.ctrlMap = {};
+            that.valueChangedCtrls = [];
            var ctrls = [];
            jQuery.each(tot,function(key,val){
                if(eval("tot."+key) && eval("tot."+key+".prototype") && eval("tot."+key+".prototype.uiCls")){
@@ -69,6 +70,9 @@
                uiCls = uiCls.replace("mini-","");
                var ctrl = eval("tot."+item+".prototype");
                var fieldList = [];
+               if(ctrl.onValueChanged){
+                   that.valueChangedCtrls[that.valueChangedCtrls.length] = uiCls;
+               }
                jQuery.each(ctrl,function(key,val){
                    if(typeof val != "function"){
                        return true;
@@ -95,71 +99,78 @@
                 that.uiMap = {};
             }
             jQuery.each(that.ctrlMap,function (field,ctrl) {
-                jQuery(".totipotent-" + field).each(function (n, item) {
+                jQuery("."+that.prefixClass+ field).each(function (n, item) {
                     if (item.getAttribute("uikey")) {
                         return true;
                     }
-                    var div =$("<div class='mini-" + field + "'></div>");
-                    div.appendTo(item);
-                    var obj = new ctrl.ctrlClass(div[0]);
-                    if(obj == null){
-                        return true;
-                    }
-                    var key = "totipkey-" + (that.lastKeyId++);
-                    jQuery(item).attr("uikey", key);
-                    obj.totipUiEl = item;
-                    that.uiMap[key] = obj;
-                    var events = {};
-                    jQuery.each(item.attributes, function (i, attr) {
-                        if (!attr.specified) {
-                            return true;
-                        }
-                        if(attr.name.indexOf("sizzle") != -1) {
-                            return true;
-                        }
-                        if (attr.name == "class" || attr.name == "uikey" || attr.name == "id") {
-                            return true;
-                        }
-                        if(ctrl.fieldList.contains(attr.name)){
-                            var value = that.getRealValue(attr.value);
-                            eval("obj.set"+that.firstToUpperCase(attr.name)+"(value)");
-                        }else{
-                            if (attr.name.length > 2 && attr.name.substring(0, 2) == "el") {
-                                events[attr.name.substring(2)] = attr.value;
-                            }
-                        }
-                    });
-                    obj.allBindEventMap = {};
-                    jQuery.each(events, function (key, value) {
-                        value = value.trim();
-                        if (win[value]) {
-                            obj.on(key, win[value]);
-                        } else if (value.startsWith("function")) {
-                            if (that.lastEventId == null) {
-                                that.lastEventId = 1;
-                            }
-                            var eventName = "totip_event_" + (that.lastEventId++);
-                            eval("win." + eventName + "=" + value);
-                            obj.on(key, eval(eventName));
-                        } else if (value.indexOf("(") != -1 && value.indexOf(")") != -1) {
-                            var z = value.indexOf("(");
-                            var m = value.indexOf(":");
-                            var method;
-                            if (m != -1 && m < z) {
-                                method = value.substring(m + 1, z);
-                            } else {
-                                method = value.substring(0, z);
-                            }
-                            if (method && win[method]) {
-                                obj.on(key, win[method]);
-                            }
-                        }else{
-                            return true;
-                        }
-                        obj.allBindEventMap[key] = key;
-                    });
+                    jQuery(item).html("<div class='mini-" + field + "'></div>");
                 });
             });
+           tot.parse();
+           jQuery.each(that.ctrlMap,function (field,ctrl) {
+               jQuery("."+that.prefixClass+ field).each(function (n, item) {
+                   if (item.getAttribute("uikey")) {
+                       return true;
+                   }
+                   var obj = tot.get(jQuery(item).find(":first-child")[0]);
+                   if(obj == null){
+                       return true;
+                   }
+                   var key = "totipkey-" + (that.lastKeyId++);
+                   jQuery(item).attr("uikey", key);
+                   obj.totipUiEl = item;
+                   obj.totipUid = key;
+                   obj.totipType = field;
+                   that.uiMap[key] = obj;
+                   var events = {};
+                   jQuery.each(item.attributes, function (i, attr) {
+                       if (!attr.specified) {
+                           return true;
+                       }
+                       if(attr.name.indexOf("sizzle") != -1) {
+                           return true;
+                       }
+                       if (attr.name == "class" || attr.name == "uikey" || attr.name == "id") {
+                           return true;
+                       }
+                       if(ctrl.fieldList.contains(attr.name)){
+                           var value = that.getRealValue(attr.value);
+                           eval("obj.set"+that.firstToUpperCase(that.underlineToHump(attr.name))+"(value)");
+                       }else{
+                           if (attr.name.length > 2 && attr.name.substring(0, 2) == "el") {
+                               events[attr.name.substring(2)] = attr.value;
+                           }
+                       }
+                   });
+                   jQuery.each(events, function (key, value) {
+                       value = value.trim();
+                       if (win[value]) {
+                           obj.on(key, win[value]);
+                       } else if (value.startsWith("function")) {
+                           if (that.lastEventId == null) {
+                               that.lastEventId = 1;
+                           }
+                           var eventName = "totip_event_" + (that.lastEventId++);
+                           eval("win." + eventName + "=" + value);
+                           obj.on(key, eval(eventName));
+                       } else if (value.indexOf("(") != -1 && value.indexOf(")") != -1) {
+                           var z = value.indexOf("(");
+                           var m = value.indexOf(":");
+                           var method;
+                           if (m != -1 && m < z) {
+                               method = value.substring(m + 1, z);
+                           } else {
+                               method = value.substring(0, z);
+                           }
+                           if (method && win[method]) {
+                               obj.on(key, win[method]);
+                           }
+                       }else{
+                           return true;
+                       }
+                   });
+               });
+           });
         },
         getBySelect:function(el){
             var key = jQuery(el).attr("uikey");

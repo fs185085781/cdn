@@ -7,29 +7,57 @@
 </head>
 <body>
 <div id="app">
-    <div class="totipotent-textbox" v-bind:value="textbox.value" v-bind:empty_text="textbox.emptyText" v-on:elvaluechanged="testEvent"></div>
-    <div class="totipotent-button" v-bind:text="button.text" v-on:elclick="btnClick"></div>
-    <p>Message is: {{ textbox.value }}</p>
+    <div v-for="textbox in textboxs" class="totipotent-textbox dsads" v-bind:value="textbox.value" v-bind:empty_text="textbox.emptyText" v-on:elvaluechanged="testEvent"></div>
+    <div class="totipotent-button dssdsa" v-bind:text="button.text" v-on:elclick="btnClick"></div>
+    <p>Message is: {{ textboxs[0].value }}</p>
+    <div class="dsadsadsa" v-bind:title="test.title">
+        <div>{{test.msg}}</div>
+    </div>
+    <div class="totipotent-monthpicker" v-bind:value="month.value"></div>
+    <p>Message is: {{month.value}}</p>
+    <div class="totipotent-datepicker" v-bind:value="date.value" value_type="string" format="yyyy-MM-dd HH:mm:ss"></div>
+    <p>Message is: {{date.value}}</p>
+    <div class="totipotent-combobox" data="[{id:'1',text:'11'},{id:'2',text:'22'}]" v-bind:value="combobox.value"></div>
+    <p>Message is: {{combobox.value}}</p>
 </div>
 </body>
 <script>
     var app = new Vue({
         el: '#app',
         data: {
-            textbox:{
-                value:"你好",
-                emptyText:"为空提示"
+            textboxs:[
+                {
+                    value:"你好",
+                    emptyText:"为空提示",
+                },
+                {
+                    value:"你好2",
+                    emptyText:"为空提示2"
+                }
+            ],
+            test:{
+                title:"测试标题",
+                msg:"测试提示"
             },
             button:{
                 text:"修改输入框文字"
+            },
+            month:{
+                value:"2018-09"
+            },
+            date:{
+                value:"2018-09-11 00:22:33"
+            },
+            combobox:{
+                value:"2"
             }
         },
         methods:{
             testEvent:function(e){
-                console.log(e);
+                console.log(e,this);
             },
             btnClick:function(){
-                this.textbox.value = "修改一下输入框";
+                this.textboxs[0].value = "修改一下输入框";
             }
         }
     })
