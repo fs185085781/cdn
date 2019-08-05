@@ -178,6 +178,10 @@
                 return null;
             }
             return this.uiMap[key];
+        },
+        getByTid:function(tid){
+            var el = jQuery("[uikey='totipkey-"+tid+"']")[0];
+            return this.getBySelect(el);
         }
     }
     for(var key in temp){
