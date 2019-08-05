@@ -1,0 +1,180 @@
+.mini-calendar .mini-timespinner .mini-buttonedit-buttons {
+    height: 21px;
+}
+
+.mini-calendar .mini-timespinner .mini-buttonedit-buttons .mini-timepicker-select {
+    padding: 4px 1px;
+}
+
+.mini-calendar-hastime {
+    text-align: center;
+}
+
+.mini-timepicker-commit-button {
+    width: 52px;
+    height: 22px;
+}
+
+.mini-timepicker-commit-button .mini-button-inner {
+    padding-top: 0px;
+}
+
+.mini-time-calendar-header td.time-calendar-first-td {
+    border-left: 0px solid #a7abb0;
+}
+
+.mini-yearpicker-header {
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+}
+
+.mini-yearpicker-header-prev{
+    background: url(../images/calendar/months.gif) no-repeat 0 0;
+}
+.mini-yearpicker-header-next {
+    background: url(../images/calendar/months.gif) no-repeat right 0;
+}
+.mini-yearpicker-header-prev, .mini-yearpicker-header-next {
+    cursor: pointer;
+    width: 10px;
+    height: 15px;
+    margin-top: 5px;
+}
+
+.mini-yearpicker-footer {
+    height: 28px;
+    text-align: right;
+    line-height: 24px;
+    text-align: center;
+}
+
+.mini-yearpicker-button {
+    height: 22px;
+    margin-right: 5px;
+}
+
+.mini-yearpicker-cell {
+    border: solid 1px white;
+    float: left;
+    text-align: center;
+    width: 50px;
+    height: 22px;
+    line-height: 22px;
+    color: #000000;
+    text-decoration: none;
+    outline: none;
+    margin-bottom: 2px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+}
+
+.mini-yearpicker-cell:hover {
+    background: #e5e5d5;
+    border: solid 1px #d6d6d5;
+}
+
+.mini-yearpicker-cell-now {
+    border: 1px solid #C00000;
+}
+
+.mini-yearpicker-cell-select {
+    color: black;
+    background: #e2ecf7;
+    border: solid 1px #999999;
+}
+
+.mini-yearpicker-panel {
+    height: 200px;
+}
+
+.mini-yearpicker-body {
+    height: 138px;
+}
+
+.mini-time-calendar-table {
+    width: 220px;
+    border: solid 1px #a7abb0;
+}
+
+.mini-time-calendar-table.no-border-bottom {
+    border-bottom: none;
+}
+
+.mini-time-calendar-header {
+    background: #efefef;
+    font-weight: bold;
+}
+
+.mini-time-calendar-header td {
+    height: 26px;
+    text-align: center;
+    border-bottom: solid 1px #a7abb0;
+}
+
+.mini-time-calendar-main td {
+    border-bottom: solid 1px #a7abb0;
+    border-left: solid 1px #a7abb0;
+}
+
+.mini-time-calendar-main td.time-calendar-first-td {
+    border-left: solid 0px #a7abb0;
+}
+
+.mini-time-calendar-main .time-calendar-inner {
+    margin: 5px 0px;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol {
+    height: 148px;
+    padding: 0px;
+    overflow-y: auto;
+    list-style: none;
+    text-align: center;
+    margin: 0px;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol li {
+    width: 22px;
+    margin-left: 19px;
+    height: 22px;
+    line-height: 22px;
+    cursor: pointer;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol li.select-this {
+    background: #e2ecf7;
+    border: 1px solid #999999;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol li:hover {
+    background: #e2ecf7;
+    border: 1px solid #999999;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol.mini-disabled {
+    overflow-y: hidden;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol.mini-disabled li {
+    cursor: default;
+}
+
+.mini-time-calendar-main .time-calendar-inner ol.mini-disabled li:not(.select-this):hover {
+    background: none;
+    border: none;
+}
+
+.mini-time-calendar-footer td {
+    height: 32px;
+    background: #efefef;
+}
+
+.mini-time-calendar-footer .time-calendar-inner {
+    text-align: center;
+}
+
+.mini-time-calendar-footer .time-calendar-inner a.mini-button {
+    margin: 5px 5px;
+    height: 22px;
+}

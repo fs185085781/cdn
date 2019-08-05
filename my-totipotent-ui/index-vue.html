@@ -19,6 +19,12 @@
     <p>Message is: {{date.value}}</p>
     <div class="totipotent-combobox" data="[{id:'1',text:'11'},{id:'2',text:'22'}]" v-bind:value="combobox.value"></div>
     <p>Message is: {{combobox.value}}</p>
+    <div class="totipotent-timepicker" format="yyyy-MM-dd HH:mm:ss" show_time="true" v-bind:value="timepicker.value" time_format="HH:mm:ss" is_cover="true"/></div>
+    <p>Message is: {{timepicker.value}}</p>
+    <div class="totipotent-yearpicker" allowInput="false" show_ok_button="true" v-bind:value="year.value"/></div>
+    <p>Message is: {{year.value}}</p>
+    <div class="totipotent-time-calendar" format="HH:mm" v-bind:value="time.value"/></div>
+    <p>Message is: {{time.value}}</p>
 </div>
 </body>
 <script>
@@ -50,7 +56,13 @@
             },
             combobox:{
                 value:"2"
-            }
+            },
+            timepicker:{
+                value:"2019-10-12 11:22:34"
+            },year:{
+                value:"2019"
+            },
+            time:{value:"12:34"}
         },
         methods:{
             testEvent:function(e){
@@ -59,7 +71,15 @@
             btnClick:function(){
                 this.textboxs[0].value = "修改一下输入框";
             }
+        },
+        mounted:function(){
+            var that = this;
+            that.$nextTick(function(){
+                console.log("页面初始化2",that);
+            });
+            console.log("页面初始化1",that);
         }
-    })
+    });
+    console.log("页面执行完");
 </script>
 </html>

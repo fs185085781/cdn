@@ -257,3 +257,27 @@ if (window.mini.Gantt) {
 
     });
 }
+
+if(mini.YearPicker){
+    mini.copyTo(mini.YearPicker.prototype, {
+        commitButton: "OK",
+        clearButton:"Clear",
+        nowYearButton:"ToYear"
+    });
+}
+if(mini.TimeCalendar){
+    mini.copyTo(mini.TimeCalendar.prototype, {
+        nowButton: "Now",
+        clearButton:"Clear",
+        hourText:"Hour",
+        minuteText:"Minute",
+        secondText:"Second"
+    });
+}
+if(mini.Timepicker){
+    mini.copyTo(mini.Timepicker.prototype, {
+        commitButton: "OK",
+        returnButton:"Return",
+        nowButton:"Now"
+    });
+}

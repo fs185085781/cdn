@@ -64,11 +64,13 @@
     document.write('<script src="' + jsPath + '/base/jquery.min.js" type="text/javascript"></sc' + 'ript>');
     /**加载miniui*/
     document.write('<script src="' + jsPath + '/base/miniui.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + jsPath + '/base/miniextend.js" type="text/javascript"></sc' + 'ript>');
     document.write('<script src="' + jsPath + '/base/base.js" type="text/javascript"></sc' + 'ript>');
     /*加载字库文件*/
     document.write('<link href="' + jsPath + '/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />');
     /*加载默认样式*/
     document.write('<link href="' + jsPath + '/skin/default/miniui.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + jsPath + '/skin/default/miniuiextend.css" rel="stylesheet" type="text/css" />');
     if(jsSearch.mode != "jquery" && jsSearch.mode != "vue" && jsSearch.mode != "react" && jsSearch.mode != "angular" && jsSearch.mode != "angular2"){
         return;
     }

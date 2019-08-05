@@ -256,3 +256,27 @@ if (window.mini.Gantt) {
     });
 
 }
+
+if(mini.YearPicker){
+    mini.copyTo(mini.YearPicker.prototype, {
+        commitButton: "确定",
+        clearButton:"清除",
+        nowYearButton:"今年"
+    });
+}
+if(mini.TimeCalendar){
+    mini.copyTo(mini.TimeCalendar.prototype, {
+        nowButton: "现在",
+        clearButton:"清除",
+        hourText:"时",
+        minuteText:"分",
+        secondText:"秒"
+    });
+}
+if(mini.Timepicker){
+    mini.copyTo(mini.Timepicker.prototype, {
+        commitButton: "确定",
+        returnButton:"返回",
+        nowButton:"现在"
+    });
+}
