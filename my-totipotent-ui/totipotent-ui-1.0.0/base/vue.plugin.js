@@ -59,7 +59,9 @@
             var divClass = tot.prefixClass+cls;
             jQuery("."+divClass).each(function(i,div){
                 var valueProp = jQuery(div).attr("v-bind:value");
-                jQuery(div).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
+                if(valueProp){
+                    jQuery(div).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
+                }
             });
         });
     }
