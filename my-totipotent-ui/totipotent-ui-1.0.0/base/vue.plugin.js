@@ -79,7 +79,7 @@
         if(!uiObj){
             return;
         }
-        if(uiObj.onValueChanged){
+        if(uiObj.onValueChanged && !uiObj.hasInitUpdateValue){
             uiObj.on("valuechanged",function(e){
                 var input = e.sender.totipUiEl;
                 input.value = e.value;
@@ -90,6 +90,7 @@
                 event.initMouseEvent("updatevaluechange", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, 0, null,null);
                 input.dispatchEvent(event);
             });
+            uiObj.hasInitUpdateValue = true;
         }
         if(that.totipUiMap[uiObj.totipUid] == null){
             that.totipUiMap[uiObj.totipUid] = {attrs:{},on:{}};
