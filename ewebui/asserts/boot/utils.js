@@ -1,34 +1,43 @@
 (function (win) {
     var utils = {
-        loadJs:function(path,id){
+        loadJs:function(path,id,type){
             if(!path){
                 return;
             }
             if(id && document.getElementById(id)){
-                return;
+                document.getElementById(id).remove();
             }
             var script = document.createElement("script");
             script.src = path;
             if(id){
                 script.id = id;
             }
+            if(!type){
+                type = "text/javascript";
+            }
+            script.type = type;
             document.head.appendChild(script);
         },
-        loadCss:function(path,id,rel){
+        loadCss:function(path,id,rel,type){
             if(!path){
                 return;
             }
             if(id && document.getElementById(id)){
-                return;
+                document.getElementById(id).remove();
             }
             var link = document.createElement("link");
             link.href = path;
             if(id){
                 link.id = id;
             }
-            if(id){
-                link.rel = rel;
+            if(!rel){
+                rel = "stylesheet";
             }
+            link.rel = rel;
+            if(!type){
+                type = "text/css";
+            }
+            link.type = type;
             document.head.appendChild(link);
         },
         //获取页面指定key值的参数值
@@ -41,16 +50,17 @@
             var search = decodeURIComponent(win.location.search);
             return getSearchByStr(search);
         },
-        setLocalStorage:function(key,obj){
-			var map = {};
-			map[key] = obj;
+        setLocalStorage:function(key,val){
+            var map = {};
+            map[key] = val;
             localStorage.setItem(key,JSON.stringify(map));
         },
         getLocalStorage:function(key){
-			var map = JSON.parse(localStorage.getItem(key));
-			if(!map){
-				map = {};
-			}
+            var mapStr = localStorage.getItem(key);
+            if(!mapStr){
+                mapStr = "{}";
+            }
+            var map = JSON.parse(mapStr);
             return map[key];
         },
         delLocalStorage:function(key){
@@ -58,96 +68,6 @@
         },
         delAllLocalStorage:function(){
             localStorage.clear();
-        },
-        initFileUpload: function (accept, fileCallBack, url) {
-            var that = this;
-            accept = accept || "";
-            if (!fileCallBack) {
-                throw "回调函数不可为空";
-                return;
-            }
-            var form = $("form[utils='file-upload-form']");
-            if (form.length > 0) {
-                throw "请先销毁后控件后重新初始化";
-                return;
-            }
-            that.url = url;
-            that.destroyFileUpload = function () {
-                $("form[utils='file-upload-form']").remove();
-                that.uploadFileAction = undefined;
-                that.selectFile = undefined;
-                that.destroyFileUpload = undefined;
-            }
-            that.uploadFileAction = function () {
-                var input = $("form[utils='file-upload-form'] input[input='file-upload-input']");
-                var fileValue = input.val();
-                if (fileValue == "") {
-                    return;
-                }
-                var fileName = input[0].files[0].name;
-                var accept = input.attr("file-accept");
-                if (accept) {
-                    var pattern = new RegExp("\\.(" + accept + ")$", "gi");
-                    if (!pattern.test(fileValue)) {
-                        fileCallBack({flag: false, msg: "当前上传的文件不支持(仅支持" + accept + "上传)"});
-                        return;
-                    }
-                }
-                var formData = new FormData($("form[utils='file-upload-form']")[0]);
-                that.uploadStatus = 1;
-                $.ajax({
-                    url: utils.host + (url || "/json/fileUploadService/upload"),
-                    type: 'POST',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function (ret) {
-                        if (ret.status == "SUCCESS") {
-                            var retData = {flag:true,uploadId:that.uploadId,msg:ret.msg,fileName:fileName,url:ret.data};
-                            fileCallBack(retData);
-                        } else {
-                            fileCallBack({flag: false, msg: ret.msg});
-                        }
-                        that.uploadStatus = 0;
-                    },
-                    error: function (res) {
-                        if (res.responseJSON && res.responseJSON.msg) {
-                            fileCallBack({flag: false, msg: res.responseJSON.msg});
-                        } else {
-                            fileCallBack({flag: false, msg: "请求异常"});
-                        }
-                        that.uploadStatus = 0;
-                    }
-                });
-            }
-            that.selectFile = function (id) {
-                var that = this;
-                if (that.uploadStatus == 1) {
-                    fileCallBack({flag: false, msg: "上一文件还未上传完毕"});
-                    return;
-                }
-                var input = $("form[utils='file-upload-form'] input[input='file-upload-input']");
-                input.val('');
-                input.click();
-                that.uploadId = id;
-            }
-            $("body").append("<form utils=\"file-upload-form\" enctype=\"multipart/form-data\" style=\"display: none;\"><input file-accept=\"" + accept + "\" input=\"file-upload-input\" type=\"file\" name=\"file\" onchange=\"utils.uploadFileAction()\"/></form>");
-        },
-        getRemoteData:function(url,callBack){
-            var xmlhttp;
-            if (win.XMLHttpRequest){
-                xmlhttp=new XMLHttpRequest();
-            }else{
-                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            xmlhttp.onreadystatechange=function(){
-                if(xmlhttp.readyState==4 && xmlhttp.status==200){
-                    callBack(xmlhttp.responseText);
-                }
-            }
-            xmlhttp.open("GET",url,false);
-            xmlhttp.send();
         },
 		getJsPath:function(js, length) {
 		    var scripts = document.getElementsByTagName("script");
@@ -165,12 +85,6 @@
 		    return path;
 		}
     }
-	function initConfig(){
-		var path = utils.getJsPath("utils.js",1);
-		utils.getRemoteData(path+"/config.js",function(text){
-			eval(text);
-		});
-	}
     function getSearchByStr(search){
         if (search) {
             search = search.substring(1);
@@ -203,81 +117,50 @@
         }
         return map;
     }
-    function initJquery(){
-		utils.getRemoteData(utils.htmlHost+"/asserts/compatible/jquery.min.js",function(text){
-			eval(text);
-		});
-		function getTokenMap(){
-			var map = {};
-			map[utils.config.tokenKey] = utils.config.getUserToken();
-			return map;
-		}
-        jQuery.ajaxSetup({
-            global: true,
-            headers:getTokenMap(),
-            beforeSend:function(xhr){
-                xhr.setRequestHeader(utils.config.tokenKey, utils.config.getUserToken());
-                if(!this.noLoading && win.Vue){
-                    xhr.loading = utils.msgVue.$loading({
-                        lock: true,
-                        text: '加载中',
-                        spinner: 'el-icon-loading',
-                        background: '#ffffff'
-                    });
-                }
-            },
-            complete:function(xhr,status){
-                if(xhr.loading != null && win.Vue){
-                    xhr.loading.close();
-                }
-            },
-            error:function(xhr,status, error){
-                if(xhr.loading != null && win.Vue){
-                    xhr.loading.close();
-                }
-            }
-        });
-    }
 	win.utils = utils;
-	initConfig();
-    initJquery();
     var jsSearch = getJsSearch("utils.js");
-    if(!jsSearch.from){
+    if(jsSearch.from != "m"){
         jsSearch.from = "pc";
     }
-    utils.login = jsSearch.login == "true";
-    utils.from = jsSearch.from;
-    var debugStr = utils.getParamer("debug");
-    utils.loadJs(utils.htmlHost + '/assets/js/const.js?_='+new Date().getTime(),"const_config");
-    if(!utils.initJquery ){
-        utils.loadJs(utils.htmlHost+"/assets/spaui/assets/libs/jquery/jquery-3.2.1.min.js","jquery");
+    if(jsSearch.env != "test"){
+        jsSearch.env = "prod";
     }
-    utils.loadJs(utils.htmlHost+"/assets/js/user.js","user_utils");
+    if(jsSearch.lib != "vue" && jsSearch.lib != "react" && jsSearch.lib != "angular" && jsSearch.lib != "angular2"){
+        jsSearch.lib = "jquery";
+    }
+    var envStr = "";
+    if(jsSearch.env == "prod"){
+        envStr = ".min";
+    }
+    var jspath = utils.getJsPath("utils.js",2);
     if(jsSearch.from == "pc"){
-        utils.loadCss(utils.htmlHost + '/assets/images/favicon.ico',"shortcut_link",'shortcut icon');
-        utils.loadCss(utils.htmlHost + '/assets/images/favicon.ico',"bookmark_link",'bookmark');
-    }else if(jsSearch.from == "m"){
-        utils.loadJs(utils.htmlHost + '/assets/mui-3.7.1/js/mui.min.js');
-        utils.loadCss(utils.htmlHost + '/assets/mui-3.7.1/css/mui.min.css');
-        utils.loadCss(utils.htmlHost + '/assets/mui-3.7.1/css/icons-extra.css');
-        if(debugStr=="true"){
-            utils.loadJs(utils.htmlHost + '/assets/eruda/eruda.js');
-            //eruda.init();
-        }
+        /**
+         * 优先加载miniui
+         */
+        document.write('<script src="' + jspath + '/miniui3.9.1/boot.js" type="text/javascript"></sc' + 'ript>');
     }
-    var plugins= jsSearch.plugins;
-    if(plugins){
-        if(plugins.indexOf("muipoppicker") != -1){
-            utils.loadJs(utils.htmlHost + '/assets/mui-3.7.1/js/mui.poppicker.js');
-            utils.loadCss(utils.htmlHost + '/assets/mui-3.7.1/css/mui.poppicker.css');
-        }
-        if(plugins.indexOf("indexedlist") != -1){
-            utils.loadJs(utils.htmlHost + '/assets/mui-3.7.1/js/mui.indexedlist.js');
-            utils.loadCss(utils.htmlHost + '/assets/mui-3.7.1/css/mui.indexedlist.css');
-        }
-        if(plugins.indexOf("mtimepicker") != -1){
-            utils.loadJs(utils.htmlHost + '/assets/mui-3.7.1/js/mui.picker.min.js');
-            utils.loadCss(utils.htmlHost + '/assets/mui-3.7.1/css/mui.picker.min.css');
-        }
+    /*加载jsx*/
+    if(jsSearch.jsx == "true"){
+        document.write('<script src="' + jspath + '/libs/babel.min.js" type="text/javascript"></sc' + 'ript>');
+    }
+    /*如果是angular2 加载angular2的基础文件*/
+    if(jsSearch.lib == "angular2"){
+        document.write('<script src="' + jspath + '/libs/es6-shim.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jspath + '/libs/angular2-polyfills.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jspath + '/libs/Rx.umd.js" type="text/javascript"></sc' + 'ript>');
+    }
+    /**
+     * 加载环境
+     */
+    document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+    /*如果是react 加载react的必备文件*/
+    if(jsSearch.lib == "react"){
+        document.write('<script src="' + jspath + '/compatible/react-dom'+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+    }
+    /**
+     * 加载插件
+     */
+    if(jsSearch.lib != "jquery"){
+        document.write('<script src="' + jspath + '/libs/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
 })(window)
