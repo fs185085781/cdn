@@ -1,45 +1,5 @@
 (function (win) {
     var utils = {
-        loadJs:function(path,id,type){
-            if(!path){
-                return;
-            }
-            if(id && document.getElementById(id)){
-                document.getElementById(id).remove();
-            }
-            var script = document.createElement("script");
-            script.src = path;
-            if(id){
-                script.id = id;
-            }
-            if(!type){
-                type = "text/javascript";
-            }
-            script.type = type;
-            document.head.appendChild(script);
-        },
-        loadCss:function(path,id,rel,type){
-            if(!path){
-                return;
-            }
-            if(id && document.getElementById(id)){
-                document.getElementById(id).remove();
-            }
-            var link = document.createElement("link");
-            link.href = path;
-            if(id){
-                link.id = id;
-            }
-            if(!rel){
-                rel = "stylesheet";
-            }
-            link.rel = rel;
-            if(!type){
-                type = "text/css";
-            }
-            link.type = type;
-            document.head.appendChild(link);
-        },
         //获取页面指定key值的参数值
         getParamer: function (key) {
             var map = this.getSearch();
@@ -134,13 +94,14 @@
     }
     var jspath = utils.getJsPath("utils.js",2);
     if(jsSearch.from == "pc"){
-        /**
-         * 优先加载miniui
-         */
+        /**当前是PC环境,加载miniui*/
         document.write('<script src="' + jspath + '/miniui3.9.1/boot.js" type="text/javascript"></sc' + 'ript>');
+    }else if(jsSearch.from == "m"){
+        /**当前是手机环境*/
     }
-    /*加载jsx*/
+
     if(jsSearch.jsx == "true"){
+        /*加载jsx*/
         document.write('<script src="' + jspath + '/libs/babel.min.js" type="text/javascript"></sc' + 'ript>');
     }
     /*如果是angular2 加载angular2的基础文件*/
@@ -152,7 +113,9 @@
     /**
      * 加载环境
      */
-    document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+    if(jsSearch.lib != "jquery" || jsSearch.from != "pc"){
+        document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+    }
     /*如果是react 加载react的必备文件*/
     if(jsSearch.lib == "react"){
         document.write('<script src="' + jspath + '/compatible/react-dom'+envStr+'.js" type="text/javascript"></sc' + 'ript>');
@@ -160,7 +123,9 @@
     /**
      * 加载插件
      */
-    if(jsSearch.lib != "jquery"){
+    if(jsSearch.lib != "jquery" && jsSearch.from == "pc"){
+        /**加载改造包*/
+        document.write('<script src="' + jspath + '/libs/base.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script src="' + jspath + '/libs/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
 })(window)
