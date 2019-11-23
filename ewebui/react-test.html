@@ -21,17 +21,21 @@
 		class App extends React.Component {
 			constructor() {
 				super();
+				var that = this;
 				this.state = {
 					btn:{
-						id:"test1",
-						value:"2",
-						data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
-						valuechanged:"valueChanged"
+						test:{
+							value:"2",
+							data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
+							value_update:createReactMap(that,"btn.test"),
+							allowinput:"true"
+						}
 					},
 					btn2:{
-						id:"test2",
 						value:"2",
-						data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}])
+						data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}]),
+						valuechanged:"valueChanged",
+						value_update:createReactMap(that,"btn2")
 					}
 				}
 				this.handleClick = this.handleClick.bind(this);
@@ -44,14 +48,14 @@
 			}
 			btn1Input(value){
 				this.setState(state => ({
-					btn:{...state.btn,value:value}
+					btn:{...state.btn,test:{...state.btn.test,value:value}}
 				}));
 			}
 			render() {
 				return (
 						<div>
 						<a onClick={this.handleClick}>测试</a>
-						<MiniButton className="mini-combobox bbb" options={this.state.btn} inputEvent={this.btn1Input}/>
+						<MiniButton className="mini-combobox bbb" options={this.state.btn.test}/>
 						<MiniButton className="mini-combobox ccc" options={this.state.btn2}/>
 						</div>
 				);

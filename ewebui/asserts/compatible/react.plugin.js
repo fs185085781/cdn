@@ -34,6 +34,20 @@
         }
     }
     window.MiniUi = MiniUi;
+    window.createReactMap = function(that,key){
+        if(!window.reactParentMap){
+            window.reactParentMap = {};
+        }
+        var id = guid();
+        window.reactParentMap[id] = {app:that,valueKey:key};
+        function guid() {
+            function S4() {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            }
+            return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+        }
+        return id;
+    }
     function initMountDom(that){
         if(!that.props || !that.props.options || !that.props.options.className){
             throw "EwebUiError:not find the class";
@@ -57,8 +71,13 @@
                     eventMap[key] = event;
                 })
                 copatible.bindEvent(ele,eventMap,function(e){
-                    if(that.props.inputEvent){
-                        that.props.inputEvent(e.value);
+                    if(that.props && that.props.options && that.props.options.value_update){
+                        var appMap = reactParentMap[that.props.options.value_update];
+                        var app = appMap.app;
+                        var valueKey = appMap.valueKey;
+                        var state = app.state;
+                        eval("state."+valueKey+".value=e.value;");
+                        app.setState(state);
                     }
                 });
             });
