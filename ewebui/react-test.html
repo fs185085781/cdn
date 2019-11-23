@@ -35,18 +35,24 @@
 					}
 				}
 				this.handleClick = this.handleClick.bind(this);
+				this.btn1Input = this.btn1Input.bind(this);
 			}
 			handleClick(){
 				this.setState(state => ({
 					btn:{...state.btn,value:"1"}
 				}));
 			}
+			btn1Input(value){
+				this.setState(state => ({
+					btn:{...state.btn,value:value}
+				}));
+			}
 			render() {
 				return (
 						<div>
 						<a onClick={this.handleClick}>测试</a>
-						<MiniButton class="mini-combobox" options={this.state.btn}/>
-						<MiniButton class="mini-combobox" options={this.state.btn2}/>
+						<MiniButton className="mini-combobox bbb" options={this.state.btn} inputEvent={this.btn1Input}/>
+						<MiniButton className="mini-combobox ccc" options={this.state.btn2}/>
 						</div>
 				);
 			}

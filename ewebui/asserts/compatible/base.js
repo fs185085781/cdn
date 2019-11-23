@@ -45,9 +45,17 @@
                 afterCallback();
             }
         },
-        changeOneClass:function(className,ele,callback){
+        changeOneClass:function(classNameStr,ele,callback){
             var that = this;
-            if(!that.ctrlMap[className]){
+            var clazzSz = classNameStr.split(" ");
+            var className="";
+            $.each(clazzSz,function(i,item){
+                if(that.ctrlMap[item]){
+                    className = item;
+                    return false;
+                }
+            });
+            if(!className || !that.ctrlMap[className]){
                 throw "EwebUiError:"+className+" is not a miniui class";
             }
             $(ele).removeClass(className).addClass("p-"+className).attr("minicls",className);
@@ -73,9 +81,17 @@
                 afterCallback();
             }
         },
-        parseMiniOne:function(className,ele,callback){
+        parseMiniOne:function(classNameStr,ele,callback){
             var that = this;
-            if(!that.ctrlMap[className]){
+            var clazzSz = classNameStr.split(" ");
+            var className="";
+            $.each(clazzSz,function(i,item){
+                if(that.ctrlMap[item]){
+                    className = item;
+                    return false;
+                }
+            });
+            if(!className || !that.ctrlMap[className]){
                 throw "EwebUiError:"+className+" is not a miniui class";
             }
             var wb = $(ele).prop("outerHTML")+"";

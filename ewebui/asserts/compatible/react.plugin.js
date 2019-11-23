@@ -1,10 +1,17 @@
 (function(){
     class MiniUi extends React.Component {
         constructor(props) {
+            var clazz = props.class;
+            if(!clazz){
+                clazz = props.className;
+            }
+            if(!clazz){
+                throw "EwebUiError:not find the class";
+            }
             if(!props.options){
-                props.options={className:props.class}
+                props.options={className:clazz}
             }else{
-                props.options.className=props.class
+                props.options.className=clazz;
             }
             super(props);
             this.el = React.createRef();
@@ -16,7 +23,7 @@
             }
         }
         componentDidUpdate(prevProps, prevState){
-            copatible.updateComponent(this.el.current,prevProps.options,this.props.options);
+           copatible.updateComponent(this.el.current,prevProps.options,this.props.options);
             if(this.miniuiDidUpdate){
                 this.miniuiDidUpdate();
             }
@@ -28,10 +35,10 @@
     }
     window.MiniUi = MiniUi;
     function initMountDom(that){
-        if(!that.props || !that.props.class){
-            throw "EwebUiError:not find the miniui class";
+        if(!that.props || !that.props.options || !that.props.options.className){
+            throw "EwebUiError:not find the class";
         }
-        var className = that.props.class;
+        var className = that.props.options.className;
         var ele = that.el.current;
         copatible.changeOneClass(className,ele,function(){
             copatible.parseMiniOne(className,ele,function(){
@@ -50,7 +57,9 @@
                     eventMap[key] = event;
                 })
                 copatible.bindEvent(ele,eventMap,function(e){
-
+                    if(that.props.inputEvent){
+                        that.props.inputEvent(e.value);
+                    }
                 });
             });
         });
