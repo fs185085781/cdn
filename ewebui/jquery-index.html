@@ -3,144 +3,139 @@
 	<head>
 		<meta charset="utf-8">
 		<title></title>
-		<script src="./asserts/miniui3.9.1/boot.js"></script>
+		<script src="./asserts/boot/utils.js?from=pc&lib=jquery&env=test"></script>
 	</head>
 	<body>
 		<div class="mini-row">
-			<div class="mini-col-4"></div>
-			<div class="mini-col-8">
-				
-			</div>
-		</div>
-		<div class="mini-row">
-			<div class="mini-col-4">语言</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">语言</div>
+			<div class="mini-col-7">
 				<div id="language" class="mini-combobox" onvaluechanged="mini.setLange(e.value)"></div>
 			</div>
+			<div class="mini-col-2"></div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">皮肤</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">皮肤</div>
+			<div class="mini-col-7">
 				<div id="skinbox" class="mini-combobox" onvaluechanged="mini.setSkin(e.value)"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">模式</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">模式</div>
+			<div class="mini-col-7">
 				<div id="modebox" class="mini-combobox" onvaluechanged="mini.setMode(e.value)"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">进度条</div>
-			<div class="mini-col-8"><div class="mini-progressbar" value="55"></div></div>
+			<div class="mini-col-3">进度条</div>
+			<div class="mini-col-7"><div class="mini-progressbar" value="55"></div></div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">下拉输入框</div>
-			<div class="mini-col-8"><div class="mini-combobox" data="[{id:'1',text:'测试一下'}]"></div></div>
+			<div class="mini-col-3">下拉输入框</div>
+			<div class="mini-col-7"><div class="mini-combobox" data="[{id:'1',text:'测试一下'}]"></div></div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">多选输入框</div>
-			<div class="mini-col-8"><div class="mini-textboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1,2" text="测试一下,测试一下2"></div></div>
+			<div class="mini-col-3">多选输入框</div>
+			<div class="mini-col-7"><div class="mini-textboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1,2" text="测试一下,测试一下2"></div></div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">按钮</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">按钮</div>
+			<div class="mini-col-7">
 				<a class="mini-button" iconCls="icon-edit" onclick="onClick">编辑</a>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">复选框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">复选框</div>
+			<div class="mini-col-7">
 				<div class="mini-checkbox" checked="true" readOnly="false" text="复选框"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">列表</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">列表</div>
+			<div class="mini-col-7">
 				<div class="mini-listbox" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">复选框组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">复选框组</div>
+			<div class="mini-col-7">
 				<div class="mini-checkboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">单选框组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">单选框组</div>
+			<div class="mini-col-7">
 				<div class="mini-radiobuttonlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">日历</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">日历</div>
+			<div class="mini-col-7">
 				<div class="mini-calendar"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">按钮输入框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">按钮输入框</div>
+			<div class="mini-col-7">
 				<input class="mini-buttonedit"/>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">过滤输入框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">过滤输入框</div>
+			<div class="mini-col-7">
 				<input class="mini-filteredit" value="11" filterValue=">" filterData="filters" showClose="true"  />
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">输入框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">输入框</div>
+			<div class="mini-col-7">
 				<input class="mini-textbox" value="123456"/>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">密码框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">密码框</div>
+			<div class="mini-col-7">
 				<input class="mini-password" value="123456"/>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">多行输入框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">多行输入框</div>
+			<div class="mini-col-7">
 				<textarea class="mini-textarea" emptyText="请输入备注"></textarea>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">日期框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">日期框</div>
+			<div class="mini-col-7">
 				<input class="mini-datepicker"/>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">年月框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">年月框</div>
+			<div class="mini-col-7">
 				<input class="mini-monthpicker"/> 
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">数值框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">数值框</div>
+			<div class="mini-col-7">
 				<input class="mini-spinner" minValue="200" maxValue="250" />
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">时间输入框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">时间输入框</div>
+			<div class="mini-col-7">
 				<input class="mini-timespinner" format="HH:mm:ss" />
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形下拉框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形下拉框</div>
+			<div class="mini-col-7">
 				<input class="mini-treeselect" url="./json/listTree.json" valueField="id" textField="text"/>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">下拉搜索选择框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">下拉搜索选择框</div>
+			<div class="mini-col-7">
 				<input class="mini-lookup" textField="name" valueField="id" popupWidth="auto" popup="#lookupPanel" grid="#lookupGrid" multiSelect="true"/>
 				<div id="lookupPanel" class="mini-panel" title="header" iconCls="icon-add" style="width:450px;height:250px;" showCloseButton="true" showHeader="false" bodyStyle="padding:0" borderStyle="border:0">
 					<div id="lookupGrid" class="mini-datagrid" style="width:100%;height:100%;" borderStyle="border:0" showPageSize="false" showPageIndex="false" url="./json/datagrid.json">
@@ -155,14 +150,14 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">文件上传(html)</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">文件上传(html)</div>
+			<div class="mini-col-7">
 				<input class="mini-htmlfile" limitType="*.txt" />
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">表格</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">表格</div>
+			<div class="mini-col-7">
 				<div class="mini-datagrid" autoLoad="true" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid.json">
 					<div property="columns">
 						<div type="indexcolumn" ></div>
@@ -174,14 +169,14 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形</div>
+			<div class="mini-col-7">
 				<div class="mini-tree" autoLoad="true" url="./json/tree.json" style="width:300px;" showTreeIcon="true" textField="text" idField="id" value="base" expandOnNodeClick="true"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形表格</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形表格</div>
+			<div class="mini-col-7">
 				<div class="mini-treegrid" style="width:700px;height:280px;" url="./json/tasks.json" showTreeIcon="true" 
 				treeColumn="taskname" idField="UID" parentField="ParentTaskUID" resultAsTree="false" allowResize="true" 
 				expandOnLoad="true">
@@ -197,8 +192,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">面板</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">面板</div>
+			<div class="mini-col-7">
 				<div class="mini-panel" title="header" iconCls="icon-add" style="width:300px;height:200px;"
 				    showToolbar="true" showCloseButton="true" showFooter="true"
 				>
@@ -218,8 +213,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">弹出窗口</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">弹出窗口</div>
+			<div class="mini-col-7">
 				<a class="mini-button" onclick="mini.get('win').show()">弹出窗口</a>
 				<div id="win" class="mini-window" title="Window" style="width:400px;height:250px;"
 				 showMaxButton="true" showCollapseButton="true" showShadow="true" showToolbar="true" 
@@ -237,8 +232,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">分离器</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">分离器</div>
+			<div class="mini-col-7">
 				<div class="mini-splitter" style="width:350px;height:200px;">
 				    <div size="30%" showCollapseButton="true">
 				        1
@@ -250,16 +245,16 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">分页控件</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">分页控件</div>
+			<div class="mini-col-7">
 				<div class="mini-pager" style="width:700px;" 
 				    totalCount="123" sizeList="[5,10,20,100]">        
 				</div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">布局管理器</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">布局管理器</div>
+			<div class="mini-col-7">
 				<div id="layout1" class="mini-layout" style="width:600px;height:400px;">
 				    <div title="north" region="north" height="80" >
 				        north
@@ -280,8 +275,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">折叠面板组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">折叠面板组</div>
+			<div class="mini-col-7">
 				<div class="mini-outlookbar " activeIndex="0" style="width:180px;height:200px;" autoCollapse="true">
 				    <div title="Small Items">            
 				        1
@@ -293,21 +288,21 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">菜单导航</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">菜单导航</div>
+			<div class="mini-col-7">
 				<div class="mini-outlookmenu" style="width:400px;height:300px;" url="./json/outlookmenu.json" idField="id" parentField="pid"
 					textField="text" borderStyle="border:0" expandOnLoad="false"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形导航</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形导航</div>
+			<div class="mini-col-7">
 				<div class="mini-outlooktree" style="width:400px;height:300px;" url="./json/outlooktree.json" textField="text" idField="id" parentField="pid"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">标签页</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">标签页</div>
+			<div class="mini-col-7">
 				<div class="mini-tabs" activeIndex="0"  style="width:350px;height:200px;">
 				    <div title="Tab1">
 				        1
@@ -325,8 +320,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">菜单</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">菜单</div>
+			<div class="mini-col-7">
 				<ul class="mini-menu">
 				    <li>
 				        <span >操作</span>
@@ -345,8 +340,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">工具栏</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">工具栏</div>
+			<div class="mini-col-7">
 				<div class="mini-toolbar">
 				    <a class="mini-button" iconCls="icon-add">增加</a>
 				    <a class="mini-button" iconCls="icon-edit">修改</a>
@@ -362,38 +357,39 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4"></div>
-			<div class="mini-col-8">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
 				
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4"></div>
-			<div class="mini-col-8">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
 				
 			</div>
 		</div>
 	</body>
 	<script>
 		var filters = [{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}];
-		mini.parse();
-		var languageStrs = "en_US,zh_CN";
-		var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
-		var lmodeStrs = "default,medium,large,huge";
-		initCombobox(languageStrs,"language");
-		initCombobox(skinStrs,"skinbox");
-		initCombobox(lmodeStrs,"modebox");
-		mini.get("language").setValue(mini.getLange());
-		mini.get("skinbox").setValue(mini.getSkin());
-		mini.get("modebox").setValue(mini.getMode());
-		function initCombobox(strs,id){
-			var strsz = strs.split(",");
-			var list = [];
-			$.each(strsz,function(i,item){
-				list.push({id:item,text:item});
-			});
-			mini.get(id).setData(list);
-		}
+		$(function(){
+			var languageStrs = "en_US,zh_CN";
+			var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
+			var lmodeStrs = "default,medium,large,huge";
+			initCombobox(languageStrs,"language");
+			initCombobox(skinStrs,"skinbox");
+			initCombobox(lmodeStrs,"modebox");
+			mini.get("language").setValue(mini.getLange());
+			mini.get("skinbox").setValue(mini.getSkin());
+			mini.get("modebox").setValue(mini.getMode());
+			function initCombobox(strs,id){
+				var strsz = strs.split(",");
+				var list = [];
+				$.each(strsz,function(i,item){
+					list.push({id:item,text:item});
+				});
+				mini.get(id).setData(list);
+			}
+		});
 	</script>
 	<style type="text/css">
 		.mini-row{

@@ -7,26 +7,39 @@
 	</head>
 	<body>
 	<div id="app">
-		<div :test="xixi" class="dsada">
-			<div class="mini-combobox abc" :data="list" :value="value" valueFromSelect="true"></div>
+		<div id="test" class="mini-combobox" valueFromSelect="true"></div>
+		<div v-for="item in items">
+			<div>{{item.value}}</div>
+			<div name="xixihaha" class="mini-combobox" :data="item.data" :value="item.value" :valueFromSelect="item.from" @valuechanged="hahax" allowInput="true"></div>
 		</div>
-		<div>
-			{{xixi}}
-		</div>
-		<div class="mini-combobox abs" :data="list" :value="value" valueFromSelect="true"></div>
 	</div>
 	</body>
 	<script>
 		var app = new Vue({
 			el: '#app',
 			data: {
-				xixi:"hahaha",
-				value:"1",
-				list:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}])
+				items:[{
+					from:true,
+					data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}]),
+					value:"1"
+				},{
+					data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
+					value:"1"
+				}]
 			},
 			methods:{
+				hahax:function(e){
+					console.log(this);
+					console.log(e);
+				}
 			},
 			mounted:function(){
+				console.log("我的页面加载完成")
+			},beforeUpdate:function(){
+				console.log("我的更新之前")
+			},updated:function(){
+				console.log("我在更新之后")
+			},created:function(){
 				console.log("我的页面创建完成")
 			}
 		})

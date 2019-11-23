@@ -114,18 +114,21 @@
      * 加载环境
      */
     if(jsSearch.lib != "jquery" || jsSearch.from != "pc"){
-        document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jspath + '/libs/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
     }
     /*如果是react 加载react的必备文件*/
     if(jsSearch.lib == "react"){
-        document.write('<script src="' + jspath + '/compatible/react-dom'+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jspath + '/libs/react-dom'+envStr+'.js" type="text/javascript"></sc' + 'ript>');
     }
     /**
      * 加载插件
      */
-    if(jsSearch.lib != "jquery" && jsSearch.from == "pc"){
-        /**加载改造包*/
-        document.write('<script src="' + jspath + '/libs/base.js" type="text/javascript"></sc' + 'ript>');
-        document.write('<script src="' + jspath + '/libs/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
+    if(jsSearch.from == "pc"){
+        /**加载兼容层底包,jquery兼容层不依赖此底包*/
+        if(jsSearch.lib != "jquery"){
+            document.write('<script src="' + jspath + '/compatible/base.js" type="text/javascript"></sc' + 'ript>');
+        }
+        /** 加载兼容层 */
+        document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
 })(window)

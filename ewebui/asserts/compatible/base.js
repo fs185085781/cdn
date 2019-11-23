@@ -28,5 +28,13 @@
         });
         ctrlMap[clazz] = propMap;
     });
+    var copatible = {};
     window.ctrlMap = ctrlMap;
+    /**
+     * 所有兼容层的实现原理均为以下步骤
+     * 1.替换所有miniui的class
+     * 2.准备双向绑定素材
+     * 3.对mini进行外包一层,并调用mini初始化
+     * 4.当有数据更新的时候,同步更新文档
+     */
 })()
