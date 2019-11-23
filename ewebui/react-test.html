@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="./asserts/boot/utils.js?from=pc&lib=react&env=test&jsx=true"></script>
+		<script>
+			class MiniButton extends MiniUi{
+				valueChanged(e){
+					console.log(e,"变更事件");
+				}
+			}
+		</script>
+	</head>
+	<body>
+	<div id="example">
+
+	</div>
+	</body>
+	<script type="text/babel">
+		class App extends React.Component {
+			constructor() {
+				super();
+				this.state = {
+					btn:{
+						id:"test1",
+						value:"2",
+						data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
+						valuechanged:"valueChanged"
+					},
+					btn2:{
+						id:"test2",
+						value:"2",
+						data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}])
+					}
+				}
+				this.handleClick = this.handleClick.bind(this);
+			}
+			handleClick(){
+				this.setState(state => ({
+					btn:{...state.btn,value:"1"}
+				}));
+			}
+			render() {
+				return (
+						<div>
+						<a onClick={this.handleClick}>测试</a>
+						<MiniButton class="mini-combobox" options={this.state.btn}/>
+						<MiniButton class="mini-combobox" options={this.state.btn2}/>
+						</div>
+				);
+			}
+		}
+		ReactDOM.render(
+		<App />,
+				document.getElementById('example')
+		);
+	</script>
+</html>
