@@ -17,13 +17,16 @@
             this.el = React.createRef();
         }
         componentDidMount(){
+            this.lastProps = getPropsByReact(this.props.options);
             initMountDom(this);
             if(this.miniuiDidMount){
                 this.miniuiDidMount();
             }
         }
-        componentDidUpdate(prevProps, prevState){
-           copatible.updateComponent(this.el.current,prevProps.options,this.props.options);
+        componentDidUpdate(){
+            var that = this;
+            copatible.updateComponent(that.el.current,that.lastProps,that.props.options);
+            that.lastProps = getPropsByReact(that.props.options);
             if(this.miniuiDidUpdate){
                 this.miniuiDidUpdate();
             }
@@ -34,6 +37,13 @@
         }
     }
     window.MiniUi = MiniUi;
+    window.getPropsByReact = function(options){
+        var map = {};
+        $.each(options,function(key,val){
+            map[key] = val;
+        });
+        return map;
+    }
     window.createReactMap = function(that,key){
         if(!window.reactParentMap){
             window.reactParentMap = {};

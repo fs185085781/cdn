@@ -166,6 +166,8 @@
                 if(!prop){
                     return true;
                 }
+                value = that.getRealValue(value);
+                value = that.parseData(value,prop.type);
                 if(prop.type == "function"){
                     eval("miniObj."+prop.real+"(value)");
                 }else{
@@ -177,9 +179,92 @@
                     }
                 }
             });
+        },
+        getRealValue:function (val){
+            try{
+                /*IE浏览器下eval执行到不包含的变量不会抛异常返回undefined*/
+                if(eval(val) == eval(eval(val))){
+                    /*当前是数值或是对象*/
+                }else{
+                    try{
+                        val = eval(val);
+                    }catch (e2) {
+                        /*无法使用eval的不处理*/
+                    }
+                }
+            }catch (e) {
+                /*谷歌浏览器下eval执行到不包含的变量会抛异常进这里*/
+                try{
+                    val = eval(val);
+                }catch (e2) {
+                    /*无法使用eval的不处理*/
+                }
+            }
+            return val;
+        },
+        parseData:function(val,type){
+            if(type == "string"){
+                return this.parseString(val);
+            }else if(type == "boolean"){
+                return this.parseBoolean(val);
+            }if(type == "number"){
+                return this.parseNumber(val);
+            }if(type == "object"){
+                return this.parseObject(val);
+            }else{
+                throw "EwebUiError:can not convert val";
+            }
+        },
+        parseString:function(val){
+            if(typeof val == "string"){
+                return val.trim();
+            }else if(val == null){
+                return "";
+            }else if(typeof val == "function"){
+                return String(val);
+            }else{
+                return mini.encode(val);
+            }
+        },
+        parseBoolean:function(val){
+            if(typeof val == "boolean"){
+                return val;
+            }if(val == "true" || val == "false"){
+                return eval(val);
+            }if(val == "1" || val =="0"){
+                return Boolean(Number(val));
+            }else if(val == null){
+                return false;
+            }else if(typeof val == "string"){
+                val = val.trim();
+                if(val){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            return true;
+        },
+        parseNumber:function(val){
+            if(typeof val == "number"){
+                return val;
+            }else if(typeof val == "string"){
+                val = val.trim();
+                if(!isNaN(val)){
+                    return val*1;
+                }
+            }else if(val instanceof Date){
+                return val.getTime();
+            }
+            return 0;
+        },
+        parseObject:function(val){
+            if(typeof val != "string"){
+                return val;
+            }
+            return mini.decode(val);
         }
     };
-    window.ctrlMap = ctrlMap;
     window.copatible = copatible;
     /**
      * 所有兼容层的实现原理均为以下步骤

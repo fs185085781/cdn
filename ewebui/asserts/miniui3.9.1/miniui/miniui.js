@@ -19,10 +19,10 @@ Ol0O01=function(){this.el=document.createElement("div");this.el.className="mini-
 //mini eval
 window.eval=evalData;
 //json
-JSON.stringify=mini.encode;
+/*JSON.stringify=mini.encode;
 JSON.encode=JSON.stringify;
 JSON.parse=mini.decode;
-JSON.decode=JSON.parse;
+JSON.decode=JSON.parse;*/
 //auto
 window.mini.autoParse = false;
 //debug
