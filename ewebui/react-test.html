@@ -9,12 +9,14 @@
 				valueChanged(e){
 					console.log(e,"变更事件");
 				}
+				componentDidMount(){
+					console.log("子级")
+				}
 			}
 		</script>
 	</head>
 	<body>
 	<div id="example">
-
 	</div>
 	</body>
 	<script type="text/babel">
@@ -54,8 +56,8 @@
 				return (
 						<div>
 						<a onClick={this.handleClick}>测试</a>
-						<MiniButton className="mini-combobox bbb" options={this.state.btn.test}/>
-						<MiniButton className="mini-combobox bbb" options={this.state.btn2}/>
+						<MiniButton className="mini-combobox" options={this.state.btn.test}/>
+						<MiniButton className="mini-combobox" options={this.state.btn2}/>
 						</div>
 				);
 			}

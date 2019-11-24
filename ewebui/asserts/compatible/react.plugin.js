@@ -14,22 +14,24 @@
                 props.options.className=clazz;
             }
             super(props);
+            this.oldComponentDidMount = this.componentDidMount;
+            this.componentDidMount =function(a,b){
+                this.lastProps = getPropsByReact(this.props.options);
+                initMountDom(this);
+                if(this.oldComponentDidMount){
+                    this.oldComponentDidMount(a,b);
+                }
+            }
+            this.oldComponentDidUpdate = this.componentDidUpdate;
+            this.componentDidUpdate =function(a,b){
+                var that = this;
+                copatible.updateComponent(that.el.current,that.lastProps,that.props.options);
+                that.lastProps = getPropsByReact(that.props.options);
+                if(this.oldComponentDidUpdate){
+                    this.oldComponentDidUpdate(a,b);
+                }
+            }
             this.el = React.createRef();
-        }
-        componentDidMount(){
-            this.lastProps = getPropsByReact(this.props.options);
-            initMountDom(this);
-            if(this.miniuiDidMount){
-                this.miniuiDidMount();
-            }
-        }
-        componentDidUpdate(){
-            var that = this;
-            copatible.updateComponent(that.el.current,that.lastProps,that.props.options);
-            that.lastProps = getPropsByReact(that.props.options);
-            if(this.miniuiDidUpdate){
-                this.miniuiDidUpdate();
-            }
         }
         render() {
             this.props.options.ref = this.el;
@@ -37,7 +39,7 @@
         }
     }
     window.MiniUi = MiniUi;
-    window.getPropsByReact = function(options){
+    function getPropsByReact(options){
         var map = {};
         $.each(options,function(key,val){
             map[key] = val;

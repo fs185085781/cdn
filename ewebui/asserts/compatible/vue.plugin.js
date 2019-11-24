@@ -9,6 +9,16 @@
     }
     Vue.prototype._init = function(options){
         var oldMounted = options.mounted;
+        options.mounted = function(){
+            //我拦截的,可以在这里写框架代码
+            var that = this;
+            if(oldMounted){
+                that.oldMounted = oldMounted;
+                //用户输入的,调用用户的生命周期方法
+                that.oldMounted();
+            }
+        }
+
         var oldBeforeUpdate = options.beforeUpdate;
         var oldUpdated = options.updated;
         var oldCreated = options.created;

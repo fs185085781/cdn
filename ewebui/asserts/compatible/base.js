@@ -1,5 +1,18 @@
 (function(){
     "use strict";
+    /*兼容IE5不支持的属性*/
+    /*重写string的trim方法*/
+    if(typeof String.prototype.trim !== 'function') {
+        String.prototype.trim = function() {
+            return this.replace(/^\s+|\s+$/g, '');
+        }
+    }
+    /*重写string的startsWith方法*/
+    if(typeof String.prototype.startsWith !== 'function') {
+        String.prototype.startsWith = function(str) {
+            return this.indexOf(str) == 0;
+        }
+    }
     var ctrlMap = {};
     jQuery.each(mini,function(key,val){
         if(!mini[key]){
