@@ -9,7 +9,7 @@
 	<div>{{comboboxs[0].value}}</div>
 	<div>{{comboboxs[1].value}}</div>
 	<div miniui module="mini-combobox" ng-repeat="(index,combobox) in comboboxs" field="comboboxs[{{index}}]"></div>
-	<div id="nihaoa" miniui module="mini-combobox" field="onecombobox" ng-model="onecombobox.value"></div>
+	<div id="nihaoa" miniui module="mini-combobox" field="onecombobox"></div>
 	<div>{{onecombobox.value}}</div>
 	<a ng-click="changeButton()">测试</a>
 	</body>
