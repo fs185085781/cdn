@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="./asserts/boot/utils.js?from=pc&lib=angular&env=test"></script>
+	</head>
+	<body ng-app="myApp" ng-controller="testCtrl">
+	<div>{{comboboxs[0].value}}</div>
+	<div>{{comboboxs[1].value}}</div>
+	<div miniui module="mini-combobox" ng-repeat="(index,combobox) in comboboxs" field="comboboxs[{{index}}]"></div>
+	<div id="nihaoa" miniui module="mini-combobox" field="onecombobox" ng-model="onecombobox.value"></div>
+	<div>{{onecombobox.value}}</div>
+	<a ng-click="changeButton()">测试</a>
+	</body>
+	<script>
+		var app=angular.module('myApp', []);
+		app.controller('testCtrl', function ($scope) {
+			$scope.comboboxs = [
+				{
+					value:"2",
+					data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
+					allowinput:"true"
+				},
+				{
+					value:"2",
+					data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}]),
+					allowinput:"true",
+					valuechanged:"textchange"
+				}
+			];
+			$scope.onecombobox = {
+				value:"2",
+				data:JSON.stringify([{id:"1",text:"测试b1"},{id:"2",text:"测试b2"}]),
+				allowinput:"true"
+			}
+			$scope.textchange = function (e) {
+				console.log("下拉变更",e)
+			};
+			$scope.changeButton = function () {
+				$scope.onecombobox.value="1";
+			};
+		});
+	</script>
+</html>

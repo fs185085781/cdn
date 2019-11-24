@@ -150,11 +150,14 @@
         },
         updateComponent:function(ele,prepMap,currentMap){
             var that = this;
-            var miniEle = $(ele).find(":first-child");
-            if(miniEle.length == 0){
-                throw "EwebUiError:not find the element";
+            var miniObj = ele;
+            if(!ele.isControl){
+                var miniEle = $(ele).find(":first-child");
+                if(miniEle.length == 0){
+                    throw "EwebUiError:not find the element";
+                }
+                miniObj = mini.get($(miniEle)[0]);
             }
-            var miniObj = mini.get($(miniEle)[0]);
             if(!miniObj){
                 throw "EwebUiError:the ele is not a mini obj";
             }
