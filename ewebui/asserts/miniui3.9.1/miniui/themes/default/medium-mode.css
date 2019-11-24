@@ -477,3 +477,7 @@ body .mini-pager-num
     line-height:24px;
     font-size:13px;
 }
+.mini-checkbox-icon,.mini-list-icon{
+    line-height: 16px;
+    min-height: 16px;
+}

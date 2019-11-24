@@ -6,6 +6,7 @@
 		<script src="./asserts/boot/utils.js?from=pc&lib=jquery&env=test"></script>
 	</head>
 	<body>
+		<div class="mini-row" style="margin-top:200px;"></div>
 		<div class="mini-row">
 			<div class="mini-col-3">语言</div>
 			<div class="mini-col-7">
@@ -372,6 +373,7 @@
 	<script>
 		var filters = [{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}];
 		$(function(){
+			mini.parse();
 			var languageStrs = "en_US,zh_CN";
 			var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
 			var lmodeStrs = "default,medium,large,huge";
@@ -381,6 +383,9 @@
 			mini.get("language").setValue(mini.getLange());
 			mini.get("skinbox").setValue(mini.getSkin());
 			mini.get("modebox").setValue(mini.getMode());
+			//皮肤和模式需要手动刷新
+			mini.get("skinbox").doValueChanged();
+			mini.get("modebox").doValueChanged();
 			function initCombobox(strs,id){
 				var strsz = strs.split(",");
 				var list = [];

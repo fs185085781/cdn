@@ -563,8 +563,8 @@ body .mini-calendar .mini-calendar-daysheader td
 }
 
 .mini-checkbox-icon,.mini-list-icon{
-	line-height: 13px;
-	min-height: 13px;
+	line-height: 18px;
+	min-height: 18px;
 }
 .mini-pager-size .mini-buttonedit-border{
 	height:26px;
@@ -573,7 +573,7 @@ body .mini-calendar .mini-calendar-daysheader td
 	height:26px;
 	line-height:26px;
 }
-.mini-pager-size ..mini-buttonedit-button{
+.mini-pager-size .mini-buttonedit-button{
 	height:20px;
 }
 

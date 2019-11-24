@@ -19,10 +19,13 @@ Ol0O01=function(){this.el=document.createElement("div");this.el.className="mini-
 //mini eval
 window.eval=evalData;
 //json
-/*JSON.stringify=mini.encode;
+if(typeof JSON == "undefined"){
+    JSON = {};
+}
+JSON.stringify=mini.encode;
 JSON.encode=JSON.stringify;
 JSON.parse=mini.decode;
-JSON.decode=JSON.parse;*/
+JSON.decode=JSON.parse;
 //auto
 window.mini.autoParse = false;
 //debug
@@ -33,6 +36,6 @@ window.mini_debugger = false;
         for(var key in miniUtils){
             mini[key] = miniUtils[key];
         }
-        delete window.miniUtils;
+        window.miniUtils = undefined;
     }
 })();

@@ -1,4 +1,75 @@
 (function(){
+	/**
+	 * 兼容IE5
+	 */
+	var jsonUtils={
+		stringify:function(jsonObj) {
+			var that = this;
+			var result = '',
+				curVal;
+			if (jsonObj === null) {
+				return String(jsonObj);
+			}
+			switch (typeof jsonObj) {
+				case 'number':
+				case 'boolean':
+					return String(jsonObj);
+				case 'string':
+					return '"' + jsonObj + '"';
+				case 'undefined':
+				case 'function':
+					return undefined;
+			}
+			switch (Object.prototype.toString.call(jsonObj)) {
+				case '[object Array]':
+					result += '[';
+					for (var i = 0, len = jsonObj.length; i < len; i++) {
+						curVal = that.stringify(jsonObj[i]);
+						result += (curVal === undefined ? null : curVal) + ",";
+					}
+					if (result !== '[') {
+						result = result.slice(0, -1);
+					}
+					result += ']';
+					return result;
+				case '[object Date]':
+					return '"' + that.formatDate(jsonObj,"yyyy-MM-dd HH:mm:ss") + '"';
+				case '[object RegExp]':
+					return "{}";
+				case '[object Object]':
+					result += '{';
+					for (i in jsonObj) {
+						console.log(jsonObj);
+						if (jsonObj.hasOwnProperty(i)) {
+							curVal = that.stringify(jsonObj[i]);
+							if (curVal !== undefined) {
+								result += '"' + i + '":' + curVal + ',';
+							}
+						}
+					}
+					if (result !== '{') {
+						result = result.slice(0, -1);
+					}
+					result += '}';
+					return result;
+
+				case '[object String]':
+					return '"' + jsonObj.toString() + '"';
+				case '[object Number]':
+				case '[object Boolean]':
+					return jsonObj.toString();
+			}
+		},
+		parse:function(str){
+			if(typeof str == "object"){
+				return str;
+			}
+			return eval("("+str+")");
+		}
+	}
+	if(typeof JSON == "undefined"){
+		JSON = jsonUtils;
+	}
 	var bootPATH = __CreateJSPath("boot.js",1);
 	var miniUtils = {
 	    setLocalStorage:function(key,val){
@@ -23,7 +94,11 @@
 			var ele = document.getElementById(key);
 			if(mode == "default"){
 				if(ele){
-					ele.remove();
+					if(jQuery){
+						jQuery(ele).remove();
+					}else{
+						ele.remove();
+					}
 				}
 			}else{
 				var url = bootPATH + '/miniui/themes/default/' + mode + '-mode.css';
@@ -44,7 +119,9 @@
 	        this.setLocalStorage(key,skin);
 			var ele = document.getElementById(key);
 			if(skin == "default"){
-				if(ele){
+				if(jQuery){
+					jQuery(ele).remove();
+				}else{
 					ele.remove();
 				}
 			}else{
@@ -84,6 +161,9 @@
 				type = "text/javascript";
 			}
 			script.type = type;
+			if(!document.head){
+				document.head = document.getElementsByTagName("head")[0];
+			}
 			document.head.appendChild(script);
 		},
 		loadCss:function(path,id,rel,type){
@@ -106,14 +186,17 @@
 				type = "text/css";
 			}
 			link.type = type;
+			if(!document.head){
+				document.head = document.getElementsByTagName("head")[0];
+			}
 			document.head.appendChild(link);
 		}
 	}
-	var lang = miniUtils.getLange() || 'zh_CN';
 	window.miniUtils = miniUtils;
 	//miniui
 	document.write('<script src="' + bootPATH + '/jquery.min.js" type="text/javascript"></sc' + 'ript>');
 	document.write('<script src="' + bootPATH + '/miniui/miniui.js" type="text/javascript" ></sc' + 'ript>');
+	var lang = miniUtils.getLange() || 'zh_CN';
 	document.write('<script src="' + bootPATH + '/miniui/locale/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');
 	document.write('<link href="' + bootPATH + '/res/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />');
 	document.write('<link href="' + bootPATH + '/miniui/themes/default/miniui.css" rel="stylesheet" type="text/css" />');

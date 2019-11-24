@@ -585,8 +585,8 @@ body .mini-calendar-menu-year
 }
 
 .mini-checkbox-icon,.mini-list-icon{
-	line-height: 13px;
-	min-height: 13px;
+	line-height: 20px;
+	min-height: 20px;
 }
 .mini-pager-size .mini-buttonedit-border{
 	height:26px;
