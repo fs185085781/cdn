@@ -35,7 +35,7 @@
                  * 更新组件
                  */
                 if(that.state && that.state.miniObj && that.state.miniObj.el && that.el && that.el.current){
-                    copatible.updateComponent(that.el.current,that.lastProps,that.props.options,function(eventMap){
+                    copatible.updateComponent(that.state.miniObj,that.lastProps,that.props.options,function(eventMap){
                         $.each(eventMap,function (key,val) {
                             if(val && that[val]){
                                 eventMap[key] = that[val];
