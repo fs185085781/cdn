@@ -118,7 +118,7 @@
             }
             mini.parse(ele);
             if(callback){
-                callback(ele);
+                callback(mini.get($(ele).find(":first-child")[0]));
             }
         },
         bindEvent:function(ele,evnetMap,valueChangeFire){
@@ -140,15 +140,22 @@
                 if(!ctrl["on"+key]){
                     return true;
                 }
-                miniObj.on(key,val);
+                if(val){
+                    miniObj.on(key,val);
+                }else{
+                    miniObj.un(key,null);
+                }
             });
             if(valueChangeFire && ctrl["onvaluechanged"]){
-                miniObj.on("valuechanged",function(e){
-                    valueChangeFire(e);
-                });
+                if(!miniObj.valueUpdateEvent){
+                    miniObj.valueUpdateEvent = function(e){
+                        valueChangeFire(e);
+                    }
+                }
+                miniObj.on("valuechanged",miniObj.valueUpdateEvent);
             }
         },
-        updateComponent:function(ele,prepMap,currentMap){
+        updateComponent:function(ele,prepMap,currentMap,callback){
             var that = this;
             var miniObj = ele;
             if(!ele.isControl){
@@ -173,12 +180,17 @@
             $.each(currentMap,function(key,val){
                 map[key] = 1;
             });
+            var eventMap = {};
             $.each(map,function(key,val){
                 var value = currentMap[key];
                 if(prepMap[key] == value){
                     return true;
                 }
                 var prop = ctrl[key];
+                var event = ctrl["on"+key];
+                if(event){
+                    eventMap[key] = value;
+                }
                 if(!prop){
                     return true;
                 }
@@ -195,6 +207,22 @@
                     }
                 }
             });
+            if(callback){
+                callback(eventMap);
+            }
+        },
+        destroyComponent:function(ele){
+            var miniObj = ele;
+            if(!ele.isControl){
+                var miniEle = $(ele).find(":first-child");
+                if(miniEle.length == 0){
+                    throw "EwebUiError:not find the element";
+                }
+                miniObj = mini.get($(miniEle)[0]);
+            }
+            if(miniObj){
+                miniObj.destroy();
+            }
         },
         getRealValue:function (val){
             try{

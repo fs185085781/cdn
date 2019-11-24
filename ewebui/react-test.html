@@ -5,13 +5,19 @@
 		<title></title>
 		<script src="./asserts/boot/utils.js?from=pc&lib=react&env=test&jsx=true"></script>
 		<script>
-			class MiniButton extends MiniUi{
+			class MiniCombobox extends MiniUi{
 				valueChanged(e){
 					console.log(e,"变更事件");
 				}
 				componentDidMount(){
 					console.log("子级")
 				}
+			}
+			class MiniButton extends MiniUi{
+				btnClick(e){
+					console.log(e,"按钮点击")
+				}
+
 			}
 		</script>
 	</head>
@@ -25,39 +31,42 @@
 				super();
 				var that = this;
 				this.state = {
-					btn:{
-						test:{
-							value:"2",
-							data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
-							value_update:createReactMap(that,"btn.test"),
-							allowinput:"true"
-						}
+					combobox:{
+						value:"2",
+						data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
+						value_update:createReactMap(that,"combobox"),
+						allowinput:"true",
+						className:"mini-combobox",
+						valuechanged:"valueChanged",
 					},
-					btn2:{
+					combobox2:{
 						value:"2",
 						data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}]),
-						valuechanged:"valueChanged",
-						value_update:createReactMap(that,"btn2")
-					}
+						value_update:createReactMap(that,"combobox2"),
+						allowinput:"true",
+						className:"mini-combobox",
+					},
+					btn:{
+						className:"mini-button",
+						text:"按钮",
+						click:"btnClick"
+					},
+					show:true
 				}
 				this.handleClick = this.handleClick.bind(this);
-				this.btn1Input = this.btn1Input.bind(this);
 			}
 			handleClick(){
-				this.state.btn.test.allowinput="false";
+				this.state.show = !this.state.show;
 				this.setState(this.state);
-			}
-			btn1Input(value){
-				this.setState(state => ({
-					btn:{...state.btn,test:{...state.btn.test,value:value}}
-				}));
 			}
 			render() {
 				return (
 						<div>
 						<a onClick={this.handleClick}>测试</a>
-						<MiniButton className="mini-combobox" options={this.state.btn.test}/>
-						<MiniButton className="mini-combobox" options={this.state.btn2}/>
+							{this.state.show
+									?<MiniCombobox options={this.state.combobox}/>
+									:<MiniCombobox options={this.state.combobox2}/>}
+							<MiniButton options={this.state.btn}/>
 						</div>
 				);
 			}

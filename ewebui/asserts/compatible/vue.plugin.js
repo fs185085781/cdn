@@ -9,19 +9,10 @@
     }
     Vue.prototype._init = function(options){
         var oldMounted = options.mounted;
-        options.mounted = function(){
-            //我拦截的,可以在这里写框架代码
-            var that = this;
-            if(oldMounted){
-                that.oldMounted = oldMounted;
-                //用户输入的,调用用户的生命周期方法
-                that.oldMounted();
-            }
-        }
-
         var oldBeforeUpdate = options.beforeUpdate;
         var oldUpdated = options.updated;
         var oldCreated = options.created;
+        var oldDestroyed = options.destroyed;
         options.created = function(){
             var that = this;
             /**
@@ -60,7 +51,21 @@
             updateDocument(that.beforeVnode, that.afterVnode);
             that.fireEvent("oldUpdated",oldUpdated);
         }
+        options.destroyed = function(){
+            var that = this;
+            that.fireEvent("oldDestroyed",oldDestroyed);
+        }
         this._oldInit(options);
+    }
+    function bindNodeEvent(node){
+        var eventMap = node.data.on;
+        copatible.bindEvent(node.elm,eventMap,function(e){
+            var input = $(node.elm)[0];
+            input.value = e.value;
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent("updatevaluechange", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, 0, null,null);
+            input.dispatchEvent(event);
+        });
     }
     /**
      * 初始化doc,将miniui的div重新包括一层,并调用mini.parse初始化
@@ -75,15 +80,7 @@
                     dgbl(node.children);
                 }
                 if(node.data && node.data.on && node.data.attrs && node.data.attrs.minicls){
-                    //bindEvent(node);
-                    var eventMap = node.data.on;
-                    copatible.bindEvent(node.elm,eventMap,function(e){
-                        var input = $(node.elm)[0];
-                        input.value = e.value;
-                        var event = document.createEvent("MouseEvents");
-                        event.initMouseEvent("updatevaluechange", true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, 0, null,null);
-                        input.dispatchEvent(event);
-                    });
+                    bindNodeEvent(node);
                 }
             });
         }
@@ -100,7 +97,15 @@
                     dgbl(bv.children,av.children);
                 }
                 if(bv.data && bv.data.attrs && bv.data.attrs.minicls){
-                    copatible.updateComponent(av.elm,bv.data.attrs,av.data.attrs);
+                    if(!av || !av.data || !av.data.attrs){
+                        copatible.destroyComponent(bv.elm);
+                    }else{
+                        copatible.updateComponent(av.elm,bv.data.attrs,av.data.attrs);
+                    }
+                }else if(av.data && av.data.attrs && av.data.attrs.minicls){
+                    copatible.parseMiniOne(av.data.attrs.minicls,av.elm,function(){
+                        bindNodeEvent(av);
+                    });
                 }
             });
         }

@@ -10,14 +10,17 @@
 		<div id="test" class="mini-combobox" valueFromSelect="true"></div>
 		<div v-for="item in items">
 			<div>{{item.value}}</div>
-			<div name="xixihaha" class="mini-combobox" :data="item.data" :value="item.value" :valueFromSelect="item.from" v-on:valuechanged="hahax" allowInput="true"></div>
+			<div name="xixihaha" class="mini-combobox" :data="item.data" :value="item.value" :valueFromSelect="item.from" @valuechanged="hahax" allowInput="true"></div>
 		</div>
+		<div v-if="show" class="mini-combobox" :data="onecombobox.data" :value="onecombobox.value" @valuechanged="hahax" allowInput="true"></div>
+		<a @click="show=!show">点击隐藏</a>
 	</div>
 	</body>
 	<script>
 		var app = new Vue({
 			el: '#app',
 			data: {
+				show:true,
 				items:[{
 					from:true,
 					data:JSON.stringify([{id:"1",text:"测试1"},{id:"2",text:"测试2"}]),
@@ -25,7 +28,11 @@
 				},{
 					data:JSON.stringify([{id:"1",text:"测试a1"},{id:"2",text:"测试a2"}]),
 					value:"1"
-				}]
+				}],
+				onecombobox:{
+					data:JSON.stringify([{id:"1",text:"测试b1"},{id:"2",text:"测试b2"}]),
+					value:"1"
+				}
 			},
 			methods:{
 				hahax:function(e){
