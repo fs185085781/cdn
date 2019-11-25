@@ -193,8 +193,25 @@
 		}
 	}
 	window.miniUtils = miniUtils;
+	function getRemoteData(url,callBack){
+		var xmlhttp;
+		if (window.XMLHttpRequest){
+			xmlhttp=new XMLHttpRequest();
+		}else{
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange=function(){
+			if(xmlhttp.readyState==4 && xmlhttp.status==200){
+				callBack(xmlhttp.responseText);
+			}
+		}
+		xmlhttp.open("GET",url,false);
+		xmlhttp.send();
+	}
+	getRemoteData( bootPATH + '/jquery.min.js',function (text) {
+		eval(text);
+	});
 	//miniui
-	document.write('<script src="' + bootPATH + '/jquery.min.js" type="text/javascript"></sc' + 'ript>');
 	document.write('<script src="' + bootPATH + '/miniui/miniui.js" type="text/javascript" ></sc' + 'ript>');
 	var lang = miniUtils.getLange() || 'zh_CN';
 	document.write('<script src="' + bootPATH + '/miniui/locale/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');

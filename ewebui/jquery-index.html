@@ -380,9 +380,9 @@
 			initCombobox(languageStrs,"language");
 			initCombobox(skinStrs,"skinbox");
 			initCombobox(lmodeStrs,"modebox");
-			mini.get("language").setValue(mini.getLange());
-			mini.get("skinbox").setValue(mini.getSkin());
-			mini.get("modebox").setValue(mini.getMode());
+			mini.get("language").setValue(mini.getLange()?mini.getLange():"zh_CN");
+			mini.get("skinbox").setValue(mini.getSkin()?mini.getSkin():"default");
+			mini.get("modebox").setValue(mini.getMode()?mini.getMode():"default");
 			//皮肤和模式需要手动刷新
 			mini.get("skinbox").doValueChanged();
 			mini.get("modebox").doValueChanged();
