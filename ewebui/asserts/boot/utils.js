@@ -43,7 +43,10 @@
 		    ss.length = ss.length - length;
 		    path = ss.join("/");
 		    return path;
-		}
+		},
+        getRelativePath:function(){
+            return this.getJsPath("utils.js",1);
+        }
     }
     function getSearchByStr(search){
         if (search) {
@@ -77,6 +80,21 @@
         }
         return map;
     }
+    function getRemoteData(url,callBack){
+        var xmlhttp;
+        if (win.XMLHttpRequest){
+            xmlhttp=new XMLHttpRequest();
+        }else{
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function(){
+            if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                callBack(xmlhttp.responseText);
+            }
+        }
+        xmlhttp.open("GET",url,false);
+        xmlhttp.send();
+    }
 	win.utils = utils;
     var jsSearch = getJsSearch("utils.js");
     if(jsSearch.from != "m"){
@@ -92,33 +110,39 @@
     if(jsSearch.env == "prod"){
         envStr = ".min";
     }
-    var jspath = utils.getJsPath("utils.js",2);
+    var jspath = utils.getJsPath("utils.js",1);
+    var config;
+    getRemoteData(jspath+"/config.js",function(text){
+        eval(text);
+        config = window.config;
+        window.config = undefined;
+    });
     if(jsSearch.from == "pc"){
         /**当前是PC环境,加载miniui*/
-        document.write('<script src="' + jspath + '/miniui3.9.1/boot.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.miniui.jsPath + '" type="text/javascript"></sc' + 'ript>');
     }else if(jsSearch.from == "m"){
         /**当前是手机环境*/
     }
 
     if(jsSearch.jsx == "true"){
         /*加载jsx*/
-        document.write('<script src="' + jspath + '/libs/babel.min.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.otherLibs.jsxPath + '" type="text/javascript"></sc' + 'ript>');
     }
     /*如果是angular2 加载angular2的基础文件*/
     if(jsSearch.lib == "angular2"){
-        document.write('<script src="' + jspath + '/libs/es6-shim.js" type="text/javascript"></sc' + 'ript>');
-        document.write('<script src="' + jspath + '/libs/angular2-polyfills.js" type="text/javascript"></sc' + 'ript>');
-        document.write('<script src="' + jspath + '/libs/Rx.umd.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.angular2.es6ShimPath + '" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.angular2.polyfillsPath + '" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.angular2.rxUmdPath + '" type="text/javascript"></sc' + 'ript>');
     }
     /**
      * 加载环境
      */
     if(jsSearch.lib != "jquery" || jsSearch.from != "pc"){
-        document.write('<script src="' + jspath + '/libs/'+jsSearch.lib+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"Path"] + '" type="text/javascript"></sc' + 'ript>');
     }
     /*如果是react 加载react的必备文件*/
     if(jsSearch.lib == "react"){
-        document.write('<script src="' + jspath + '/libs/react-dom'+envStr+'.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config.react[jsSearch.env+"DomPath"] + '" type="text/javascript"></sc' + 'ript>');
     }
     /**
      * 加载插件
@@ -126,9 +150,9 @@
     if(jsSearch.from == "pc"){
         /**加载兼容层底包,jquery兼容层不依赖此底包*/
         if(jsSearch.lib != "jquery"){
-            document.write('<script src="' + jspath + '/compatible/base.js" type="text/javascript"></sc' + 'ript>');
+            document.write('<script src="' + jspath + '/../compatible/base.js" type="text/javascript"></sc' + 'ript>');
         }
         /** 加载兼容层 */
-        document.write('<script src="' + jspath + '/compatible/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + jspath + '/../compatible/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
 })(window)
