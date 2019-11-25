@@ -29,15 +29,6 @@
                     }
                 });
             });
-            /*copatible.changeAllClass(function(ele){
-                var valueProp = $(ele).attr("v-bind:value");
-                if(!valueProp){
-                    valueProp = $(ele).attr(":value");
-                }
-                if(valueProp){
-                    jQuery(ele).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
-                }
-            });*/
             that.fireEvent("oldCreated",oldCreated);
         }
         options.mounted = function(){
