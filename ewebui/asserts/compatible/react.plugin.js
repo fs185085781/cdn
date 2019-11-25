@@ -92,25 +92,30 @@
         }
         var className = that.props.options.className;
         var ele = that.el.current;
-        copatible.changeOneClass(className,ele,function(){
-            copatible.parseMiniOne(className,ele,function(miniObj){
-                that.state.miniObj = miniObj;
-                that.setState(that.state);
-                var eventMap = {};
-                $.each(that.props.options,function (key,val) {
-                    if(typeof val != "string"){
-                        return true;
+        copatible.changeMiniuiClass(ele,function(list){
+            $.each(list,function(i,item){
+                copatible.parseMiniUi(item,function(objs){
+                    if(objs.length>0){
+                        var obj = objs[0];
+                        that.state.miniObj = obj;
+                        that.setState(that.state);
+                        var eventMap = {};
+                        $.each(that.props.options,function (key,val) {
+                            if(typeof val != "string"){
+                                return true;
+                            }
+                            var event = that[val];
+                            if(!event){
+                                return true;
+                            }
+                            if(typeof event != "function"){
+                                return true;
+                            }
+                            eventMap[key] = event;
+                        });
+                        eventBind(that,eventMap);
                     }
-                    var event = that[val];
-                    if(!event){
-                        return true;
-                    }
-                    if(typeof event != "function"){
-                        return true;
-                    }
-                    eventMap[key] = event;
                 });
-                eventBind(that,eventMap);
             });
         });
     }

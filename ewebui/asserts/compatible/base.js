@@ -45,6 +45,20 @@
     });
     css = css.substring(1);
     css += "{display:inline !important;}";
+    function findIncludeOwn(parent,className){
+        var jlist = $(parent).find("."+className);
+        if(jlist.length ==0 && !$(parent).hasClass(className)){
+            return [];
+        }
+        var list = [];
+        $.each(jlist,function(i,one){
+            list[list.length] = one;
+        });
+        if($(parent).hasClass(className)){
+            list[list.length] = $(parent)[0];
+        }
+        return list;
+    }
     var copatible = {
         ctrlMap:ctrlMap,
         changeMiniuiClass:function(parent,callback){
@@ -56,14 +70,8 @@
             }
             var clist = [];
             $.each(that.ctrlMap,function(key,val){
-                var jlist = $(parent).find("."+key);
-                if(jlist.length ==0 && !$(parent).hasClass(key)){
-                    return true;
-                }
-                if($(parent).hasClass(key)){
-                    jlist[jlist.length] = $(parent)[0];
-                }
-                $.each(jlist,function (i,ele) {
+                var list = findIncludeOwn(parent,key);
+                $.each(list,function (i,ele) {
                     $(ele).removeClass(key).addClass("p-"+key).attr("minicls",key);
                     if($(ele).attr("id")){
                         $(ele).attr("mini-id",$(ele).attr("id")).removeAttr("id");
@@ -81,15 +89,10 @@
             }else{
                 parent = $(parent)[0];
             }
+            var listEle = [];
             $.each(ctrlMap,function(key,val){
-                var jlist = $(parent).find(".p-"+key);
-                if(jlist.length ==0 && !$(parent).hasClass(key)){
-                    return true;
-                }
-                if($(parent).hasClass(key)){
-                    jlist[jlist.length] = $(parent)[0];
-                }
-                $.each(jlist,function (i,ele) {
+                var list = findIncludeOwn(parent,"p-"+key);
+                $.each(list,function (i,ele) {
                     var wb = $(ele).prop("outerHTML")+"";
                     $(ele).html(wb);
                     var miniEle = $(ele).find(":first-child");
@@ -99,12 +102,20 @@
                         if(miniEle.attr("mini-id")){
                             miniEle.attr("id",miniEle.attr("mini-id")).removeAttr("mini-id");
                         }
+                        listEle[listEle.length] = ele;
                     }
                 });
             });
-            mini.parse();
+            mini.parse(parent);
+            var miniObjList = [];
+            $.each(listEle,function (i,ele) {
+                var miniObj = mini.get($(ele).find(":first-child")[0]);
+                if(miniObj){
+                    miniObjList[miniObjList.length] = miniObj;
+                }
+            })
             if(callback){
-                callback();
+                callback(miniObjList);
             }
             if($("#p-mini-inline").length == 0){
                 $("body").append("<style id='p-mini-inline' type='text/css'>"+css+"</style>");
