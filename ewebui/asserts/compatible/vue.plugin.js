@@ -18,7 +18,18 @@
             /**
              * 用于将miniui的class替换成别的class,并绑定双向输入事件
              */
-            copatible.changeAllClass(function(ele){
+            copatible.changeMiniuiClass(null,function(list){
+                $.each(list,function(i,ele){
+                    var valueProp = $(ele).attr("v-bind:value");
+                    if(!valueProp){
+                        valueProp = $(ele).attr(":value");
+                    }
+                    if(valueProp){
+                        jQuery(ele).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
+                    }
+                });
+            });
+            /*copatible.changeAllClass(function(ele){
                 var valueProp = $(ele).attr("v-bind:value");
                 if(!valueProp){
                     valueProp = $(ele).attr(":value");
@@ -26,7 +37,7 @@
                 if(valueProp){
                     jQuery(ele).attr("v-on:updatevaluechange",valueProp+"=$event.target.value");
                 }
-            });
+            });*/
             that.fireEvent("oldCreated",oldCreated);
         }
         options.mounted = function(){
@@ -71,9 +82,12 @@
      * 初始化doc,将miniui的div重新包括一层,并调用mini.parse初始化
      */
     function initDocument(vnode){
-        copatible.parseMiniAll(null,function(){
+        copatible.parseMiniUi(null,function(){
             dgbl([vnode]);
         });
+        /*copatible.parseMiniAll(null,function(){
+            dgbl([vnode]);
+        });*/
         function dgbl(list){
             $.each(list,function(i,node){
                 if(node.children && node.children.length > 0 ){
@@ -103,7 +117,7 @@
                         copatible.updateComponent(av.elm,bv.data.attrs,av.data.attrs);
                     }
                 }else if(av.data && av.data.attrs && av.data.attrs.minicls){
-                    copatible.parseMiniOne(av.data.attrs.minicls,av.elm,function(){
+                    copatible.parseMiniUi(av.elm,function(){
                         bindNodeEvent(av);
                     });
                 }

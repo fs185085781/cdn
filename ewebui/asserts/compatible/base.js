@@ -14,6 +14,7 @@
         }
     }
     var ctrlMap = {};
+    var css = "";
     jQuery.each(mini,function(key,val){
         if(!mini[key]){
             return true;
@@ -40,101 +41,89 @@
            }
         });
         ctrlMap[clazz] = propMap;
+        css += ",.p-"+clazz;
     });
+    css = css.substring(1);
+    css += "{display:inline !important;}";
     var copatible = {
         ctrlMap:ctrlMap,
-        changeAllClass:function(oneCallback,afterCallback){
+        changeMiniuiClass:function(parent,callback){
             var that = this;
+            if(parent==null || $(parent).length == 0){
+                parent = $("body")[0];
+            }else{
+                parent = $(parent)[0];
+            }
+            var clist = [];
             $.each(that.ctrlMap,function(key,val){
-                var jlist = $("."+key);
-                if(jlist.length ==0){
+                var jlist = $(parent).find("."+key);
+                if(jlist.length ==0 && !$(parent).hasClass(key)){
                     return true;
                 }
+                if($(parent).hasClass(key)){
+                    jlist[jlist.length] = $(parent)[0];
+                }
                 $.each(jlist,function (i,ele) {
-                    that.changeOneClass(key,ele,oneCallback);
+                    $(ele).removeClass(key).addClass("p-"+key).attr("minicls",key);
+                    if($(ele).attr("id")){
+                        $(ele).attr("mini-id",$(ele).attr("id")).removeAttr("id");
+                    }
+                    clist[clist.length] = ele;
                 });
             });
-            if(afterCallback){
-                afterCallback();
-            }
-        },
-        changeOneClass:function(classNameStr,ele,callback){
-            var that = this;
-            var clazzSz = classNameStr.split(" ");
-            var className="";
-            $.each(clazzSz,function(i,item){
-                if(that.ctrlMap[item]){
-                    className = item;
-                    return false;
-                }
-            });
-            if(!className || !that.ctrlMap[className]){
-                throw "EwebUiError:"+className+" is not a miniui class";
-            }
-            $(ele).removeClass(className).addClass("p-"+className).attr("minicls",className);
-            if($(ele).attr("id")){
-                $(ele).attr("mini-id",$(ele).attr("id")).removeAttr("id");
-            }
             if(callback){
-                callback(ele);
+                callback(clist);
             }
         },
-        parseMiniAll:function(oneCallback,afterCallback){
-            var that = this;
+        parseMiniUi:function(parent,callback){
+            if(parent==null || $(parent).length == 0){
+                parent = $("body")[0];
+            }else{
+                parent = $(parent)[0];
+            }
             $.each(ctrlMap,function(key,val){
-                var jlist = $(".p-"+key);
-                if(jlist.length ==0){
+                var jlist = $(parent).find(".p-"+key);
+                if(jlist.length ==0 && !$(parent).hasClass(key)){
                     return true;
                 }
+                if($(parent).hasClass(key)){
+                    jlist[jlist.length] = $(parent)[0];
+                }
                 $.each(jlist,function (i,ele) {
-                    that.parseMiniOne(key,ele,oneCallback);
+                    var wb = $(ele).prop("outerHTML")+"";
+                    $(ele).html(wb);
+                    var miniEle = $(ele).find(":first-child");
+                    if(miniEle.length>0){
+                        miniEle = $(miniEle[0]);
+                        miniEle.removeClass("p-"+key).addClass(key);
+                        if(miniEle.attr("mini-id")){
+                            miniEle.attr("id",miniEle.attr("mini-id")).removeAttr("mini-id");
+                        }
+                    }
                 });
             });
-            if(afterCallback){
-                afterCallback();
-            }
-        },
-        parseMiniOne:function(classNameStr,ele,callback){
-            var that = this;
-            var clazzSz = classNameStr.split(" ");
-            var className="";
-            $.each(clazzSz,function(i,item){
-                if(that.ctrlMap[item]){
-                    className = item;
-                    return false;
-                }
-            });
-            if(!className || !that.ctrlMap[className]){
-                throw "EwebUiError:"+className+" is not a miniui class";
-            }
-            var wb = $(ele).prop("outerHTML")+"";
-            $(ele).html(wb);
-            var miniEle = $(ele).find(":first-child");
-            if(miniEle.length>0){
-                miniEle.removeClass("p-"+className).addClass(className);
-                if(miniEle.attr("mini-id")){
-                    miniEle.attr("id",miniEle.attr("mini-id")).removeAttr("mini-id");
-                }
-            }
-            mini.parse(ele);
+            mini.parse();
             if(callback){
-                callback(mini.get($(ele).find(":first-child")[0]));
+                callback();
+            }
+            if($("#p-mini-inline").length == 0){
+                $("body").append("<style id='p-mini-inline' type='text/css'>"+css+"</style>");
             }
         },
         bindEvent:function(ele,evnetMap,valueChangeFire){
             var that = this;
             var miniEle = $(ele).find(":first-child");
             if(miniEle.length == 0){
-                throw "EwebUiError:not find the element";
+                throw "EwebUiError bindEvent:not find the element";
             }
             var miniObj = mini.get($(miniEle)[0]);
             if(!miniObj){
-                throw "EwebUiError:the ele is not a mini obj";
+                throw "EwebUiError bindEvent:the ele is not a mini obj";
             }
             var clazzName = miniObj.uiCls;
             var ctrl = that.ctrlMap[clazzName];
             if(!ctrl){
-                throw "EwebUiError:ctrlMap has updated";
+                throw "EwebUiError bindEvent:ctrlMap has updated";
             }
             $.each(evnetMap,function(key,val){
                 if(!ctrl["on"+key]){
@@ -161,17 +150,19 @@
             if(!ele.isControl){
                 var miniEle = $(ele).find(":first-child");
                 if(miniEle.length == 0){
-                    throw "EwebUiError:not find the element";
+                    $(ele).hide();
+                    return;
                 }
-                miniObj = mini.get($(miniEle)[0]);
+                miniObj = mini.get(miniEle[0]);
             }
             if(!miniObj){
-                throw "EwebUiError:the ele is not a mini obj";
+                $(ele).hide();
+                return;
             }
             var clazzName = miniObj.uiCls;
             var ctrl = that.ctrlMap[clazzName];
             if(!ctrl){
-                throw "EwebUiError:ctrlMap has updated";
+                throw "EwebUiError updateComponent:ctrlMap has updated";
             }
             var map = {};
             $.each(prepMap,function(key,val){
@@ -216,7 +207,7 @@
             if(!ele.isControl){
                 var miniEle = $(ele).find(":first-child");
                 if(miniEle.length == 0){
-                    throw "EwebUiError:not find the element";
+                    throw "EwebUiError:not find the destroyComponent element";
                 }
                 miniObj = mini.get($(miniEle)[0]);
             }

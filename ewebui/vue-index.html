@@ -6,137 +6,140 @@
 		<script src="./asserts/boot/utils.js?from=pc&lib=vue&env=test"></script>
 	</head>
 	<body>
+		<div id="app">
+		<div class="mini-row" style="margin-top:200px;"></div>
 		<div class="mini-row">
-			<div class="mini-col-4">语言</div>
-			<div class="mini-col-8">
-				<div id="language" class="mini-combobox" onvaluechanged="mini.setLange(e.value)"></div>
+			<div class="mini-col-3">语言</div>
+			<div class="mini-col-7">
+				<div id="language" class="mini-combobox" :data="ui.langData" :value="ui.lang" @valuechanged="setLange" ></div>
+			</div>
+			<div class="mini-col-2"></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">皮肤</div>
+			<div class="mini-col-7">
+				<div id="skinbox" class="mini-combobox" :data="ui.skinData" :value="ui.skin" @valuechanged="setSkin"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">皮肤</div>
-			<div class="mini-col-8">
-				<div id="skinbox" class="mini-combobox" onvaluechanged="mini.setSkin(e.value)"></div>
+			<div class="mini-col-3">模式</div>
+			<div class="mini-col-7">
+				<div id="modebox" class="mini-combobox" :data="ui.modeData" :value="ui.mode" @valuechanged="setMode"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">模式</div>
-			<div class="mini-col-8">
-				<div id="modebox" class="mini-combobox" onvaluechanged="mini.setMode(e.value)"></div>
+			<div class="mini-col-3">进度条</div>
+			<div class="mini-col-7"><div class="mini-progressbar" value="55"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">下拉输入框</div>
+			<div class="mini-col-7"><div class="mini-combobox" data="[{id:'1',text:'测试一下'}]"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">多选输入框</div>
+			<div class="mini-col-7"><div class="mini-textboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1,2" text="测试一下,测试一下2"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">按钮</div>
+			<div class="mini-col-7">
+				<div class="mini-button" iconCls="icon-edit">编辑</div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">进度条</div>
-			<div class="mini-col-8"><div class="mini-progressbar" value="55"></div></div>
-		</div>
-		<div class="mini-row">
-			<div class="mini-col-4">下拉输入框</div>
-			<div class="mini-col-8"><div class="mini-combobox" data="[{id:'1',text:'测试一下'}]"></div></div>
-		</div>
-		<div class="mini-row">
-			<div class="mini-col-4">多选输入框</div>
-			<div class="mini-col-8"><div class="mini-textboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1,2" text="测试一下,测试一下2"></div></div>
-		</div>
-		<div class="mini-row">
-			<div class="mini-col-4">按钮</div>
-			<div class="mini-col-8">
-				<a class="mini-button" iconCls="icon-edit" onclick="onClick">编辑</a>
-			</div>
-		</div>
-		<div class="mini-row">
-			<div class="mini-col-4">复选框</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">复选框</div>
+			<div class="mini-col-7">
 				<div class="mini-checkbox" checked="true" readOnly="false" text="复选框"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">列表</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">列表</div>
+			<div class="mini-col-7">
 				<div class="mini-listbox" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">复选框组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">复选框组</div>
+			<div class="mini-col-7">
 				<div class="mini-checkboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">单选框组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">单选框组</div>
+			<div class="mini-col-7">
 				<div class="mini-radiobuttonlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">日历</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">日历</div>
+			<div class="mini-col-7">
 				<div class="mini-calendar"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">按钮输入框</div>
-			<div class="mini-col-8">
-				<input class="mini-buttonedit"/>
+			<div class="mini-col-3">按钮输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-buttonedit"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">过滤输入框</div>
-			<div class="mini-col-8">
-				<input class="mini-filteredit" value="11" filterValue=">" filterData="filters" showClose="true"  />
+			<div class="mini-col-3">过滤输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-filteredit" value="11" filterValue=">" :filterData="filters" showClose="true"  ></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">输入框</div>
-			<div class="mini-col-8">
-				<input class="mini-textbox" value="123456"/>
+			<div class="mini-col-3">输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-textbox" value="123456"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">密码框</div>
-			<div class="mini-col-8">
-				<input class="mini-password" value="123456"/>
+			<div class="mini-col-3">密码框</div>
+			<div class="mini-col-7">
+				<div class="mini-password" value="123456"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">多行输入框</div>
-			<div class="mini-col-8">
-				<textarea class="mini-textarea" emptyText="请输入备注"></textarea>
+			<div class="mini-col-3">多行输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-textarea" emptyText="请输入备注"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">日期框</div>
-			<div class="mini-col-8">
-				<input class="mini-datepicker"/>
+			<div class="mini-col-3">日期框</div>
+			<div class="mini-col-7">
+				<div class="mini-datepicker"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">年月框</div>
-			<div class="mini-col-8">
-				<input class="mini-monthpicker"/> 
+			<div class="mini-col-3">年月框</div>
+			<div class="mini-col-7">
+				<div class="mini-monthpicker"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">数值框</div>
-			<div class="mini-col-8">
-				<input class="mini-spinner" minValue="200" maxValue="250" />
+			<div class="mini-col-3">数值框</div>
+			<div class="mini-col-7">
+				<div class="mini-spinner" minValue="200" maxValue="250" ></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">时间输入框</div>
-			<div class="mini-col-8">
-				<input class="mini-timespinner" format="HH:mm:ss" />
+			<div class="mini-col-3">时间输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-timespinner" format="HH:mm:ss" ></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形下拉框</div>
-			<div class="mini-col-8">
-				<input class="mini-treeselect" url="./json/listTree.json" valueField="id" textField="text"/>
+			<div class="mini-col-3">树形下拉框</div>
+			<div class="mini-col-7">
+				<div class="mini-treeselect" url="./json/listTree.json" valueField="id" textField="text"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">下拉搜索选择框</div>
-			<div class="mini-col-8">
-				<input class="mini-lookup" textField="name" valueField="id" popupWidth="auto" popup="#lookupPanel" grid="#lookupGrid" multiSelect="true"/>
-				<div id="lookupPanel" class="mini-panel" title="header" iconCls="icon-add" style="width:450px;height:250px;" showCloseButton="true" showHeader="false" bodyStyle="padding:0" borderStyle="border:0">
+			<div class="mini-col-3">下拉搜索选择框</div>
+			<div class="mini-col-7">
+				<div class="mini-lookup" textField="name" valueField="id" popupWidth="auto" popup="#lookupPanel" grid="#lookupGrid" multiSelect="true"></div>
+				<div id="lookupPanel" class="mini-panel" title="header" iconCls="icon-add" style="width:450px;height:250px;display:none;" showCloseButton="true" showHeader="false" bodyStyle="padding:0" borderStyle="border:0">
 					<div id="lookupGrid" class="mini-datagrid" style="width:100%;height:100%;" borderStyle="border:0" showPageSize="false" showPageIndex="false" url="./json/datagrid.json">
 						<div property="columns">
 							<div type="checkcolumn" ></div>
@@ -149,14 +152,14 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">文件上传(html)</div>
-			<div class="mini-col-8">
-				<input class="mini-htmlfile" limitType="*.txt" />
+			<div class="mini-col-3">文件上传(html)</div>
+			<div class="mini-col-7">
+				<div class="mini-htmlfile" limitType="*.txt" ></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">表格</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">表格</div>
+			<div class="mini-col-7">
 				<div class="mini-datagrid" autoLoad="true" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid.json">
 					<div property="columns">
 						<div type="indexcolumn" ></div>
@@ -168,14 +171,14 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形</div>
+			<div class="mini-col-7">
 				<div class="mini-tree" autoLoad="true" url="./json/tree.json" style="width:300px;" showTreeIcon="true" textField="text" idField="id" value="base" expandOnNodeClick="true"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形表格</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形表格</div>
+			<div class="mini-col-7">
 				<div class="mini-treegrid" style="width:700px;height:280px;" url="./json/tasks.json" showTreeIcon="true" 
 				treeColumn="taskname" idField="UID" parentField="ParentTaskUID" resultAsTree="false" allowResize="true" 
 				expandOnLoad="true">
@@ -191,18 +194,18 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">面板</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">面板</div>
+			<div class="mini-col-7">
 				<div class="mini-panel" title="header" iconCls="icon-add" style="width:300px;height:200px;"
 				    showToolbar="true" showCloseButton="true" showFooter="true"
 				>
 				    <!--toolbar-->
 				    <div property="toolbar">
-				        <input class='mini-button' text='工具栏按钮'/>
+				        <div class='mini-button' text='工具栏按钮'></div>
 				    </div>
 				    <!--footer-->
 				    <div property="footer">
-				        <input class='mini-button' text='底部按钮'/>
+				        <div class='mini-button' text='底部按钮'></div>
 				    </div>
 				    <!--body-->
 				    <div>
@@ -212,17 +215,17 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">弹出窗口</div>
-			<div class="mini-col-8">
-				<a class="mini-button" onclick="mini.get('win').show()">弹出窗口</a>
+			<div class="mini-col-3">弹出窗口</div>
+			<div class="mini-col-7">
+				<div class="mini-button" onclick="mini.get('win').show()">弹出窗口</div>
 				<div id="win" class="mini-window" title="Window" style="width:400px;height:250px;"
 				 showMaxButton="true" showCollapseButton="true" showShadow="true" showToolbar="true" 
 				 showFooter="true" showModal="false" allowResize="true" allowDrag="true">
 					<div property="toolbar" style="padding:5px;">
-						<input class='mini-button' text='工具栏按钮'/>
+						<div class='mini-button' text='工具栏按钮'></div>
 					</div>
 					<div property="footer" style="text-align:right;padding:5px;padding-right:15px;">
-						<input class='mini-button' text='底部按钮'/>
+						<div class='mini-button' text='底部按钮'></div>
 					</div> 
 					<div>
 						窗口主内容
@@ -231,8 +234,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">分离器</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">分离器</div>
+			<div class="mini-col-7">
 				<div class="mini-splitter" style="width:350px;height:200px;">
 				    <div size="30%" showCollapseButton="true">
 				        1
@@ -244,16 +247,16 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">分页控件</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">分页控件</div>
+			<div class="mini-col-7">
 				<div class="mini-pager" style="width:700px;" 
 				    totalCount="123" sizeList="[5,10,20,100]">        
 				</div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">布局管理器</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">布局管理器</div>
+			<div class="mini-col-7">
 				<div id="layout1" class="mini-layout" style="width:600px;height:400px;">
 				    <div title="north" region="north" height="80" >
 				        north
@@ -274,8 +277,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">折叠面板组</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">折叠面板组</div>
+			<div class="mini-col-7">
 				<div class="mini-outlookbar " activeIndex="0" style="width:180px;height:200px;" autoCollapse="true">
 				    <div title="Small Items">            
 				        1
@@ -287,21 +290,21 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">菜单导航</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">菜单导航</div>
+			<div class="mini-col-7">
 				<div class="mini-outlookmenu" style="width:400px;height:300px;" url="./json/outlookmenu.json" idField="id" parentField="pid"
 					textField="text" borderStyle="border:0" expandOnLoad="false"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">树形导航</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">树形导航</div>
+			<div class="mini-col-7">
 				<div class="mini-outlooktree" style="width:400px;height:300px;" url="./json/outlooktree.json" textField="text" idField="id" parentField="pid"></div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">标签页</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">标签页</div>
+			<div class="mini-col-7">
 				<div class="mini-tabs" activeIndex="0"  style="width:350px;height:200px;">
 				    <div title="Tab1">
 				        1
@@ -319,8 +322,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">菜单</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">菜单</div>
+			<div class="mini-col-7">
 				<ul class="mini-menu">
 				    <li>
 				        <span >操作</span>
@@ -339,8 +342,8 @@
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4">工具栏</div>
-			<div class="mini-col-8">
+			<div class="mini-col-3">工具栏</div>
+			<div class="mini-col-7">
 				<div class="mini-toolbar">
 				    <a class="mini-button" iconCls="icon-add">增加</a>
 				    <a class="mini-button" iconCls="icon-edit">修改</a>
@@ -350,44 +353,78 @@
 				    <a class="mini-button" plain="true">修改</a>
 				    <a class="mini-button" plain="true">删除</a>
 				    <span class="separator"></span>
-				    <input class="mini-textbox" />      
+				    <div class="mini-textbox"></div>
 				    <a class="mini-button" plain="true">查询</a>
 				</div>
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4"></div>
-			<div class="mini-col-8">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
 				
 			</div>
 		</div>
 		<div class="mini-row">
-			<div class="mini-col-4"></div>
-			<div class="mini-col-8">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
 				
 			</div>
 		</div>
+		</div>
 	</body>
 	<script>
-		var filters = [{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}];
-		mini.parse();
-		var languageStrs = "en_US,zh_CN";
-		var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
-		var lmodeStrs = "default,medium,large,huge";
-		initCombobox(languageStrs,"language");
-		initCombobox(skinStrs,"skinbox");
-		initCombobox(lmodeStrs,"modebox");
-		mini.get("language").setValue(mini.getLange());
-		mini.get("skinbox").setValue(mini.getSkin());
-		mini.get("modebox").setValue(mini.getMode());
-		function initCombobox(strs,id){
-			var strsz = strs.split(",");
-			var list = [];
-			$.each(strsz,function(i,item){
-				list.push({id:item,text:item});
-			});
-			mini.get(id).setData(list);
-		}
+		var app = new Vue({
+			el: '#app',
+			data: {
+				ui:{
+					lang:mini.getLange(),
+					skin:mini.getSkin(),
+					mode:mini.getMode(),
+					langData:JSON.stringify([]),
+					skinData:JSON.stringify([]),
+					modeData:JSON.stringify([])
+				},
+				filters:JSON.stringify([{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}])
+			},
+			methods:{
+				setLange:function(e){
+					mini.setLange(e.value);
+				},
+				setSkin:function(e) {
+					mini.setSkin(e.value)
+				},
+				setMode:function(e) {
+					mini.setMode(e.value)
+				}
+			},
+			mounted:function(){
+				var that = this;
+				var languageStrs = "en_US,zh_CN";
+				var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
+				var modeStrs = "default,medium,large,huge";
+				initCombobox(languageStrs,function(list){
+					that.ui.langData = JSON.stringify(list)
+				});
+				initCombobox(skinStrs,function(list){
+					that.ui.skinData = JSON.stringify(list)
+				});
+				initCombobox(modeStrs,function(list){
+					that.ui.modeData = JSON.stringify(list)
+				});
+				//皮肤和模式需要手动刷新
+				mini.get("skinbox").doValueChanged();
+				mini.get("modebox").doValueChanged();
+				function initCombobox(strs,callback){
+					var strsz = strs.split(",");
+					var list = [];
+					$.each(strsz,function(i,item){
+						list.push({id:item,text:item});
+					});
+					callback(list);
+				}
+
+			}
+		})
 	</script>
 	<style type="text/css">
 		.mini-row{
