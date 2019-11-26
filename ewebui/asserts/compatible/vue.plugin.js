@@ -76,9 +76,6 @@
         copatible.parseMiniUi(null,function(){
             dgbl([vnode]);
         });
-        /*copatible.parseMiniAll(null,function(){
-            dgbl([vnode]);
-        });*/
         function dgbl(list){
             $.each(list,function(i,node){
                 if(node.children && node.children.length > 0 ){

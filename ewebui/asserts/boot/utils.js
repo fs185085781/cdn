@@ -32,10 +32,8 @@
             async = async === false?false:true;
             var xmlhttp;
             if (window.XMLHttpRequest){
-                console.log("新版")
                 xmlhttp=new XMLHttpRequest();
             }else{
-                console.log("旧版")
                 xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
             }
             xmlhttp.onreadystatechange=function(){
