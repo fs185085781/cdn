@@ -26,7 +26,12 @@
             prodPath:rp()+"/../libs/jquery.min.js"
         },
         miniui:{
-            jsPath:rp()+"/../miniui3.9.1/boot.js"
+            jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",
+            jsPath:rp()+"/../miniui3.9.1/miniui/miniui.js",
+            themesPath:rp()+"/../miniui3.9.1/miniui/themes",
+            localePath:rp()+"/../miniui3.9.1/miniui/locale",
+            fontAwesomePath:rp()+"/../miniui3.9.1/res/fonts/font-awesome/css/font-awesome.min.css",
+            cssPath:rp()+"/../miniui3.9.1/miniui/themes/default/miniui.css",
         },
         otherLibs:{
             jsxPath:rp()+"/../libs/babel.min.js"

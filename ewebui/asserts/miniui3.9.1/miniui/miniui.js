@@ -26,10 +26,6 @@ JSON.stringify=mini.encode;
 JSON.encode=JSON.stringify;
 JSON.parse=mini.decode;
 JSON.decode=JSON.parse;
-//auto
-window.mini.autoParse = false;
-//debug
-window.mini_debugger = false;
 //utils
 (function(){
     if(window.miniUtils){
