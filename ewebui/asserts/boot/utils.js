@@ -1,107 +1,8 @@
 (function () {
     /*兼容IE5不支持的方法*/
     initCompatibleIE5();
-    var utils = {
-        //获取页面指定key值的参数值
-        getParamer: function (key) {
-            var map = this.getSearch();
-            return map[key];
-        },
-        //获取页面所有key的参数值的集合
-        getSearch: function () {
-            var search = decodeURIComponent(window.location.search);
-            return getSearchByStr(search);
-        },
-        setLocalStorage:function(key,val){
-            var map = {};
-            map[key] = val;
-            localStorage.setItem(key,JSON.stringify(map));
-        },
-        getLocalStorage:function(key){
-            var mapStr = localStorage.getItem(key);
-            if(!mapStr){
-                mapStr = "{}";
-            }
-            var map = JSON.parse(mapStr);
-            return map[key];
-        },
-        delLocalStorage:function(key){
-            localStorage.removeItem(key);
-        },
-        getRemoteData:function(url,async,callback){
-            async = async === false?false:true;
-            var xmlhttp;
-            if (window.XMLHttpRequest){
-                xmlhttp=new XMLHttpRequest();
-            }else{
-                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            xmlhttp.onreadystatechange=function(){
-                if(xmlhttp.readyState==4){
-                    console.log(xmlhttp.responseText.substring(xmlhttp.responseText.length-100,xmlhttp.responseText.length))
-                    callback({text:xmlhttp.responseText,status:xmlhttp.status});
-                }
-            }
-            xmlhttp.open("GET",url,async);
-            xmlhttp.send();
-        },
-        getRelativePath:function(){
-            return getJsPath("utils.js",1);
-        },
-        removeProp:function(obj,fieldName){
-            try{
-                delete obj[fieldName];
-            }catch (e) {
-                obj[fieldName] = undefined;
-            }
-        },loadJs:function(path,id,type){
-            if(!path){
-                return;
-            }
-            if(id && document.getElementById(id)){
-                document.getElementById(id).remove();
-            }
-            var script = document.createElement("script");
-            script.src = path;
-            if(id){
-                script.id = id;
-            }
-            if(!type){
-                type = "text/javascript";
-            }
-            script.type = type;
-            if(!document.head){
-                document.head = document.getElementsByTagName("head")[0];
-            }
-            document.head.appendChild(script);
-        },
-        loadCss:function(path,id,rel,type){
-            if(!path){
-                return;
-            }
-            if(id && document.getElementById(id)){
-                document.getElementById(id).remove();
-            }
-            var link = document.createElement("link");
-            link.href = path;
-            if(id){
-                link.id = id;
-            }
-            if(!rel){
-                rel = "stylesheet";
-            }
-            link.rel = rel;
-            if(!type){
-                type = "text/css";
-            }
-            link.type = type;
-            if(!document.head){
-                document.head = document.getElementsByTagName("head")[0];
-            }
-            document.head.appendChild(link);
-        }
-    }
-    window.utils = utils;
+    /*初始化utils工具*/
+    window.utils = initUtils();
     var jsSearch = getJsSearch("utils.js");
     if(jsSearch.from != "m"){
         jsSearch.from = "pc";
@@ -113,14 +14,7 @@
         jsSearch.lib = "jquery";
     }
     var jspath = utils.getRelativePath();
-    var config;
-    utils.getRemoteData(jspath+"/config.js",false,function(res){
-        if(res.status == 200){
-            eval(res.text);
-            config = window.config;
-            utils.removeProp(window,"config");
-        }
-    });
+    var config = initConfig(jspath+"/config.js");
     /**
      * 加载miniui
      */
@@ -154,25 +48,6 @@
         /** 加载兼容层 */
         document.write('<script src="' + jspath + '/../compatible/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
-    function getSearchByStr(search){
-        if (search) {
-            search = search.substring(1);
-        } else {
-            return {};
-        }
-        var strsz = search.split("&");
-        var map = {};
-        for (var i=0; i<strsz.length; i++){
-            var strs = strsz[i];
-            if (strs.indexOf("=") != -1) {
-                var tempsz = strs.split("=");
-                var tempkey = tempsz[0];
-                var tempvalue = tempsz[1];
-                map[tempkey] = tempvalue;
-            }
-        }
-        return map;
-    }
     function getJsSearch(js){
         var scripts = document.getElementsByTagName("script");
         var map = {};
@@ -180,28 +55,22 @@
         for (var i = 0, l = scripts.length; i < l; i++) {
             var src = scripts[i].src;
             if ((c = src.indexOf(js) ) != -1) {
-                map = getSearchByStr(src.substring(c+js.length));
+                map = utils.getSearchByStr(src.substring(c+js.length));
                 break;
             }
         }
         return map;
     }
-    function getJsPath(js, length) {
-        var scripts = document.getElementsByTagName("script");
-        var path = "";
-        for (var i = 0, l = scripts.length; i < l; i++) {
-            var src = scripts[i].src;
-            if (src.indexOf(js) != -1) {
-                path = src;
-                break;
-            }
-        }
-        var ss = path.split("/");
-        ss.length = ss.length - length;
-        path = ss.join("/");
-        return path;
-    }
+
     function loadMiniUi(miniui){
+        /**
+         * 加载jquery底包
+         */
+        utils.getRemoteData(miniui.jqueryPath,false,function(res){
+            if(res.status == 200){
+                eval(res.text);
+            }
+        });
         var miniUtils = {
             setMode:function(mode){
                 var key = "miniuiMode";
@@ -251,14 +120,6 @@
             }
         }
         window.miniUtils = miniUtils;
-        /**
-         * 加载jquery底包
-         */
-        utils.getRemoteData(miniui.jqueryPath,false,function(res){
-            if(res.status == 200){
-                eval(res.text);
-            }
-        });
         //miniui
         document.write('<script src="' + miniui.jsPath + '" type="text/javascript" ></sc' + 'ript>');
         var lang = miniUtils.getLange() || 'zh_CN';
@@ -351,5 +212,151 @@
             }
         }
         /*兼容IE5不支持的属性 -- 结束*/
+    }
+    function initUtils(){
+        return {
+            //获取页面指定key值的参数值
+            getParamer: function (key) {
+                var map = this.getSearch();
+                return map[key];
+            },
+            //获取页面所有key的参数值的集合
+            getSearch: function () {
+                var search = decodeURIComponent(location.search);
+                return this.getSearchByStr(search);
+            },
+            getSearchByStr:function(search){
+                if (search) {
+                    search = search.substring(1);
+                } else {
+                    return {};
+                }
+                var strsz = search.split("&");
+                var map = {};
+                for (var i=0; i<strsz.length; i++){
+                    var strs = strsz[i];
+                    if (strs.indexOf("=") != -1) {
+                        var tempsz = strs.split("=");
+                        var tempkey = tempsz[0];
+                        var tempvalue = tempsz[1];
+                        map[tempkey] = tempvalue;
+                    }
+                }
+                return map;
+            },
+            setLocalStorage:function(key,val){
+                var map = {};
+                map[key] = val;
+                localStorage.setItem(key,JSON.stringify(map));
+            },
+            getLocalStorage:function(key){
+                var mapStr = localStorage.getItem(key);
+                if(!mapStr){
+                    mapStr = "{}";
+                }
+                var map = JSON.parse(mapStr);
+                return map[key];
+            },
+            delLocalStorage:function(key){
+                localStorage.removeItem(key);
+            },
+            getRemoteData:function(url,async,callback){
+                async = async === false?false:true;
+                var xmlhttp;
+                if (window.XMLHttpRequest){
+                    xmlhttp=new XMLHttpRequest();
+                }else{
+                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange=function(){
+                    if(xmlhttp.readyState==4){
+                        callback({text:xmlhttp.responseText,status:xmlhttp.status});
+                    }
+                }
+                xmlhttp.open("GET",url,async);
+                xmlhttp.send();
+            },
+            getJsPath:function(js, length) {
+                var scripts = document.getElementsByTagName("script");
+                var path = "";
+                for (var i = 0, l = scripts.length; i < l; i++) {
+                    var src = scripts[i].src;
+                    if (src.indexOf(js) != -1) {
+                        path = src;
+                        break;
+                    }
+                }
+                var ss = path.split("/");
+                ss.length = ss.length - length;
+                path = ss.join("/");
+                return path;
+            },
+            getRelativePath:function(){
+                return this.getJsPath("utils.js",1);
+            },
+            removeProp:function(obj,fieldName){
+                try{
+                    delete obj[fieldName];
+                }catch (e) {
+                    obj[fieldName] = undefined;
+                }
+            },loadJs:function(path,id,type){
+                if(!path){
+                    return;
+                }
+                if(id && document.getElementById(id)){
+                    document.getElementById(id).remove();
+                }
+                var script = document.createElement("script");
+                script.src = path;
+                if(id){
+                    script.id = id;
+                }
+                if(!type){
+                    type = "text/javascript";
+                }
+                script.type = type;
+                if(!document.head){
+                    document.head = document.getElementsByTagName("head")[0];
+                }
+                document.head.appendChild(script);
+            },
+            loadCss:function(path,id,rel,type){
+                if(!path){
+                    return;
+                }
+                if(id && document.getElementById(id)){
+                    document.getElementById(id).remove();
+                }
+                var link = document.createElement("link");
+                link.href = path;
+                if(id){
+                    link.id = id;
+                }
+                if(!rel){
+                    rel = "stylesheet";
+                }
+                link.rel = rel;
+                if(!type){
+                    type = "text/css";
+                }
+                link.type = type;
+                if(!document.head){
+                    document.head = document.getElementsByTagName("head")[0];
+                }
+                document.head.appendChild(link);
+            }
+        }
+    }
+    function initConfig(url){
+        var c;
+        utils.getRemoteData(url,false,function(res){
+            if(res.status == 200){
+                eval(res.text);
+                c = window.config;
+                utils.removeProp(window,"config");
+            }
+        });
+        return c;
     }
 })()
