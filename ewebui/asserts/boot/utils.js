@@ -63,6 +63,60 @@
     }
     function loadMiniUi(miniui){
         /**
+         * 破解miniui
+         */
+        var evalData = window.eval;
+        window.eval = function(x){
+            x = x.replace("location=\"http://www.miniui.com\"",";");
+            x = x.replace("alert(\"试用到期 www.miniui.com\")",";");
+            x = x.replace("location = \"http://www.miniui.com\"",";");
+            console.log(x);
+            return evalData(x);
+        }
+        utils.decodeMiniui = function(){
+            if(typeof mini == "undefined"){
+                setTimeout(utils.decodeMiniui,10);
+            }else{
+                /**
+                 * 增加JSON
+                 */
+                if(typeof JSON == "undefined"){
+                    JSON = {};
+                }
+                JSON.stringify=mini.encode;
+                JSON.encode=JSON.stringify;
+                JSON.parse=mini.decode;
+                JSON.decode=JSON.parse;
+                /**
+                 * 增加mini工具
+                 */
+                if(window.miniUtils){
+                    for(var key in miniUtils){
+                        mini[key] = miniUtils[key];
+                    }
+                    utils.removeProp(window,"miniUtils");
+                }
+                /**
+                 * 页面加载完毕更新皮肤
+                 */
+                utils.setModeAndSkin = function(){
+                    if(mini.isReady){
+                        var mode = mini.getMode() || 'medium';
+                        var skin = mini.getSkin() || 'cupertino';
+                        mini.setMode(mode);
+                        mini.setSkin(skin);
+                        utils.removeProp(utils,"setModeAndSkin");
+                    }else{
+                        setTimeout(utils.setModeAndSkin,100);
+                    }
+                }
+                utils.setModeAndSkin();
+                window.eval = evalData;
+                utils.removeProp(utils,"decodeMiniui");
+            }
+        }
+        utils.decodeMiniui();
+        /**
          * 加载jquery底包
          */
         utils.getRemoteData(miniui.jqueryPath,false,function(res){

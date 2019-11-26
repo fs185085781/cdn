@@ -152,6 +152,7 @@
             if(!ele.isControl){
                 var miniEle = $(ele).find(":first-child");
                 if(miniEle.length == 0){
+                    console.warn("未找到mini元素");
                     $(ele).hide();
                     return;
                 }
@@ -159,6 +160,7 @@
             }
             if(!miniObj){
                 $(ele).hide();
+                console.warn("未找到mini实体");
                 return;
             }
             var clazzName = miniObj.uiCls;
