@@ -62,61 +62,57 @@
         return map;
     }
     function loadMiniUi(miniui){
-        /**
-         * 破解miniui
-         */
-        var evalData = window.eval;
-        window.eval = function(x){
-            x = x.replace("location=\"http://www.miniui.com\"",";");
-            x = x.replace("alert(\"试用到期 www.miniui.com\")",";");
-            x = x.replace("location = \"http://www.miniui.com\"",";");
-            console.log(x);
-            return evalData(x);
-        }
-        utils.decodeMiniui = function(){
-            if(typeof mini == "undefined"){
-                setTimeout(utils.decodeMiniui,10);
-            }else{
-                window.eval = evalData;
-                /**
-                 * 增加JSON
-                 */
-                if(typeof JSON == "undefined"){
-                    JSON = {};
-                }
-                JSON.stringify=mini.encode;
-                JSON.encode=JSON.stringify;
-                JSON.parse=mini.decode;
-                JSON.decode=JSON.parse;
-                /**
-                 * 增加mini工具
-                 */
-                if(window.miniUtils){
-                    for(var key in miniUtils){
-                        mini[key] = miniUtils[key];
-                    }
-                    mini.utilsReady = true;
-                    utils.removeProp(window,"miniUtils");
-                }
-                /**
-                 * 页面加载完毕更新皮肤
-                 */
-                utils.setModeAndSkin = function(){
-                    if(document.readyState == "complete"){
-                        var mode = mini.getMode() || 'medium';
-                        var skin = mini.getSkin() || 'cupertino';
-                        mini.setMode(mode);
-                        mini.setSkin(skin);
-                        utils.removeProp(utils,"setModeAndSkin");
-                    }else{
-                        setTimeout(utils.setModeAndSkin,300);
-                    }
-                }
-                utils.setModeAndSkin();
-                utils.removeProp(utils,"decodeMiniui");
+        utils.decodeMiniuiBefore = function(){
+            utils.evalData = window.eval;
+            window.eval = function(x){
+                x = x.replace("location=\"http://www.miniui.com\"",";");
+                x = x.replace("alert(\"试用到期 www.miniui.com\")",";");
+                x = x.replace("location = \"http://www.miniui.com\"",";");
+                return utils.evalData(x);
             }
+            utils.removeProp(utils,"decodeMiniuiBefore");
         }
-        utils.decodeMiniui();
+
+        utils.decodeMiniuiAfter = function(){
+            window.eval = utils.evalData;
+            utils.removeProp(utils,"evalData");
+            /**
+             * 增加JSON
+             */
+            if(typeof JSON == "undefined"){
+                JSON = {};
+            }
+            JSON.stringify=mini.encode;
+            JSON.encode=JSON.stringify;
+            JSON.parse=mini.decode;
+            JSON.decode=JSON.parse;
+            /**
+             * 增加mini工具
+             */
+            if(window.miniUtils){
+                for(var key in miniUtils){
+                    mini[key] = miniUtils[key];
+                }
+                mini.utilsReady = true;
+                utils.removeProp(window,"miniUtils");
+            }
+            /**
+             * 页面加载完毕更新皮肤
+             */
+            utils.setModeAndSkin = function(){
+                if(document.readyState == "complete"){
+                    var mode = mini.getMode() || 'medium';
+                    var skin = mini.getSkin() || 'cupertino';
+                    mini.setMode(mode);
+                    mini.setSkin(skin);
+                    utils.removeProp(utils,"setModeAndSkin");
+                }else{
+                    setTimeout(utils.setModeAndSkin,300);
+                }
+            }
+            utils.setModeAndSkin();
+            utils.removeProp(utils,"decodeMiniuiAfter");
+        }
         /**
          * 加载jquery底包
          */
@@ -179,8 +175,12 @@
             }
         }
         window.miniUtils = miniUtils;
+        /*破解miniui 准备*/
+        document.write('<script type="text/javascript" >utils.decodeMiniuiBefore();</sc' + 'ript>');
         //miniui
         document.write('<script src="' + miniui.jsPath + '" type="text/javascript" ></sc' + 'ript>');
+        /*破解miniui 结束*/
+        document.write('<script type="text/javascript" >utils.decodeMiniuiAfter();</sc' + 'ript>');
         var lang = miniUtils.getLange() || 'zh_CN';
         document.write('<script src="' + miniui.localePath + '/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');
         document.write('<link href="' + miniui.fontAwesomePath + '" rel="stylesheet" type="text/css" />');

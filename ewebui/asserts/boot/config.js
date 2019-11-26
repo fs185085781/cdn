@@ -26,7 +26,8 @@
             prodPath:rp()+"/../libs/jquery.min.js"
         },
         miniui:{
-            jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",
+            jqueryPath:"http://miniui.tenfell.cn/scripts/jquery.min.js",
+            /*jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",*/
             jsPath:rp()+"/../miniui3.9.1/miniui/miniui.js",
             themesPath:rp()+"/../miniui3.9.1/miniui/themes",
             localePath:rp()+"/../miniui3.9.1/miniui/locale",
