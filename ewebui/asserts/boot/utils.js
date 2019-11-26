@@ -77,6 +77,7 @@
             if(typeof mini == "undefined"){
                 setTimeout(utils.decodeMiniui,10);
             }else{
+                window.eval = evalData;
                 /**
                  * 增加JSON
                  */
@@ -100,7 +101,7 @@
                  * 页面加载完毕更新皮肤
                  */
                 utils.setModeAndSkin = function(){
-                    if(mini.isReady){
+                    if(document.readyState == "complete"){
                         var mode = mini.getMode() || 'medium';
                         var skin = mini.getSkin() || 'cupertino';
                         mini.setMode(mode);
@@ -111,7 +112,6 @@
                     }
                 }
                 utils.setModeAndSkin();
-                window.eval = evalData;
                 utils.removeProp(utils,"decodeMiniui");
             }
         }
