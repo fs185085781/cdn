@@ -1,4 +1,4 @@
-(function(win){
+(function(){
     var c = {
         vue:{
             testPath:rp()+"/../libs/vue.js",
@@ -31,7 +31,7 @@
             themesPath:rp()+"/../miniui3.9.1/miniui/themes",
             localePath:rp()+"/../miniui3.9.1/miniui/locale",
             fontAwesomePath:rp()+"/../miniui3.9.1/res/fonts/font-awesome/css/font-awesome.min.css",
-            cssPath:rp()+"/../miniui3.9.1/miniui/themes/default/miniui.css",
+            cssPath:rp()+"/../miniui3.9.1/miniui/themes/default/miniui.css"
         },
         otherLibs:{
             jsxPath:rp()+"/../libs/babel.min.js"
@@ -40,5 +40,5 @@
     function rp(){
         return utils.getRelativePath();
     }
-    win.config = c;
-})(window)
+    window.config = c;
+})()

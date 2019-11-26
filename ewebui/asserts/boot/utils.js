@@ -1,4 +1,6 @@
 (function () {
+    /*兼容IE5不支持的方法*/
+    initCompatibleIE5();
     var utils = {
         //获取页面指定key值的参数值
         getParamer: function (key) {
@@ -30,12 +32,15 @@
             async = async === false?false:true;
             var xmlhttp;
             if (window.XMLHttpRequest){
+                console.log("新版")
                 xmlhttp=new XMLHttpRequest();
             }else{
+                console.log("旧版")
                 xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
             }
             xmlhttp.onreadystatechange=function(){
                 if(xmlhttp.readyState==4){
+                    console.log(xmlhttp.responseText.substring(xmlhttp.responseText.length-100,xmlhttp.responseText.length))
                     callback({text:xmlhttp.responseText,status:xmlhttp.status});
                 }
             }
@@ -198,88 +203,6 @@
         path = ss.join("/");
         return path;
     }
-    /*兼容IE5不支持的属性 -- 开始*/
-    /*重写string的trim方法*/
-    if(typeof String.prototype.trim !== 'function') {
-        String.prototype.trim = function() {
-            return this.replace(/^\s+|\s+$/g, '');
-        }
-    }
-    /*重写string的startsWith方法*/
-    if(typeof String.prototype.startsWith !== 'function') {
-        String.prototype.startsWith = function(str) {
-            return this.indexOf(str) == 0;
-        }
-    }/*增加json*/
-    var jsonUtils={
-        stringify:function(jsonObj) {
-            var that = this;
-            var result = '',
-                curVal;
-            if (jsonObj === null) {
-                return String(jsonObj);
-            }
-            switch (typeof jsonObj) {
-                case 'number':
-                case 'boolean':
-                    return String(jsonObj);
-                case 'string':
-                    return '"' + jsonObj + '"';
-                case 'undefined':
-                case 'function':
-                    return undefined;
-            }
-            switch (Object.prototype.toString.call(jsonObj)) {
-                case '[object Array]':
-                    result += '[';
-                    for (var i = 0, len = jsonObj.length; i < len; i++) {
-                        curVal = that.stringify(jsonObj[i]);
-                        result += (curVal === undefined ? null : curVal) + ",";
-                    }
-                    if (result !== '[') {
-                        result = result.slice(0, -1);
-                    }
-                    result += ']';
-                    return result;
-                case '[object Date]':
-                    return '"' + that.formatDate(jsonObj,"yyyy-MM-dd HH:mm:ss") + '"';
-                case '[object RegExp]':
-                    return "{}";
-                case '[object Object]':
-                    result += '{';
-                    for (i in jsonObj) {
-                        console.log(jsonObj);
-                        if (jsonObj.hasOwnProperty(i)) {
-                            curVal = that.stringify(jsonObj[i]);
-                            if (curVal !== undefined) {
-                                result += '"' + i + '":' + curVal + ',';
-                            }
-                        }
-                    }
-                    if (result !== '{') {
-                        result = result.slice(0, -1);
-                    }
-                    result += '}';
-                    return result;
-
-                case '[object String]':
-                    return '"' + jsonObj.toString() + '"';
-                case '[object Number]':
-                case '[object Boolean]':
-                    return jsonObj.toString();
-            }
-        },
-        parse:function(str){
-            if(typeof str == "object"){
-                return str;
-            }
-            return eval("("+str+")");
-        }
-    }
-    if(typeof JSON == "undefined"){
-        JSON = jsonUtils;
-    }
-    /*兼容IE5不支持的属性 -- 结束*/
     function loadMiniUi(miniui){
         var miniUtils = {
             setMode:function(mode){
@@ -346,5 +269,89 @@
         document.write('<link href="' + miniui.cssPath + '" rel="stylesheet" type="text/css" />');
         //icon
         document.write('<link href="' + miniui.themesPath + '/icons.css" rel="stylesheet" type="text/css" />');
+    }
+    function initCompatibleIE5(){
+        /*兼容IE5不支持的属性 -- 开始*/
+        /*重写string的trim方法*/
+        if(typeof String.prototype.trim !== 'function') {
+            String.prototype.trim = function() {
+                return this.replace(/^\s+|\s+$/g, '');
+            }
+        }
+        /*重写string的startsWith方法*/
+        if(typeof String.prototype.startsWith !== 'function') {
+            String.prototype.startsWith = function(str) {
+                return this.indexOf(str) == 0;
+            }
+        }
+        /*增加json*/
+        if(typeof window.JSON == "undefined"){
+            window.JSON = {
+                stringify:function(jsonObj) {
+                    var that = this;
+                    var result = '',
+                        curVal;
+                    if (jsonObj === null) {
+                        return String(jsonObj);
+                    }
+                    switch (typeof jsonObj) {
+                        case 'number':
+                        case 'boolean':
+                            return String(jsonObj);
+                        case 'string':
+                            return '"' + jsonObj + '"';
+                        case 'undefined':
+                        case 'function':
+                            return undefined;
+                    }
+                    switch (Object.prototype.toString.call(jsonObj)) {
+                        case '[object Array]':
+                            result += '[';
+                            for (var i = 0, len = jsonObj.length; i < len; i++) {
+                                curVal = that.stringify(jsonObj[i]);
+                                result += (curVal === undefined ? null : curVal) + ",";
+                            }
+                            if (result !== '[') {
+                                result = result.slice(0, -1);
+                            }
+                            result += ']';
+                            return result;
+                        case '[object Date]':
+                            return '"' + that.formatDate(jsonObj,"yyyy-MM-dd HH:mm:ss") + '"';
+                        case '[object RegExp]':
+                            return "{}";
+                        case '[object Object]':
+                            result += '{';
+                            for (i in jsonObj) {
+                                console.log(jsonObj);
+                                if (jsonObj.hasOwnProperty(i)) {
+                                    curVal = that.stringify(jsonObj[i]);
+                                    if (curVal !== undefined) {
+                                        result += '"' + i + '":' + curVal + ',';
+                                    }
+                                }
+                            }
+                            if (result !== '{') {
+                                result = result.slice(0, -1);
+                            }
+                            result += '}';
+                            return result;
+
+                        case '[object String]':
+                            return '"' + jsonObj.toString() + '"';
+                        case '[object Number]':
+                        case '[object Boolean]':
+                            return jsonObj.toString();
+                    }
+                },
+                parse:function(str){
+                    if(typeof str == "object"){
+                        return str;
+                    }
+                    return eval("("+str+")");
+                }
+            }
+        }
+        /*兼容IE5不支持的属性 -- 结束*/
     }
 })()
