@@ -411,9 +411,6 @@
 				initCombobox(modeStrs,function(list){
 					that.ui.modeData = JSON.stringify(list)
 				});
-				//皮肤和模式需要手动刷新
-				mini.get("skinbox").doValueChanged();
-				mini.get("modebox").doValueChanged();
 				function initCombobox(strs,callback){
 					var strsz = strs.split(",");
 					var list = [];

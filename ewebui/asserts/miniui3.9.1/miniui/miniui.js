@@ -33,15 +33,18 @@ JSON.decode=JSON.parse;
             mini[key] = miniUtils[key];
         }
         window.miniUtils = undefined;
-        console.log(document.onreadystatechange);
-        document.onreadystatechange=function(e){
-            if(this.readyState == "complete"){
+        window.setModeAndSkin = function(){
+            if(mini.isReady){
                 var mode = mini.getMode() || 'medium';
                 var skin = mini.getSkin() || 'cupertino';
                 mini.setMode(mode);
                 mini.setSkin(skin);
-                console.log("更新皮肤");
+                window.setModeAndSkin = undefined
+            }else{
+                setTimeout(setModeAndSkin,100);
             }
+
         }
+        setModeAndSkin();
     }
 })();
