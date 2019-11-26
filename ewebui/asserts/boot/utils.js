@@ -95,6 +95,7 @@
                     for(var key in miniUtils){
                         mini[key] = miniUtils[key];
                     }
+                    mini.utilsReady = true;
                     utils.removeProp(window,"miniUtils");
                 }
                 /**
@@ -108,7 +109,7 @@
                         mini.setSkin(skin);
                         utils.removeProp(utils,"setModeAndSkin");
                     }else{
-                        setTimeout(utils.setModeAndSkin,100);
+                        setTimeout(utils.setModeAndSkin,300);
                     }
                 }
                 utils.setModeAndSkin();
@@ -119,11 +120,16 @@
         /**
          * 加载jquery底包
          */
-        utils.getRemoteData(miniui.jqueryPath,false,function(res){
-            if(res.status == 200){
-                eval(res.text);
-            }
-        });
+        try{
+            utils.getRemoteData(miniui.jqueryPath,false,function(res){
+                if(res.status == 200){
+                    eval(res.text);
+                }
+            });
+        }catch (e) {
+            console.warn(miniui.jqueryPath+", js发生跨域,将以标签形式加载");
+            document.write('<script src="' + miniui.jqueryPath + '" type="text/javascript" ></sc' + 'ript>');
+        }
         var miniUtils = {
             setMode:function(mode){
                 var key = "miniuiMode";
