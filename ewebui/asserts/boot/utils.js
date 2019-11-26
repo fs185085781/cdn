@@ -61,7 +61,6 @@
         }
         return map;
     }
-
     function loadMiniUi(miniui){
         /**
          * 加载jquery底包

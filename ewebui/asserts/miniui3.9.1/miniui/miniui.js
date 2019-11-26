@@ -33,5 +33,15 @@ JSON.decode=JSON.parse;
             mini[key] = miniUtils[key];
         }
         window.miniUtils = undefined;
+        console.log(document.onreadystatechange);
+        document.onreadystatechange=function(e){
+            if(this.readyState == "complete"){
+                var mode = mini.getMode() || 'medium';
+                var skin = mini.getSkin() || 'cupertino';
+                mini.setMode(mode);
+                mini.setSkin(skin);
+                console.log("更新皮肤");
+            }
+        }
     }
 })();
