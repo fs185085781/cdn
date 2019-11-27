@@ -175,10 +175,12 @@
         window.miniUtils = miniUtils;
         /*破解miniui 准备*/
         document.write('<script type="text/javascript" >utils.decodeMiniuiBefore();</sc' + 'ript>');
-        //miniui
+        /*miniui*/
         document.write('<script src="' + miniui.jsPath + '" type="text/javascript" ></sc' + 'ript>');
         /*破解miniui 结束*/
         document.write('<script type="text/javascript" >utils.decodeMiniuiAfter();</sc' + 'ript>');
+        /*datagrid导出*/
+        document.write('<script src="' + miniui.exportJsPath + '" type="text/javascript" ></sc' + 'ript>');
         var lang = miniUtils.getLange() || 'zh_CN';
         document.write('<script src="' + miniui.localePath + '/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');
         document.write('<link href="' + miniui.fontAwesomePath + '" rel="stylesheet" type="text/css" />');
