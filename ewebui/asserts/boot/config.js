@@ -26,9 +26,8 @@
             prodPath:rp()+"/../libs/jquery.min.js"
         },
         miniui:{
-            jqueryPath:"http://miniui.tenfell.cn/scripts/jquery.min.js",
-            /*jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",*/
-            jsPath:rp()+"/../miniui3.9.1/miniui/miniui.js",
+            jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",
+            jsPath:rp()+"/../miniui3.9.1/miniui/miniuiformat.js",
             themesPath:rp()+"/../miniui3.9.1/miniui/themes",
             localePath:rp()+"/../miniui3.9.1/miniui/locale",
             fontAwesomePath:rp()+"/../miniui3.9.1/res/fonts/font-awesome/css/font-awesome.min.css",

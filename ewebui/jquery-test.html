@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="./asserts/boot/utils.js?from=pc&lib=jquery&env=test"></script>
+	</head>
+	<body>
+	<div id="datagrid" class="mini-datagrid" autoLoad="true" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid.json">
+		<div property="columns">
+			<div type="indexcolumn" ></div>
+			<div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
+			<div field="name" width="120" headerAlign="center" allowSort="true">姓名</div>
+			<div field="createtime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd" allowSort="true">创建日期</div>
+		</div>
+	</div>
+	</body>
+	<script>
+		mini.parse();
+		var datagrid = mini.get("datagrid");
+		datagrid.on("drawcell",function(e){
+
+			console.log(e);
+			e.cancel = true;
+		});
+	</script>
+</html>

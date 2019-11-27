@@ -116,16 +116,14 @@
         /**
          * 加载jquery底包
          */
-        try{
-            utils.getRemoteData(miniui.jqueryPath,false,function(res){
-                if(res.status == 200){
-                    eval(res.text);
-                }
-            });
-        }catch (e) {
-            console.warn(miniui.jqueryPath+", js发生跨域,将以标签形式加载");
-            document.write('<script src="' + miniui.jqueryPath + '" type="text/javascript" ></sc' + 'ript>');
-        }
+        utils.getRemoteData(miniui.jqueryPath,false,function(res){
+            if(res.status == 200){
+                eval(res.text);
+            }else{
+                console.warn(miniui.jqueryPath+", js加载出现问题,将以标签形式加载");
+                document.write('<script src="' + miniui.jqueryPath + '" type="text/javascript" ></sc' + 'ript>');
+            }
+        });
         var miniUtils = {
             setMode:function(mode){
                 var key = "miniuiMode";
@@ -320,20 +318,24 @@
                 localStorage.removeItem(key);
             },
             getRemoteData:function(url,async,callback){
-                async = async === false?false:true;
-                var xmlhttp;
-                if (window.XMLHttpRequest){
-                    xmlhttp=new XMLHttpRequest();
-                }else{
-                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                xmlhttp.onreadystatechange=function(){
-                    if(xmlhttp.readyState==4){
-                        callback({text:xmlhttp.responseText,status:xmlhttp.status});
+                try{
+                    async = async === false?false:true;
+                    var xmlhttp;
+                    if (window.XMLHttpRequest){
+                        xmlhttp=new XMLHttpRequest();
+                    }else{
+                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                     }
+                    xmlhttp.onreadystatechange=function(){
+                        if(xmlhttp.readyState==4){
+                            callback({text:xmlhttp.responseText,status:xmlhttp.status});
+                        }
+                    }
+                    xmlhttp.open("GET",url,async);
+                    xmlhttp.send();
+                }catch (e) {
+                    callback({status:500,text:e.toString()});
                 }
-                xmlhttp.open("GET",url,async);
-                xmlhttp.send();
             },
             getJsPath:function(js, length) {
                 var scripts = document.getElementsByTagName("script");
