@@ -545,7 +545,7 @@
       "position_name": "\u540e\u53f0\u5de5\u7a0b\u5e08",
       "19": "\u672c\u79d1",
       "educational_name": "\u672c\u79d1"
-    },
+    }/*,
     {
       "0": "d6fb5410-adde-46a9-9d2b-dee99c64a83d",
       "id": "d6fb5410-adde-46a9-9d2b-dee99c64a83d",
@@ -32264,6 +32264,6 @@
       "position_name": "\u9500\u552e\u5458",
       "19": "\u672c\u79d1",
       "educational_name": "\u672c\u79d1"
-    }
+    }*/
   ]
 }

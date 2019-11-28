@@ -6,7 +6,7 @@
 		<script src="./asserts/boot/utils.js?from=pc&lib=jquery&env=test"></script>
 	</head>
 	<body>
-	<div id="datagrid" class="mini-datagrid" autoLoad="true" frozenStartColumn="0" frozenEndColumn="1" virtualScroll="true" virtualColumns="true" pageSize="5000" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid2.json">
+	<div id="datagrid" class="mini-datagrid" showPager="true" ondrawcell="drawcell" autoLoad="true" frozenStartColumn="0" frozenEndColumn="1" virtualScroll="true" virtualColumns="true" pageSize="5000" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid2.json">
 		<div property="columns">
 			<div type="indexcolumn" ></div>
 			<div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
@@ -39,6 +39,9 @@
 	<script>
 		mini.parse();
 		var datagrid = mini.get("datagrid");
+		function drawcell(e){
+			//console.log("单元格绘制");
+		}
 	</script>
 	</body>
 </html>
