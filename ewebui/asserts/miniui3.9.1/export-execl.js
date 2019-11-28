@@ -55,6 +55,10 @@
         exportMap[that.uid].exportStatus = false;
         that.set(exportMap[that.uid].beforeExportOptions);
         that.setData(exportMap[that.uid].beforeExportData);
+        var mergeColumnsMethod = exportMap[that.uid].mergeColumnsMethod;
+        if(mergeColumnsMethod){
+            mergeColumnsMethod();
+        }
         delete exportMap[that.uid];
     }
     var createRowsHtmlMethodKey = "";
@@ -234,7 +238,8 @@
             }),
             exportType:options.exportType,
             fileName:options.fileName,
-            needTimeFormat:options.needTimeFormat
+            needTimeFormat:options.needTimeFormat,
+            mergeColumnsMethod:options.mergeColumnsMethod
         };
         that.setData([]);
         that.set({
