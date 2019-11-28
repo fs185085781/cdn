@@ -43,7 +43,7 @@
         }
         var blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]),fileStr], {type: "application/vnd.ms-excel"});
         var link = window.URL.createObjectURL(blob);
-        if(window.navigator.msSaveOrOpenBlob){
+        if(window.navigator && window.navigator.msSaveOrOpenBlob){
             window.navigator.msSaveOrOpenBlob(blob,fileName+t.FILETYPE);
         }else if(true){
             var a = document.createElement('a');
