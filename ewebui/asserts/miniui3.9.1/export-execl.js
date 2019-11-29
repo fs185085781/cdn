@@ -212,6 +212,16 @@
         }
     }
     mini.DataGrid.prototype.exportToExecl = function(options){
+        window.URL = window.URL || window.webkitURL;
+        if(!window.URL || !window.Blob){
+            mini.showTips({
+                content: "当前浏览器环境不支持导出,请升级浏览器",
+                state: "danger",
+                x: "center",
+                y: "center"
+            });
+            return;
+        }
         if(!options){
             options = {};
         }
