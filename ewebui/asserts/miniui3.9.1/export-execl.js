@@ -31,35 +31,43 @@
     };
     var miniUpdate = function(e){
         var that = e.sender;
-        var t = templateMap[exportMap[that.uid].exportType];
-        if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
-            exportMap[that.uid].exportTableStr += getTemplateStr("<$0>",[t.TABLE]);
+        if(exportMap[that.uid].exportStatus == "column"){
+            if(!exportMap[that.uid].exportDownStartTime){
+                var now = new Date().getTime();
+                exportMap[that.uid].exportDownStartTime = now;
+                console.log("数据生成耗时:"+(now-exportMap[that.uid].exportRowStartTime)+"ms");
+            }
+            var t = templateMap[exportMap[that.uid].exportType];
+            if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
+                exportMap[that.uid].exportTableStr += getTemplateStr("<$0>",[t.TABLE]);
+            }
+            var data = exportMap[that.uid].exportTableStr;
+            var fileName = exportMap[that.uid].fileName;
+            var fileStr = data;
+            if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
+                fileStr = getTemplateStr(t.SHEETSTART,[fileName])+ data + t.SHEETEND;
+            }
+            var blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]),fileStr], {type: "application/vnd.ms-excel"});
+            var link = window.URL.createObjectURL(blob);
+            if(window.navigator && window.navigator.msSaveOrOpenBlob){
+                window.navigator.msSaveOrOpenBlob(blob,fileName+t.FILETYPE);
+            }else if(true){
+                var a = document.createElement('a');
+                a.download = fileName+t.FILETYPE;
+                a.href = link;
+                document.body.appendChild(a).click();
+            }
+            that.un("update",miniUpdate);
+            exportMap[that.uid].exportStatus = "destroy";
+            that.set(exportMap[that.uid].beforeExportOptions);
+            that.setData(exportMap[that.uid].beforeExportData);
+            var mergeColumnsMethod = exportMap[that.uid].mergeColumnsMethod;
+            if(mergeColumnsMethod){
+                mergeColumnsMethod();
+            }
+            delete exportMap[that.uid];
         }
-        var data = exportMap[that.uid].exportTableStr;
-        var fileName = exportMap[that.uid].fileName;
-        var fileStr = data;
-        if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
-            fileStr = getTemplateStr(t.SHEETSTART,[fileName])+ data + t.SHEETEND;
-        }
-        var blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]),fileStr], {type: "application/vnd.ms-excel"});
-        var link = window.URL.createObjectURL(blob);
-        if(window.navigator && window.navigator.msSaveOrOpenBlob){
-            window.navigator.msSaveOrOpenBlob(blob,fileName+t.FILETYPE);
-        }else if(true){
-            var a = document.createElement('a');
-            a.download = fileName+t.FILETYPE;
-            a.href = link;
-            document.body.appendChild(a).click();
-        }
-        that.un("update",miniUpdate);
-        exportMap[that.uid].exportStatus = false;
-        that.set(exportMap[that.uid].beforeExportOptions);
-        that.setData(exportMap[that.uid].beforeExportData);
-        var mergeColumnsMethod = exportMap[that.uid].mergeColumnsMethod;
-        if(mergeColumnsMethod){
-            mergeColumnsMethod();
-        }
-        delete exportMap[that.uid];
+
     }
     var createRowsHtmlMethodKey = "";
     var createColumnsHtmlMethodKey = "";
@@ -84,8 +92,13 @@
     mini.DataGrid.prototype[createColumnsHtmlMethodKey] = function(a,b,c){
         var that = this;
         var html = "";
-        if(exportMap[that.uid] && exportMap[that.uid].exportStatus){
+        if(exportMap[that.uid] && exportMap[that.uid].exportStatus == "init"){
             if(a && a.length>0){
+                if(!exportMap[that.uid].exportColumnStartTime){
+                    var now = new Date().getTime();
+                    exportMap[that.uid].exportColumnStartTime = now;
+                    console.log("初始化耗时:"+(now-exportMap[that.uid].exportInitStartTime)+"ms");
+                }
                 var t = templateMap[exportMap[that.uid].exportType];
                 if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
                     exportMap[that.uid].exportTableStr = getTemplateStr("<$0>",[t.TABLE]);
@@ -139,6 +152,7 @@
                     trsStr = trsStr.substring(1)+"\r\n";
                 }
                 exportMap[that.uid].exportTableStr += trsStr;
+                exportMap[that.uid].exportStatus = "column";
             }
         }else{
             //非导出状态
@@ -148,7 +162,16 @@
     }
     mini.DataGrid.prototype[createRowsHtmlMethodKey] = function(a,b,c,d,e){
         var that = this;
-        if(exportMap[that.uid] && exportMap[that.uid].exportStatus){
+        if(exportMap[that.uid] && exportMap[that.uid].exportStatus == "column"){
+            if(!exportMap[that.uid].exportRowStartTime){
+                var now = new Date().getTime();
+                exportMap[that.uid].exportRowStartTime = now;
+                console.log("列生成耗时:"+(now-exportMap[that.uid].exportColumnStartTime)+"ms");
+            }
+            if(b != exportMap[that.uid].index){
+                return;
+            }
+            exportMap[that.uid].index ++;
             var t = templateMap[exportMap[that.uid].exportType];
             //导出状态
             var trsStr = "";
@@ -239,7 +262,8 @@
             exportType:options.exportType,
             fileName:options.fileName,
             needTimeFormat:options.needTimeFormat,
-            mergeColumnsMethod:options.mergeColumnsMethod
+            mergeColumnsMethod:options.mergeColumnsMethod,
+            index:0
         };
         that.setData([]);
         that.set({
@@ -250,7 +274,8 @@
             virtualScroll:false,
             virtualColumns:false
         });
-        exportMap[that.uid].exportStatus = true;
+        exportMap[that.uid].exportStatus = "init";
+        exportMap[that.uid].exportInitStartTime = new Date().getTime();
         that.on("update",miniUpdate);
         if(that.showPager){
             //有分页
