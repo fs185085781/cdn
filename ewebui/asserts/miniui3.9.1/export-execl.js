@@ -330,7 +330,7 @@
             index:0,
             exportStrSz:[new Uint8Array([0xEF, 0xBB, 0xBF])],
             loadingId:options.loadingId,
-            startSum:true,
+            startSum:that.showSummaryRow,
             exportSumStr:""
         };
         that.setData([]);
