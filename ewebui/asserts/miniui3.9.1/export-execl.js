@@ -37,21 +37,25 @@
                 exportMap[that.uid].exportDownStartTime = now;
                 console.log("数据生成耗时:"+(now-exportMap[that.uid].exportRowStartTime)+"ms");
             }
+            mini.hideMessageBox(exportMap[that.uid].loadingId);
             var t = templateMap[exportMap[that.uid].exportType];
+            exportMap[that.uid].exportTableStr += exportMap[that.uid].exportSumStr;
             if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
-                exportMap[that.uid].exportTableStr += getTemplateStr("<$0>",[t.TABLE]);
+                exportMap[that.uid].exportTableStr += getTemplateStr("</$0>",[t.TABLE]);
             }
-            var data = exportMap[that.uid].exportTableStr;
             var fileName = exportMap[that.uid].fileName;
-            var fileStr = data;
+            exportMap[that.uid].exportStrSz.push(exportMap[that.uid].exportTableStr);
             if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
-                fileStr = getTemplateStr(t.SHEETSTART,[fileName])+ data + t.SHEETEND;
+                exportMap[that.uid].exportStrSz.unshift(getTemplateStr(t.SHEETSTART,[fileName]));
+                exportMap[that.uid].exportStrSz.push(t.SHEETEND);
             }
-            var blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]),fileStr], {type: "application/vnd.ms-excel"});
+            var blob = new Blob(exportMap[that.uid].exportStrSz, {type: "application/vnd.ms-excel"});
+            var fileLength = getFileLength(blob);
+            console.log("文件大小:"+fileLength);
             var link = window.URL.createObjectURL(blob);
             if(window.navigator && window.navigator.msSaveOrOpenBlob){
                 window.navigator.msSaveOrOpenBlob(blob,fileName+t.FILETYPE);
-            }else if(true){
+            }else{
                 var a = document.createElement('a');
                 a.download = fileName+t.FILETYPE;
                 a.href = link;
@@ -70,31 +74,39 @@
 
     }
     var createRowsHtmlMethodKey = "";
+    var createSummaryHtmlMethodKey = "";
     var createColumnsHtmlMethodKey = "";
     var count = 0;
     $.each(mini.DataGrid.prototype,function(key,val){
         if(typeof val == "function" && val.toString().indexOf("mini-grid-cell-nowrap")!=-1){
             createRowsHtmlMethodKey = key;
             count++;
-            return count != 2;
+            return count != 3;
         }
         if(typeof val == "function" && val.toString().indexOf("mini-grid-headerCell-nowrap")!=-1){
             createColumnsHtmlMethodKey = key;
             count++;
-            return count != 2;
+            return count != 3;
+        }
+        if(typeof val == "function" && val.toString().indexOf("mini-grid-summaryCell")!=-1){
+            createSummaryHtmlMethodKey = key;
+            count++;
+            return count != 3;
         }
     });
-    if(!createRowsHtmlMethodKey || !createColumnsHtmlMethodKey){
+    if(!createRowsHtmlMethodKey || !createColumnsHtmlMethodKey || !createSummaryHtmlMethodKey){
         return;
     }
     mini.DataGrid.prototype.createColumnsHtmlMethod = mini.DataGrid.prototype[createColumnsHtmlMethodKey];
     mini.DataGrid.prototype.createRowsHtmlMethod = mini.DataGrid.prototype[createRowsHtmlMethodKey];
+    mini.DataGrid.prototype.createSummaryHtmlMethod = mini.DataGrid.prototype[createSummaryHtmlMethodKey];
     mini.DataGrid.prototype[createColumnsHtmlMethodKey] = function(a,b,c){
         var that = this;
         var html = "";
         if(exportMap[that.uid] && exportMap[that.uid].exportStatus == "init"){
             if(a && a.length>0){
                 if(!exportMap[that.uid].exportColumnStartTime){
+                    exportMap[that.uid].rowsLength = that.getData().length;
                     var now = new Date().getTime();
                     exportMap[that.uid].exportColumnStartTime = now;
                     console.log("初始化耗时:"+(now-exportMap[that.uid].exportInitStartTime)+"ms");
@@ -205,11 +217,51 @@
             }else{
                 trsStr = trsStr.substring(1)+"\r\n";
             }
-            exportMap[that.uid].exportTableStr += trsStr;
+            if(exportMap[that.uid].exportTableStr.length>10000000){
+                exportMap[that.uid].exportStrSz.push(exportMap[that.uid].exportTableStr);
+                exportMap[that.uid].exportTableStr = trsStr;
+            }else{
+                exportMap[that.uid].exportTableStr += trsStr;
+            }
         }else{
             //非导出状态
             that.createRowsHtmlMethod(a,b,c,d,e);
         }
+    }
+    mini.DataGrid.prototype[createSummaryHtmlMethodKey] = function(a,b){
+        var that = this;
+        if(b!=1 && exportMap[that.uid] && exportMap[that.uid].startSum){
+            var t = templateMap[exportMap[that.uid].exportType];
+            var v = that.getDataView();
+            console.log(a,b)
+            exportMap[that.uid].exportSumStr = "";
+            for (var i = 0,srs = that.summaryRows; i < srs; i++) {
+                var trsStr = "";
+                if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
+                    trsStr = getTemplateStr("<$0>",[t.ROW])
+                }
+                for (var n = 0, leg = a.length; n < leg; n++) {
+                    var m = that._OnDrawSummaryCell(v, a[n], null, i);
+                    var obj = toTransformationData(m.cellHtml,that);
+                    m.columnIndex = m.column._index;
+                    m.colSpan =1;
+                    m.rowSpan =1;
+                    if(exportMap[that.uid].exportType == "xml"){
+                        m.rowSpan -=1;
+                        m.colSpan -=1;
+                    }
+                    m.visible =true;
+                    trsStr += getCellStrByType(exportMap[that.uid].exportType,[t.CELL,m.columnIndex+1,obj.style,t.COLSPAN,m.colSpan,t.ROWSPAN,m.rowSpan,t.TDSTYLE,t.DATA,obj.type,obj.value],m.visible);
+                }
+                if(exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html"){
+                    trsStr += getTemplateStr("</$0>",[t.ROW]);
+                }else{
+                    trsStr = trsStr.substring(1)+"\r\n";
+                }
+                exportMap[that.uid].exportSumStr += trsStr;
+            }
+        }
+        return that.createSummaryHtmlMethod(a,b);;
     }
     mini.DataGrid.prototype.exportToExecl = function(options){
         window.URL = window.URL || window.webkitURL;
@@ -241,7 +293,10 @@
                 }else{
                     return;
                 }
-                that.exportToExeclByType(options);
+                options.loadingId = mini.loading("正在导出Execl,请耐心等待");
+                setTimeout(function(){
+                    that.exportToExeclByType(options);
+                },300);
             }
         });
     }
@@ -273,7 +328,11 @@
             fileName:options.fileName,
             needTimeFormat:options.needTimeFormat,
             mergeColumnsMethod:options.mergeColumnsMethod,
-            index:0
+            index:0,
+            exportStrSz:[new Uint8Array([0xEF, 0xBB, 0xBF])],
+            loadingId:options.loadingId,
+            startSum:true,
+            exportSumStr:""
         };
         that.setData([]);
         that.set({
@@ -284,16 +343,22 @@
             virtualScroll:false,
             virtualColumns:false
         });
-        exportMap[that.uid].exportStatus = "init";
         exportMap[that.uid].exportInitStartTime = new Date().getTime();
         that.on("update",miniUpdate);
         if(that.showPager){
             //有分页
+            exportMap[that.uid].exportStatus = "init";
             that.reload();
         }else{
             //无分页
+            if(options.mergeColumnsMethod && (exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html")){
+
+            }else{
+                exportMap[that.uid].exportStatus = "init";
+            }
             that.setData(exportMap[that.uid].beforeExportData);
             if(options.mergeColumnsMethod && (exportMap[that.uid].exportType == "xml" || exportMap[that.uid].exportType == "html")){
+                exportMap[that.uid].exportStatus = "init";
                 options.mergeColumnsMethod();
             }
         }
@@ -366,6 +431,40 @@
             }else{
                 return "";
             }
+        }
+    }
+    function getFileLength(blob){
+        var length = blob.size;
+        var dw = "B";
+        var res = dg({size:length,dw:dw});
+        return res.size.toFixed(2)+res.dw;
+        function dg(option){
+            var dz = ["B","KB","MB","GB","TB","PB"];
+            for(var i=0;i<dz.length;i++){
+                if(option.dw.toUpperCase() != dz[i]){
+                    continue;
+                }
+                if(i == dz.length-1){
+                    continue;
+                }
+                if(option.size<1024){
+                    continue;
+                }
+                return dg({size:option.size/1024,dw:dz[i+1]})
+            }
+            return option;
+        }
+        if(length>1024){
+            length = length/1024;
+            dw = "KB";
+        }
+        if(length>1024){
+            length = length/1024;
+            dw = "MB";
+        }
+        if(length>1024){
+            length = length/1024;
+            dw = "GB";
         }
     }
 })()

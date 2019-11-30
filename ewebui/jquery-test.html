@@ -6,7 +6,7 @@
 		<script src="./asserts/boot/utils.js?from=pc&lib=jquery&env=test"></script>
 	</head>
 	<body>
-	<div id="datagrid" class="mini-datagrid" showPager="false" onload="dataload" ondrawcell="drawcell" autoLoad="true" frozenStartColumn="0" frozenEndColumn="1" virtualScroll="true" virtualColumns="true" pageSize="5000" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid2.json">
+	<div id="datagrid" class="mini-datagrid" showPager="false" ondrawsummarycell="drawsummarycell" summaryRows="3" showSummaryRow="true" frozenStartColumn="0" frozenEndColumn="1" virtualScroll="true" virtualColumns="true" pageSize="5000" style="width:750px;height:250px;" borderStyle="border:0">
 		<div property="columns">
 			<div type="indexcolumn" ></div>
 			<div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
@@ -22,7 +22,7 @@
 			<div header="基本信息">
 				<div property="columns">
 					<div field="gender" width="100" renderer="onGenderRenderer">性别</div>
-					<div field="age" width="100" allowSort="true">年龄</div>
+					<div field="age" width="100" allowSort="true" summaryType="avg">年龄</div>
 					<div field="birthday" width="100" renderer="onBirthdayRenderer">出生日期</div>
 					<div field="married" width="100" align="center" renderer="onMarriedRenderer">婚否</div>
 					<div field="email" width="100">邮箱</div>
@@ -40,11 +40,22 @@
 	<script>
 		mini.parse();
 		var datagrid = mini.get("datagrid");
+		$.ajax({
+            url:"./json/datagrid2.json",
+            dataType:"json",
+            success:function(res){
+                var list = res.data;
+                var data = [];
+                for(var i=0;i<1;i++){
+                    $.each(list,function(n,item){
+                        data[data.length] = item;
+                    });
+                }
+                datagrid.setData(data);
+            }
+        });
 		function drawcell(e){
 			//console.log("单元格绘制");
-		}
-		function dataload(e){
-			datagrid.mergeColumns(["dept_name"]);
 		}
 		function exportData(){
 			datagrid.exportToExecl({
@@ -54,6 +65,9 @@
 					datagrid.mergeColumns(["dept_name"]);
 				}
 			})
+		}
+		function drawsummarycell(e){
+			e.cellHtml = Math.random()+"aa";
 		}
 	</script>
 	</body>
