@@ -233,7 +233,6 @@
         if(b!=1 && exportMap[that.uid] && exportMap[that.uid].startSum){
             var t = templateMap[exportMap[that.uid].exportType];
             var v = that.getDataView();
-            console.log(a,b)
             exportMap[that.uid].exportSumStr = "";
             for (var i = 0,srs = that.summaryRows; i < srs; i++) {
                 var trsStr = "";
