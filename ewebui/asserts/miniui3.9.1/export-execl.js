@@ -223,9 +223,10 @@
             }else{
                 exportMap[that.uid].exportTableStr += trsStr;
             }
+            return "";
         }else{
             //非导出状态
-            that.createRowsHtmlMethod(a,b,c,d,e);
+            return that.createRowsHtmlMethod(a,b,c,d,e);
         }
     }
     mini.DataGrid.prototype[createSummaryHtmlMethodKey] = function(a,b){
@@ -260,7 +261,7 @@
                 exportMap[that.uid].exportSumStr += trsStr;
             }
         }
-        return that.createSummaryHtmlMethod(a,b);;
+        return that.createSummaryHtmlMethod(a,b);
     }
     mini.DataGrid.prototype.exportToExecl = function(options){
         window.URL = window.URL || window.webkitURL;
