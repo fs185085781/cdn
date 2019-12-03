@@ -454,17 +454,5 @@
             }
             return option;
         }
-        if(length>1024){
-            length = length/1024;
-            dw = "KB";
-        }
-        if(length>1024){
-            length = length/1024;
-            dw = "MB";
-        }
-        if(length>1024){
-            length = length/1024;
-            dw = "GB";
-        }
     }
 })()
