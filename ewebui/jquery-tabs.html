@@ -43,13 +43,8 @@
 				});
 				$("body").mouseup(function(e){
 					if(targetMap && targetMap.drag){
-						var index = $("#"+tabs.uid+"\\$"+targetMap.moveByTab._id).attr("index")*1;
-						if(targetMap.needSort == 1){
-							//将targetMap.tab移动到targetMap.moveByTab的左边
-							tabs.moveTab(targetMap.tab,index)
-						}else if(targetMap.needSort == 2){
-							//将targetMap.tab移动到targetMap.moveByTab的右边
-							tabs.moveTab(targetMap.tab,index+2)
+						if(targetMap.needSort == 1 ||targetMap.needSort == 2){
+							tabs.moveTab(targetMap.tab,targetMap.sortIndex);
 						}
 						$(targetMap.proxyData).remove();
 						$(targetMap.topEl).remove();
@@ -105,12 +100,12 @@
 					my2 = tabMap.y2;
 					if(e.clientX>tabMap.x1 && e.clientX<=tabMap.x1+(tabMap.x2-tabMap.x1)/2){
 						targetMap.needSort = 1;
-						targetMap.moveByTab = tabMap.tab;
+						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+targetMap.tabMap.tab._id).attr("index")*1;
 						mx = tabMap.x1;
 						return false;
 					}else if(e.clientX>tabMap.x1+(tabMap.x2-tabMap.x1)/2 && e.clientX<=tabMap.x2){
 						targetMap.needSort = 2;
-						targetMap.moveByTab = tabMap.tab;
+						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+targetMap.tabMap.tab._id).attr("index")*1+1;
 						mx = tabMap.x2;
 						return false;
 					}
