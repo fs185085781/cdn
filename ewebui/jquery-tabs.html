@@ -32,7 +32,7 @@
 		openSaveTabsSort(tabs);
 		function openSaveTabsSort(tabs){
 			var el = tabs.el;
-			el.οncοntextmenu=function(){return false;};
+			el.oncontextmenu=function(){return false;};
 			el.onselectstart=function(){return false;};
 			var targetMap;
 			$(el).on("mousedown",".mini-tab",function(e){
