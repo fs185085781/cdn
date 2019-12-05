@@ -21,7 +21,7 @@
 		<div title="Tab4" showCloseButton="true" name="t4" visible="false">
 			4
 		</div>
-		<div title="Tab4" showCloseButton="true" name="t5">
+		<div title="Tab5" showCloseButton="true" name="t5">
 			4
 		</div>
 	</div>
@@ -29,11 +29,25 @@
 	<script>
 		mini.parse();
 		var tabs = mini.get("tabs");
-		openSaveTabsSort(tabs);
-		function openSaveTabsSort(tabs){
+		openSaveTabsSort({
+			tabs:tabs,
+			get:function(){
+				var defer = $.Deferred();
+				defer.resolve("t3,t4,t1,t2,t5".split(","));
+				return defer;
+			},
+			save:function(columns){
+				console.log("保存:",columns)
+
+			}
+		});
+		function openSaveTabsSort(options){
+			var tabs = options.tabs;
+			var lastColumnstr = "";
 			var el = tabs.el;
 			el.oncontextmenu=function(){return false;};
 			el.onselectstart=function(){return false;};
+			sortTabs();
 			var targetMap;
 			$(el).on("mousedown",".mini-tab",function(e){
 				$("body").mousemove(function(e){
@@ -45,6 +59,7 @@
 					if(targetMap && targetMap.drag){
 						if(targetMap.needSort == 1 ||targetMap.needSort == 2){
 							tabs.moveTab(targetMap.tab,targetMap.sortIndex);
+							saveTabs();
 						}
 						$(targetMap.proxyData).remove();
 						$(targetMap.topEl).remove();
@@ -69,6 +84,15 @@
 				var tabsz = tabs.getTabs();
 				var otherTabs = [];
 				$.each(tabsz,function(i,t){
+					if(!t.name){
+						mini.showTips({
+							content: "当前标签控件存在标签页无name属性,请添加手重试",
+							state: "danger",
+							x: "center",
+							y: "center"
+						});
+						return false;
+					}
 					if(t._id == tab._id){
 						return true;
 					}
@@ -100,12 +124,12 @@
 					my2 = tabMap.y2;
 					if(e.clientX>tabMap.x1 && e.clientX<=tabMap.x1+(tabMap.x2-tabMap.x1)/2){
 						targetMap.needSort = 1;
-						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+targetMap.tabMap.tab._id).attr("index")*1;
+						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+tabMap.tab._id).attr("index")*1;
 						mx = tabMap.x1;
 						return false;
 					}else if(e.clientX>tabMap.x1+(tabMap.x2-tabMap.x1)/2 && e.clientX<=tabMap.x2){
 						targetMap.needSort = 2;
-						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+targetMap.tabMap.tab._id).attr("index")*1+1;
+						targetMap.sortIndex = $("#"+tabs.uid+"\\$"+tabMap.tab._id).attr("index")*1+1;
 						mx = tabMap.x2;
 						return false;
 					}
@@ -123,6 +147,46 @@
 					}
 				}
 
+			}
+			function sortTabs(){
+				var defer = options.get();
+				var tabsz = tabs.getTabs();
+				var tabMap = {};
+				$.each(tabsz,function(i,tab){
+					tabMap[tab.name] = tab;
+				});
+				defer.done(function(list){
+					lastColumnstr = list.join("-");
+					$.each(list,function(i,name){
+						var tab = tabMap[name];
+						if(tab){
+							tabs.moveTab(tab,i);
+						}
+					});
+					tabs.reloadTab(tabs.getActiveTab());
+				});
+			}
+			function saveTabs(){
+				var tabsz = tabs.getTabs();
+				var columns = [];
+				$.each(tabsz,function(i,tab){
+					if(!tab.name){
+						mini.showTips({
+							content: "当前标签控件存在标签页无name属性,无法保存此标签顺序",
+							state: "danger",
+							x: "center",
+							y: "center"
+						});
+						return false;
+					}
+					columns.push(tab.name);
+				});
+				var columstr = columns.join("-");
+				if(columstr == lastColumnstr){
+					return;
+				}
+				lastColumnstr = columstr;
+				options.save(columns);
 			}
 		}
 	</script>
