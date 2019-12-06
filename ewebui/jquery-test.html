@@ -46,7 +46,7 @@
             success:function(res){
                 var list = res.data;
                 var data = [];
-                for(var i=0;i<1;i++){
+                for(var i=0;i<5000;i++){
                     $.each(list,function(n,item){
                         data[data.length] = item;
                     });
@@ -60,10 +60,10 @@
 		function exportData(){
 			datagrid.exportToExecl({
 				fileName:"测试导出",
-				needTimeFormat:true,
+				needTimeFormat:true/*,
 				mergeColumnsMethod:function(){
 					datagrid.mergeColumns(["dept_name"]);
-				}
+				}*/
 			})
 		}
 		function drawsummarycell(e){
