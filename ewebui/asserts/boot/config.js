@@ -26,6 +26,15 @@
             prodPath:rp()+"/../libs/jquery.min.js"
         },
         miniui:{
+            jqueryPath:rp()+"/../miniui3.9.2/jquery.min.js",
+            jsPath:rp()+"/../miniui3.9.2/miniui/miniui.js",
+            exportJsPath:rp()+"/../miniui3.9.2/export-execl.js",
+            themesPath:rp()+"/../miniui3.9.2/miniui/themes",
+            localePath:rp()+"/../miniui3.9.2/miniui/locale",
+            fontAwesomePath:rp()+"/../miniui3.9.2/res/fonts/font-awesome/css/font-awesome.min.css",
+            cssPath:rp()+"/../miniui3.9.2/miniui/themes/default/miniui.css"
+        },
+        /*miniui:{
             jqueryPath:rp()+"/../miniui3.9.1/jquery.min.js",
             jsPath:rp()+"/../miniui3.9.1/miniui/miniui.js",
             exportJsPath:rp()+"/../miniui3.9.1/export-execl.js",
@@ -33,7 +42,7 @@
             localePath:rp()+"/../miniui3.9.1/miniui/locale",
             fontAwesomePath:rp()+"/../miniui3.9.1/res/fonts/font-awesome/css/font-awesome.min.css",
             cssPath:rp()+"/../miniui3.9.1/miniui/themes/default/miniui.css"
-        },
+        },*/
         otherLibs:{
             jsxPath:rp()+"/../libs/babel.min.js"
         }
