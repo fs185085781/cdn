@@ -66,7 +66,7 @@
          * 加载jquery底包
          */
         utils.getRemoteData(miniui.jqueryPath,false,function(res){
-            if(res.status == 200){
+            if(res.status == 1){
                 eval(res.text);
             }else{
                 console.warn(miniui.jqueryPath+", js加载出现问题,将以标签形式加载");
@@ -123,19 +123,19 @@
         }
         window.miniUtils = miniUtils;
         /*破解miniui 准备*/
-        document.write('<script src="'+jspath+'/../compatible/intensify-miniui-ready.js" type="text/javascript" ></sc' + 'ript>');
+        document.write('<script src="'+jspath+'/../compatible/minijs-before.js" type="text/javascript" ></sc' + 'ript>');
         /*miniui*/
         document.write('<script src="' + miniui.jsPath + '" type="text/javascript" ></sc' + 'ript>');
         /*破解miniui 结束*/
-        document.write('<script src="'+jspath+'/../compatible/intensify-miniui-complete.js" type="text/javascript" ></sc' + 'ript>');
+        document.write('<script src="'+jspath+'/../compatible/minijs-after.js" type="text/javascript" ></sc' + 'ript>');
         /*datagrid导出*/
         document.write('<script src="' + miniui.exportJsPath + '" type="text/javascript" ></sc' + 'ript>');
-        var lang = miniUtils.getLange() || 'zh_CN';
-        document.write('<script src="' + miniui.localePath + '/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');
         document.write('<link href="' + miniui.fontAwesomePath + '" rel="stylesheet" type="text/css" />');
         document.write('<link href="' + miniui.cssPath + '" rel="stylesheet" type="text/css" />');
-        //icon
+        /*icon*/
         document.write('<link href="' + miniui.themesPath + '/icons.css" rel="stylesheet" type="text/css" />');
+        /*将配置项外露,为加载语言包做准备*/
+        window.miniuiConfig = miniui;
     }
     function initCompatibleIE5(){
         /*兼容IE5不支持的属性 -- 开始*/
@@ -151,71 +151,27 @@
                 return this.indexOf(str) == 0;
             }
         }
-        /*增加json*/
-        if(typeof window.JSON == "undefined"){
-            window.JSON = {
-                stringify:function(jsonObj) {
-                    var that = this;
-                    var result = '',
-                        curVal;
-                    if (jsonObj === null) {
-                        return String(jsonObj);
-                    }
-                    switch (typeof jsonObj) {
-                        case 'number':
-                        case 'boolean':
-                            return String(jsonObj);
-                        case 'string':
-                            return '"' + jsonObj + '"';
-                        case 'undefined':
-                        case 'function':
-                            return undefined;
-                    }
-                    switch (Object.prototype.toString.call(jsonObj)) {
-                        case '[object Array]':
-                            result += '[';
-                            for (var i = 0, len = jsonObj.length; i < len; i++) {
-                                curVal = that.stringify(jsonObj[i]);
-                                result += (curVal === undefined ? null : curVal) + ",";
-                            }
-                            if (result !== '[') {
-                                result = result.slice(0, -1);
-                            }
-                            result += ']';
-                            return result;
-                        case '[object Date]':
-                            return '"' + that.formatDate(jsonObj,"yyyy-MM-dd HH:mm:ss") + '"';
-                        case '[object RegExp]':
-                            return "{}";
-                        case '[object Object]':
-                            result += '{';
-                            for (i in jsonObj) {
-                                console.log(jsonObj);
-                                if (jsonObj.hasOwnProperty(i)) {
-                                    curVal = that.stringify(jsonObj[i]);
-                                    if (curVal !== undefined) {
-                                        result += '"' + i + '":' + curVal + ',';
-                                    }
-                                }
-                            }
-                            if (result !== '{') {
-                                result = result.slice(0, -1);
-                            }
-                            result += '}';
-                            return result;
-
-                        case '[object String]':
-                            return '"' + jsonObj.toString() + '"';
-                        case '[object Number]':
-                        case '[object Boolean]':
-                            return jsonObj.toString();
-                    }
+        /*增加localStorage*/
+        if(typeof window.localStorage == "undefined"){
+            window.localStorage = {
+                removeItem:function(key){
+                    var exp = new Date();
+                    exp.setTime(exp.getTime() - 1);
+                    document.cookie= key + "=;expires="+exp.toGMTString();
                 },
-                parse:function(str){
-                    if(typeof str == "object"){
-                        return str;
+                setItem:function(key,val){
+                    var Days = 30;
+                    var exp  = new Date();
+                    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+                    document.cookie = key + "="+ escape (val) + ";expires=" + exp.toGMTString();
+                },
+                getItem:function(key){
+                    var arr = document.cookie.match(new RegExp("(^| )"+key+"=([^;]*)(;|$)"));
+                    if(arr != null){
+                        return unescape(arr[2]);
+                    }else{
+                        return null;
                     }
-                    return eval("("+str+")");
                 }
             }
         }
@@ -279,13 +235,13 @@
                     }
                     xmlhttp.onreadystatechange=function(){
                         if(xmlhttp.readyState==4){
-                            callback({text:xmlhttp.responseText,status:xmlhttp.status});
+                            callback({text:xmlhttp.responseText,status:1});
                         }
                     }
                     xmlhttp.open("GET",url,async);
                     xmlhttp.send();
                 }catch (e) {
-                    callback({status:500,text:e.toString()});
+                    callback({status:0,text:e.toString()});
                 }
             },
             getJsPath:function(js, length) {
@@ -362,8 +318,8 @@
     }
     function initConfig(url){
         var c;
-        utils.getRemoteData(url,false,function(res){
-            if(res.status == 200){
+        utils.getRemoteData(url+"?_="+new Date().getTime(),false,function(res){
+            if(res.status == 1){
                 eval(res.text);
                 c = window.config;
                 utils.removeProp(window,"config");

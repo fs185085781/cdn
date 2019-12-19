@@ -1,6 +1,10 @@
 (function () {
     window.eval = utils.evalData;
     utils.removeProp(utils,"evalData");
+    /*增加date格式化*/
+    Date.prototype.formatDate = function(format){
+        return mini.formatDate(this,format);
+    }
     /**
      * 增加JSON
      */
@@ -8,9 +12,9 @@
         JSON = {};
     }
     JSON.stringify=mini.encode;
-    JSON.encode=JSON.stringify;
+    JSON.encode=mini.encode;
     JSON.parse=mini.decode;
-    JSON.decode=JSON.parse;
+    JSON.decode=mini.decode;
     /**
      * 增加mini工具
      */
@@ -20,6 +24,12 @@
         }
         utils.removeProp(window,"miniUtils");
     }
+    /**
+     * 加载语言包
+     */
+    var lang = mini.getLange() || 'zh_CN';
+    document.write('<script src="' + miniuiConfig.localePath + '/'+lang+'.js" type="text/javascript" ></sc' + 'ript>');
+    utils.removeProp(window,"miniuiConfig");
     /**
      * 页面加载完毕更新皮肤
      */
