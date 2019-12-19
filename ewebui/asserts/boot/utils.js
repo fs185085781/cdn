@@ -126,6 +126,8 @@
         document.write('<script src="'+jspath+'/../compatible/minijs-before.js" type="text/javascript" ></sc' + 'ript>');
         /*miniui*/
         document.write('<script src="' + miniui.jsPath + '" type="text/javascript" ></sc' + 'ript>');
+        /*将配置项外露,为加载语言包做准备*/
+        window.miniuiConfig = miniui;
         /*破解miniui 结束*/
         document.write('<script src="'+jspath+'/../compatible/minijs-after.js" type="text/javascript" ></sc' + 'ript>');
         /*datagrid导出*/
@@ -134,19 +136,17 @@
         document.write('<link href="' + miniui.cssPath + '" rel="stylesheet" type="text/css" />');
         /*icon*/
         document.write('<link href="' + miniui.themesPath + '/icons.css" rel="stylesheet" type="text/css" />');
-        /*将配置项外露,为加载语言包做准备*/
-        window.miniuiConfig = miniui;
     }
     function initCompatibleIE5(){
         /*兼容IE5不支持的属性 -- 开始*/
         /*重写string的trim方法*/
-        if(typeof String.prototype.trim !== 'function') {
+        if(!String.prototype.trim) {
             String.prototype.trim = function() {
                 return this.replace(/^\s+|\s+$/g, '');
             }
         }
         /*重写string的startsWith方法*/
-        if(typeof String.prototype.startsWith !== 'function') {
+        if(!String.prototype.startsWith) {
             String.prototype.startsWith = function(str) {
                 return this.indexOf(str) == 0;
             }
@@ -318,7 +318,8 @@
     }
     function initConfig(url){
         var c;
-        utils.getRemoteData(url+"?_="+new Date().getTime(),false,function(res){
+        url += "?_="+new Date().getTime();
+        utils.getRemoteData(url,false,function(res){
             if(res.status == 1){
                 eval(res.text);
                 c = window.config;
