@@ -1,6 +1,8 @@
 (function () {
     /*兼容IE5不支持的方法*/
     initCompatibleIE5();
+    /*拓展工具类*/
+    initExpand();
     /*初始化utils工具*/
     window.utils = initUtils();
     var jsSearch = getJsSearch("utils.js");
@@ -176,6 +178,55 @@
             }
         }
         /*兼容IE5不支持的属性 -- 结束*/
+    }
+    function initExpand(){
+        /**时间拓展----开始*/
+        Date.prototype.addMilliseconds = function(x){
+            var v = this.getTime() + x;
+            return new Date(v);
+        }
+        Date.prototype.addMonths = function(x){
+            var months = this.getFullYear()*12+this.getMonth()+x+1;
+            var date = this.getDate();
+            var year = parseInt(months/12);
+            var temp = new Date(year,months-year*12,1,this.getHours(),this.getMinutes(),this.getSeconds(),this.getMilliseconds());
+            var data = temp.addDays(-1);
+            if(date<data.getDate()){
+                data.setDate(date);
+            }
+            return data;
+        }
+        var dateMethods = [
+            {prop:"addSeconds",parentProp:"addMilliseconds",pow:1000},
+            {prop:"addMinutes",parentProp:"addSeconds",pow:60},
+            {prop:"addHours",parentProp:"addMinutes",pow:60},
+            {prop:"addDays",parentProp:"addHours",pow:24},
+            {prop:"addYears",parentProp:"addMonths",pow:12}];
+        for(var i=0;i<dateMethods.length;i++){
+            var temp = dateMethods[i];
+            (function(map){
+                Date.prototype[map.prop] = function(x){
+                    return this[map.parentProp](x*map.pow);
+                }
+            })(temp);
+        }
+        /**时间拓展----结束*/
+        /**数值拓展----开始*/
+        var numberMethods = ["floor","round","ceil"];
+        for(var i=0;i<numberMethods.length;i++){
+            var field = numberMethods[i];
+            (function(f){
+                Number.prototype[f] = function(x){
+                    if(x<0){
+                        x = 0;
+                    }
+                    var pow = Math.pow(10,x);
+                    var temp = Math[f](this*pow);
+                    return temp/pow;
+                }
+            })(field);
+        }
+        /**数值拓展----结束*/
     }
     function initUtils(){
         return {
