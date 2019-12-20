@@ -33,7 +33,7 @@ mini.dateInfo = {
         "G": "M/d/yyyy H:mm:ss tt",
         "m": "MMMM dd",
         "o": "yyyy-MM-ddTHH:mm:ss.fff",
-        "s": "yyyy-MM-ddTHH:mm:ss",
+        "s": "yyyy-MM-dd HH:mm:ss",
         "t": "H:mm tt",
         "T": "H:mm:ss tt",
         "U": "dddd, MMMM dd, yyyy HH:mm:ss tt",
