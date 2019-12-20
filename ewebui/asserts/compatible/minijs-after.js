@@ -2,7 +2,7 @@
     window.eval = utils.evalData;
     utils.removeProp(utils,"evalData");
     /*增加date格式化*/
-    Date.prototype.formatDate = function(format){
+    Date.prototype.format = function(format){
         return mini.formatDate(this,format);
     }
     /**
