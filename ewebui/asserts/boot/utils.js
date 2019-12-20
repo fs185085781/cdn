@@ -227,6 +227,48 @@
             })(field);
         }
         /**数值拓展----结束*/
+        /**精准计算拓展---开始*/
+        var decimalMethods = ["add","subtract","multiply","divide"];
+        for(var i=0;i<decimalMethods.length;i++){
+            var field = decimalMethods[i];
+            (function(f){
+                Number.prototype[f] = function(x,maxJd){
+                    if(!maxJd || maxJd>15){
+                        maxJd = 15;
+                    }
+                    var aInt = parseInt(this);
+                    var bInt = parseInt(x);
+                    var aMax = 0;
+                    var bMax = 0;
+                    if(aInt != this){
+                        aMax = String(this).length-String(aInt).length-1;
+                    }
+                    if(bInt != x){
+                        bMax = String(x).length-String(bInt).length-1;
+                    }
+                    var temp = aMax;
+                    if(temp<bMax){
+                        temp = bMax;
+                    }
+                    if(temp>maxJd){
+                        temp = maxJd;
+                    }
+                    var pow = Math.pow(10,temp);
+                    var jg = NaN;
+                    if(f=="add"){
+                        jg = (this*pow+x*pow)/pow;
+                    }else if(f=="subtract"){
+                        jg = (this*pow-x*pow)/pow;
+                    }else if(f=="multiply"){
+                        jg = (this*pow)*(x*pow)/(pow*pow);
+                    }else if(f=="divide"){
+                        jg = (this*pow)/(x*pow);
+                    }
+                    return jg;
+                }
+            })(field);
+        }
+        /**精准计算拓展---结束*/
     }
     function initUtils(){
         return {
