@@ -234,12 +234,13 @@
             (function(f){
                 Number.prototype[f] = function(x,maxJd,type){
                     if(isNaN(x)){
-                       throw "x is not a number";
+                       throw x+" is not a number";
                     }
                     if(typeof x != "number"){
                         x = x*1;
                     }
                     if(isNaN(maxJd)){
+                        console.warn(maxJd+" is not a number,will be reset to 15");
                         maxJd = 15;
                     }
                     if((!maxJd && maxJd != 0) || maxJd>15){
@@ -247,6 +248,7 @@
                     }
                     type = type || "round";
                     if(type != "floor" && type != "round" && type != "ceil"){
+                        console.warn(type+" is not a number,will be reset to 'round'");
                         type = "round";
                     }
                     function getAssist(v){
