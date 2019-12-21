@@ -232,37 +232,46 @@
         for(var i=0;i<decimalMethods.length;i++){
             var field = decimalMethods[i];
             (function(f){
-                Number.prototype[f] = function(x,maxJd){
-                    if(!maxJd || maxJd>15){
+                Number.prototype[f] = function(x,maxJd,type){
+                    if(isNaN(x)){
+                       throw "x is not a number";
+                    }
+                    if(typeof x != "number"){
+                        x = x*1;
+                    }
+                    if(isNaN(maxJd)){
                         maxJd = 15;
                     }
-                    var aInt = parseInt(this);
-                    var bInt = parseInt(x);
-                    var aMax = 0;
-                    var bMax = 0;
-                    if(aInt != this){
-                        aMax = String(this).length-String(aInt).length-1;
+                    if((!maxJd && maxJd != 0) || maxJd>15){
+                        maxJd = 15;
                     }
-                    if(bInt != x){
-                        bMax = String(x).length-String(bInt).length-1;
+                    type = type || "round";
+                    if(type != "floor" && type != "round" && type != "ceil"){
+                        type = "round";
                     }
-                    var temp = aMax;
-                    if(temp<bMax){
-                        temp = bMax;
+                    function getAssist(v){
+                        var str = String(v);
+                        var index = str.indexOf(".");
+                        var res = index != -1?str.length - index -1:0;
+                        if(res>maxJd){
+                            res = maxJd;
+                        }
+                        var pow = Math.pow(10,res);
+                        var num = v[type](res);
+                        return {pow:pow,num:num};
                     }
-                    if(temp>maxJd){
-                        temp = maxJd;
-                    }
-                    var pow = Math.pow(10,temp);
+                    var a = getAssist(this);
+                    var b = getAssist(x);
+                    var max = a.pow>b.pow?a.pow:b.pow;
                     var jg = NaN;
                     if(f=="add"){
-                        jg = (this*pow+x*pow)/pow;
+                        jg = (a.num*max+b.num*max)/max;
                     }else if(f=="subtract"){
-                        jg = (this*pow-x*pow)/pow;
+                        jg = (a.num*max-b.num*max)/max;
                     }else if(f=="multiply"){
-                        jg = (this*pow)*(x*pow)/(pow*pow);
+                        jg = (a.num*a.pow)*(b.num*b.pow)/(a.pow*b.pow);
                     }else if(f=="divide"){
-                        jg = (this*pow)/(x*pow);
+                        jg = (a.num*max)/(b.num*max);
                     }
                     return jg;
                 }
