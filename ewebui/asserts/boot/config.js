@@ -34,6 +34,9 @@
             fontAwesomePath:rp()+"/../miniui3.9.2/res/fonts/font-awesome/css/font-awesome.min.css",
             cssPath:rp()+"/../miniui3.9.2/miniui/themes/default/miniui.css"
         },
+        plugins:{
+            md5:rp()+"/../compatible/md5.js"
+        },
         otherLibs:{
             jsxPath:rp()+"/../libs/babel.min.js"
         }

@@ -15,6 +15,8 @@
     }
     var jspath = utils.getRelativePath();
     var config = initConfig(jspath+"/config.js");
+    /*加载插件*/
+    initPlugins(jsSearch.plugins,config.plugins);
     /**
      * 加载miniui
      */
@@ -287,12 +289,10 @@
     }
     function initUtils(){
         return {
-            //获取页面指定key值的参数值
             getParamer: function (key) {
                 var map = this.getSearch();
                 return map[key];
             },
-            //获取页面所有key的参数值的集合
             getSearch: function () {
                 var search = decodeURIComponent(location.search);
                 return this.getSearchByStr(search);
@@ -435,5 +435,21 @@
             }
         });
         return c;
+    }
+    function initPlugins(plugins,configPathMap){
+        if(!plugins){
+            return;
+        }
+        if(!configPathMap){
+            return;
+        }
+        var alls = plugins.split(",");
+        for(var i=0;i<alls.length;i++){
+            var url = configPathMap[alls[i]];
+            if(!url){
+                continue;
+            }
+            document.write('<script src="' + url + '" type="text/javascript"></sc' + 'ript>');
+        }
     }
 })()
