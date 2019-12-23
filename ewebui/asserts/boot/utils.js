@@ -33,7 +33,7 @@
     document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"Path"] + '" type="text/javascript"></sc' + 'ript>');
     /*如果是react 加载react的必备文件*/
     if(jsSearch.lib == "react"){
-        document.write('<script src="' + config.react[jsSearch.env+"DomPath"] + '" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"DomPath"] + '" type="text/javascript"></sc' + 'ript>');
     }
     if(jsSearch.from == "pc"){
         /**加载兼容层底包,jquery兼容层不依赖此底包*/
