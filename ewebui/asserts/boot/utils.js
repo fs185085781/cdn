@@ -1,6 +1,4 @@
 (function () {
-    /*兼容IE5不支持的方法*/
-    initCompatibleIE5();
     /*拓展工具类*/
     initExpand();
     /*初始化utils工具*/
@@ -140,21 +138,26 @@
         document.write('<link href="' + miniui.themesPath + '/icons.css" rel="stylesheet" type="text/css" />');
     }
     function initCompatibleIE5(){
-        /*兼容IE5不支持的属性 -- 开始*/
-        /*重写string的trim方法*/
+        /*增加string的trim方法*/
         if(!String.prototype.trim) {
             String.prototype.trim = function() {
                 return this.replace(/^\s+|\s+$/g, '');
             }
         }
-        /*重写string的startsWith方法*/
+        /*增加string的startsWith方法*/
         if(!String.prototype.startsWith) {
             String.prototype.startsWith = function(str) {
                 return this.indexOf(str) == 0;
             }
         }
+        /*增加Date的now方法*/
+        if(!Date.now) {
+            Date.now = function() {
+                return new Date().getTime();
+            }
+        }
         /*增加localStorage*/
-        if(typeof window.localStorage == "undefined"){
+        if(!window.localStorage){
             window.localStorage = {
                 removeItem:function(key){
                     var exp = new Date();
@@ -177,9 +180,10 @@
                 }
             }
         }
-        /*兼容IE5不支持的属性 -- 结束*/
     }
     function initExpand(){
+        /*兼容低版本浏览器不支持的属性*/
+        initCompatibleIE5();
         /**时间拓展----开始*/
         Date.prototype.addMilliseconds = function(x){
             var v = this.getTime() + x;
