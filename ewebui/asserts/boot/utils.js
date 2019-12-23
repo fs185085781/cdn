@@ -21,10 +21,6 @@
      * 加载miniui
      */
     loadMiniUi(config.miniui);
-    if(jsSearch.jsx == "true"){
-        /*加载jsx*/
-        document.write('<script src="' + config.otherLibs.jsxPath + '" type="text/javascript"></sc' + 'ript>');
-    }
     /*如果是angular2 加载angular2的基础文件*/
     if(jsSearch.lib == "angular2"){
         document.write('<script src="' + config.angular2.es6ShimPath + '" type="text/javascript"></sc' + 'ript>');
@@ -39,9 +35,6 @@
     if(jsSearch.lib == "react"){
         document.write('<script src="' + config.react[jsSearch.env+"DomPath"] + '" type="text/javascript"></sc' + 'ript>');
     }
-    /**
-     * 加载插件
-     */
     if(jsSearch.from == "pc"){
         /**加载兼容层底包,jquery兼容层不依赖此底包*/
         if(jsSearch.lib != "jquery"){

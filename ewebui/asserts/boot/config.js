@@ -35,10 +35,8 @@
             cssPath:rp()+"/../miniui3.9.2/miniui/themes/default/miniui.css"
         },
         plugins:{
-            md5:rp()+"/../compatible/md5.js"
-        },
-        otherLibs:{
-            jsxPath:rp()+"/../libs/babel.min.js"
+            md5:rp()+"/../compatible/md5.js",
+            jsx:rp()+"/../libs/babel.min.js"
         }
     }
     function rp(){
