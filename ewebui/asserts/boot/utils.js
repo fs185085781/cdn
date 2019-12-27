@@ -173,6 +173,122 @@
                 }
             }
         }
+        /*增加json*/
+        if(!window.JSON){
+            window.JSON = {
+                stringify:function(obj){
+                    return jsonStrByData(obj);
+                    function jsonStrByData(data){
+                        var type = Object.prototype.toString.call(data);
+                        if(type =="[object Array]"){
+                            var result = "[";
+                            for(var i=0;i<data.length;i++){
+                                if(i>0){
+                                    result += ",";
+                                }
+                                result += jsonStrByData(data[i]);
+                            }
+                            result += "]";
+                            return result;
+                        }else if(type == "[object Date]"){
+                            return '"'+dateFormat(data)+'"';
+                        }else if(type == "[object Object]"){
+                            if(!data){
+                                var res = "undefined";
+                                if(data === null){
+                                    res = "null";
+                                }
+                                return res;
+                            }
+                            var result = "{";
+                            var isFirst=true;
+                            for(var key in data){
+                                var str = jsonStrByData(data[key]);
+                                if(str == "undefined"){
+                                    continue;
+                                }
+                                if(!isFirst){
+                                    result += ",";
+                                }
+                                result += "\""+key+"\":"+str;
+                                isFirst = false;
+                            }
+                            result+="}";
+                            return result;
+                        }else if(type == "[object String]"){
+                            return '"'+data+'"';
+                        }else if(type == "[object Number]" || type == "[object Boolean]" || type == "[object Null]"){
+                            return String(data);
+                        }else{
+                            return "undefined"
+                        }
+                    }
+                    function dateFormat(date){
+                        var y = date.getFullYear();
+                        var M = date.getMonth()+1;
+                        var d = date.getDate();
+                        var h = date.getHours();
+                        var m = date.getMinutes();
+                        var s = date.getSeconds();
+                        var v = date.getMilliseconds();
+                        var str = y;
+                        str += "-";
+                        str += M>9?M:("0"+M);
+                        str += "-";
+                        str += d>9?d:("0"+d);
+                        str += "T";
+                        str += h>9?h:("0"+h);
+                        str += ":";
+                        str += m>9?m:("0"+m);
+                        str += ":";
+                        str += s>9?s:("0"+s);
+                        return str;
+                    }
+                },
+                parse:function(str){
+                    if(typeof str == "object"){
+                        return str;
+                    }
+                    var map = {data:eval("("+str+")")};
+                    parseDateDg(map);
+                    function parseDateDg(data){
+                        if(!data){
+                            return;
+                        }
+                        var type = Object.prototype.toString.call(data);
+                        if(type =="[object Array]"){
+                            for(var i=0;i<data.length;i++){
+                                setDate(data,i);
+                            }
+                        }else if(type == "[object Object]"){
+                            for(var key in data){
+                                setDate(data,key);
+                            }
+                        }else{
+                            return;
+                        }
+                    }
+                    function parseDate(str){
+                        var y = str.substring(0,4)*1;
+                        var M = str.substring(5,7)*1-1;
+                        var d = str.substring(8,10)*1;
+                        var h = str.substring(11,13)*1;
+                        var m = str.substring(14,16)*1;
+                        var s = str.substring(17,19)*1;
+                        return new Date(y,M,d,h,m,s,0);
+                    }
+                    function setDate(data,key){
+                        if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(data[key])){
+                            data[key] = parseDate(data[key]);
+                        }else{
+                            parseDateDg(data[key]);
+                        }
+                    }
+                    return map.data;
+                }
+            }
+
+        }
     }
     function initExpand(){
         /*兼容低版本浏览器不支持的属性*/
