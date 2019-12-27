@@ -18,9 +18,9 @@
     /*加载插件*/
     initPlugins(jsSearch.plugins,config.plugins);
     /**
-     * 加载miniui
+     * 加载jquery底包
      */
-    loadMiniUi(config.miniui);
+    document.write('<script src="' + config.jquery[jsSearch.env+"Path"] + '" type="text/javascript"></sc' + 'ript>');
     /*如果是angular2 加载angular2的基础文件*/
     if(jsSearch.lib == "angular2"){
         document.write('<script src="' + config.angular2.es6ShimPath + '" type="text/javascript"></sc' + 'ript>');
@@ -30,12 +30,18 @@
     /**
      * 加载环境
      */
-    document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"Path"] + '" type="text/javascript"></sc' + 'ript>');
+    if(jsSearch.lib != "jquery"){
+        document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"Path"] + '" type="text/javascript"></sc' + 'ript>');
+    }
     /*如果是react 加载react的必备文件*/
     if(jsSearch.lib == "react"){
         document.write('<script src="' + config[jsSearch.lib][jsSearch.env+"DomPath"] + '" type="text/javascript"></sc' + 'ript>');
     }
     if(jsSearch.from == "pc"){
+        /**
+         * 加载miniui
+         */
+        loadMiniUi(config.miniui);
         /**加载兼容层底包,jquery兼容层不依赖此底包*/
         if(jsSearch.lib != "jquery"){
             document.write('<script src="' + jspath + '/../compatible/base.js" type="text/javascript"></sc' + 'ript>');
@@ -43,6 +49,8 @@
         /** 加载兼容层 */
         document.write('<script src="' + jspath + '/../compatible/'+jsSearch.lib+'.plugin.js" type="text/javascript"></sc' + 'ript>');
     }
+    /*初始化语言*/
+    document.write('<script src="' + jspath + '/../compatible/i18n.js" type="text/javascript"></sc' + 'ript>');
     function getJsSearch(js){
         var scripts = document.getElementsByTagName("script");
         var map = {};
@@ -57,17 +65,6 @@
         return map;
     }
     function loadMiniUi(miniui){
-        /**
-         * 加载jquery底包
-         */
-        utils.getRemoteData(miniui.jqueryPath,false,function(res){
-            if(res.status == 1){
-                eval(res.text);
-            }else{
-                console.warn(miniui.jqueryPath+", js加载出现问题,将以标签形式加载");
-                document.write('<script src="' + miniui.jqueryPath + '" type="text/javascript" ></sc' + 'ript>');
-            }
-        });
         var miniUtils = {
             setMode:function(mode){
                 var key = "miniuiMode";
@@ -113,7 +110,8 @@
                 window.location.reload();
             },
             getLange:function(){
-                return utils.getLocalStorage("miniuiLanguage");
+                var language = utils.getLocalStorage("miniuiLanguage") || 'zh_CN';
+                return language;
             }
         }
         window.miniUtils = miniUtils;

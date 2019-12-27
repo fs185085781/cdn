@@ -3,24 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="./asserts/boot/utils.js"></script>
+    <script src="./asserts/boot/utils.js?from=m"></script>
 </head>
 <body>
-<div id="showid"></div>
-<div>
-    <textarea id="daima" cols="30" rows="10"></textarea>
-    <button type="button" onclick="zhixing()">确定</button>
-</div>
-<script>
-    function zhixing(){
-        var nr = "";
-        try{
-            nr = eval(document.getElementById("daima").value).toString();
-        }catch (e) {
-            nr = e.message;
-        }
-        document.getElementById("showid").innerHTML = nr;
-    }
-</script>
+<div data-text-key="index.lange.label"></div>
 </body>
 </html>
