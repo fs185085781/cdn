@@ -55,7 +55,7 @@
 					username:this.account,
 					password:this.password
 				}
-				uni.model.user.insert(data,function(){
+				uni.model.user.reg(data,function(){
 					uni.navigateBack({
 					    delta: 1
 					});

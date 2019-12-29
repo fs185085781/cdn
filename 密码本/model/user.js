@@ -1,6 +1,6 @@
 (function(){
 	var user = {
-		insert:function(data,callback){
+		reg:function(data,callback){
 			var userid = uni.utils.guid();
 			var sql = "insert into password_user (id, username, password) values ('"+userid+"', '"+data.username+"', '"+data.password+"')";
 			uni.utils.action(sql,function(res){
