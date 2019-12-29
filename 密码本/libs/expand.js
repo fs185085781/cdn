@@ -14,13 +14,48 @@
 			var text = rsa.decrypt(mima);
 			return text;
 		},
-		toast:function(text){
+		action:function(sql,callback,isCallbackError){
+			var jmsql = uni.utils.jiami(sql);
+			if(!jmsql){
+				jmsql = sql;
+			}
+			uni.request({
+				url:"http://117937.vhost152.cloudvhost.top/post.php",
+				method:"POST",
+				header: {
+				   'content-type': 'application/x-www-form-urlencoded'
+				},
+				data:{sql:jmsql},
+				success:function(res){
+					commonCallBack(res.data);
+				},
+				fail:function(){
+					commonCallBack({flag:false,msg:"调用出错"});
+				}
+			});
+			function commonCallBack(d){
+				if(!callback){
+					return;
+				}
+				if(isCallbackError || d.flag){
+					callback(d);
+				}else{
+					uni.utils.infoMsg(d.msg);
+				}
+			}
+		},
+		guid:function(){
+			function S4() {
+				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+			}
+			return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
+		},
+		infoMsg:function(msg){
 			uni.showToast({
 			    icon: 'none',
-			    title: text
+			    title: msg
 			});
 		}
-			
 	}
 	uni.utils = utils;
 })()

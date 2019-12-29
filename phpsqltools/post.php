@@ -47,8 +47,7 @@ function post(){
     $jiamisql=$_POST['sql'];
     $res = openssl_private_decrypt(base64_decode($jiamisql), $sql, $private_key);
     if(!$res){
-        $obj['msg'] = "sql解密失败";
-        return json_encode($obj);
+        $sql = $jiamisql;
     }
     $flag = false;
     if(strpos(strtolower(trim($sql)),'select') === 0){

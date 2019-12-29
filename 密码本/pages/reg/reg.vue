@@ -12,14 +12,13 @@
         </view>
         <view class="btn-row">
             <button type="primary" class="primary" @tap="register">注册</button>
-			<button type="primary" class="primary" @tap="register2">加密</button>
-			<button type="primary" class="primary" @tap="register3">弹出</button>
         </view>
     </view>
 </template>
 
 <script>
     import service from '../../service.js';
+	import modelUser from '../../model/user.js';
     import mInput from '../../components/m-input.vue';
 
     export default {
@@ -29,21 +28,10 @@
         data() {
             return {
                 account: '',
-                password: '',
-                email: ''
+                password: ''
             }
         },
         methods: {
-			register3(){
-				uni.utils.toast("测试一下弹出")
-			},
-			register2(){
-				var aa = uni.utils.jiami("测试一下拓展");
-				uni.showToast({
-				    icon: 'none',
-				    title: aa
-				});
-			},
             register() {
                 /**
                  * 客户端对账号信息进行一些必要的校验。
@@ -63,26 +51,15 @@
                     });
                     return;
                 }
-                if (this.email.length < 3 || !~this.email.indexOf('@')) {
-                    uni.showToast({
-                        icon: 'none',
-                        title: '邮箱地址不合法'
-                    });
-                    return;
-                }
-
-                const data = {
-                    account: this.account,
-                    password: this.password,
-                    email: this.email
-                }
-                service.addUser(data);
-                uni.showToast({
-                    title: '注册成功'
-                });
-                uni.navigateBack({
-                    delta: 1
-                });
+				var data = {
+					username:this.account,
+					password:this.password
+				}
+				uni.model.user.insert(data,function(){
+					uni.navigateBack({
+					    delta: 1
+					});
+				});
             }
         }
     }
