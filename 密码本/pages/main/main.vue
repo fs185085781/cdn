@@ -1,7 +1,7 @@
 <template>
     <view class="uni-container">
 		<view>
-			<text>尊敬的{{username}}，晚上好！以下是您保存的账号信息，如想更换账号请点击
+			<text>尊敬的{{username}}，{{welcomeName}}！以下是您保存的账号信息，如想更换账号请点击
 			<a style="color:blue;text-decoration:underline;" @tap="toLogout()">退出</a>
 			如想添加账号请点击
 			<a style="color:blue;text-decoration:underline;" @tap="addPwd()">添加</a>
@@ -24,8 +24,9 @@
 				    <view class="uni-panel-c" v-if="item.open">
 				        <view class="uni-navigate-item" v-for="item2 in item.children" :key="item2.id" @tap="editPwd(item2)">
 				            <text class="uni-navigate-text">{{item2.account}}</text>
-							<button type="primary" size="mini" style="margin-left:5rpx;" @tap.stop="copyText(item2,1)">复制账号</button>
-							<button type="primary" size="mini" style="margin-left:5rpx;" @tap.stop="copyText(item2,2)">复制密码</button>
+							<button type="primary" size="mini" style="margin-left:5rpx;" @tap.stop="copyText(item2,1)">账号</button>
+							<button type="primary" size="mini" style="margin-left:5rpx;" @tap.stop="copyText(item2,2)">密码</button>
+							<button type="primary" size="mini" style="margin-left:5rpx;" @tap.stop="showText(item2)">显示备注</button>
 				            <text class="uni-navigate-icon uni-icon">&#xe470;</text>
 				        </view>
 				    </view>
@@ -41,6 +42,7 @@
 		data() {
 		    return {
 				username:(uni.utils.getUserData()).username,
+				welcomeName:'',
 		        list: [],
 				}
 		},
@@ -54,7 +56,19 @@
         },
 		methods: {
 			initData(){
+				var hours = new Date().getHours();
+				var welcomeName = "晚上好";
+				if(hours>=18){
+					welcomeName = "傍晚好";
+				}else if(hours>=13){
+					welcomeName = "下午好";
+				}else if(hours>=11){
+					welcomeName = "中午好";
+				}else if(hours>=4){
+					welcomeName = "早上好";
+				}
 				var that = this;
+				that.welcomeName = welcomeName;
 				uni.model.pwd.list(function(list){
 					that.list = list;
 				});
@@ -98,6 +112,13 @@
 				uni.navigateTo({
 				    url: './edit'
 				});
+			},
+			showText(item){
+				var remark = "暂无备注信息";
+				if(item.remark){
+					remark = item.remark;
+				}
+				uni.utils.infoMsg(remark);
 			}
 		}
     }

@@ -18,7 +18,7 @@
         }, {
             "path": "pages/main/edit",
             "style": {
-                "navigationBarTitleText": ""
+                "navigationBarTitleText": "编辑密码"
             }
         }
     ],

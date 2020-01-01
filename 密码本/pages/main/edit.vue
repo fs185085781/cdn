@@ -44,6 +44,9 @@
 		onLoad() {
 			var item = uni.getStorageSync("model.edit.pwd");
 			if(!item){
+				uni.setNavigationBarTitle({
+				    title: '新增密码'
+				});
 				return;
 			}
 			var fields = ["id","name","account","pwd","remark"];

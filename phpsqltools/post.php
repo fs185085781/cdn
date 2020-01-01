@@ -1,5 +1,5 @@
 <?php
-error_reporting(0);
+//error_reporting(0);
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: *");
 include 'function.php';
@@ -50,11 +50,14 @@ function jiemi($oldText){
 }
 function post(){
     $obj = array("flag"=>false,"msg"=>"未知操作类型");
-    $sql=$_POST['sql'];
-    /*$jm = jiemi($sql);
-    if($jm['flag']){
-        $sql = $jm['data'];
-    }*/
+    $sql="";
+    $arr = json_decode(stripslashes($_POST['sql']),true);
+    foreach ($arr as $value) {
+      $temp = jiemi($value);
+      if($temp['flag']){
+        $sql=$sql.$temp['data'];
+      }
+    }
     $flag = false;
     if(strpos(strtolower(trim($sql)),'select') === 0){
         $flag = true;
