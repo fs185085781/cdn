@@ -26,29 +26,35 @@ ftfjfiGLmMeoXa/f+GI6+Bkv7bkbLxR7DziYNrjw7y1KKZb/9zHh8J9xAkAOZ6Mh
 Rsg4KfhAQp5aknlrAkAfu9DVE1oREhpSov+mqFJlB6Kii4Ekbf8INTxoHnjZ9967
 XTWvldK6l0XDKvlxrJ2AlhjVyDk+RLAxyze/NhBU
 -----END RSA PRIVATE KEY-----');
-function post(){
-    $obj = array("flag"=>false,"msg"=>"未知操作类型");
+function jiemi($oldText){
+    $obj = array("flag"=>false,"msg"=>"解密失败");
     $private_key = openssl_pkey_get_private(RSA_PRIVATE);
     $public_key = openssl_pkey_get_public(RSA_PUBLIC);
     if(!$private_key){
         $obj['msg'] = "私钥不可用";
-        return json_encode($obj);
+        return $obj;
     }
     if(!$public_key){
         $obj['msg'] = "公钥不可用";
-        return json_encode($obj);
+        return $obj;
     }
-    /*$source = "1234";
-    echo "加密前: $source";
-    openssl_public_encrypt($source,$crypttext,$public_key);
-    echo "加密后:".base64_encode($crypttext);
-    openssl_private_decrypt($crypttext,$newsource,$private_key);
-    echo "解密后: $newsource";*/
-    $jiamisql=$_POST['sql'];
-    $res = openssl_private_decrypt(base64_decode($jiamisql), $sql, $private_key);
+    $res = openssl_private_decrypt(base64_decode($oldText), $sql, $private_key);
     if(!$res){
-        $sql = $jiamisql;
+        return $obj;
+    }else{
+        $obj['msg'] = "解密成功";
+        $obj['flag'] = true;
+        $obj['data'] = $sql;
+        return $obj;
     }
+}
+function post(){
+    $obj = array("flag"=>false,"msg"=>"未知操作类型");
+    $sql=$_POST['sql'];
+    /*$jm = jiemi($sql);
+    if($jm['flag']){
+        $sql = $jm['data'];
+    }*/
     $flag = false;
     if(strpos(strtolower(trim($sql)),'select') === 0){
         $flag = true;
