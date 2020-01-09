@@ -62,5 +62,5 @@ function post(){
     }
     return json_encode($obj);
 }
-echo post($json);
+echo post();
 ?>
