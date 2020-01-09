@@ -17,7 +17,6 @@
 </template>
 
 <script>
-    import service from '../../service.js';
 	import modelUser from '../../model/user.js';
     import mInput from '../../components/m-input.vue';
 
@@ -56,8 +55,8 @@
 					password:this.password
 				}
 				uni.model.user.reg(data,function(){
-					uni.navigateBack({
-					    delta: 1
+					uni.reLaunch({
+					    url: '../main/main',
 					});
 				});
             }

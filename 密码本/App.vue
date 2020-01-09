@@ -13,6 +13,8 @@
 </script>
 
 <style>
+	 @import './common/uni.css';
+	 @import './common/uni-nvue.css';
 	/*每个页面公共css */
 	page {
 		min-height: 100%;
@@ -127,5 +129,12 @@
 
 	button.primary {
 		background-color: #0faeff;
+	}
+	uni-view{
+		display: flex;
+		flex-direction: column;
+	}
+	.uni-container{
+		width: 100%;
 	}
 </style>
