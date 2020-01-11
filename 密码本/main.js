@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import jsencrypt from './libs/jsencrypt.min.js'
-import jiami from './libs/jiami.js'
+import utils from './libs/utils.js'
 import expand from './libs/expand.js'
 
 Vue.config.productionTip = false
