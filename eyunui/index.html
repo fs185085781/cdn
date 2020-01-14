@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>eyunui</title>
-    <script src="./asserts/boot/utils.js"></script>
+    <script src="./test.js"></script>
 </head>
 <body>
 
 </body>
 <script>
-
+    var format = "yyyy!yy,hy-y+Q q#MMMM,MMM.MM'M;dddd`ddd^dd d HH H hh h mm&m)ss_s+fff=ff`f tt t";
+    var str = "2020!20,上半年-20+一季度 Q1#一月,1月.01'1;星期三`三^15 15 03 3 03 3 12&12)09_9+855=855`855 上午 AM";
+    utils.parseDate(str,format);
 </script>
 </html>

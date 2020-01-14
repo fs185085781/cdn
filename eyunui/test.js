@@ -170,7 +170,23 @@
             return format;
         },
         parseDate:function(str,format){
-            
+            var that = this;
+            if(!format){
+                return that.parseDate(str,"yyyy-MM-dd HH:mm:ss");
+            }
+            var y,M,d,H,m,s,f,t;
+            var fields = ["yyyy","yy","hy","y","Q","q","MMMM","MMM","MM","M","dddd","ddd","dd","d","HH","H","hh","h","mm","m","ss","s","fff","ff","f","tt","t"];
+            var regs = ["\\d{4}","\\d{2}","(上|下)半年","\\d{1,2}","(一|二|三|四)季度","(Q1|Q2|Q3|Q4)","[一-四]{1,2}月","[0-9]{1,2}月","\\d{2}","\\d{1,2}","星期([一-四]|日)","([一-四]|日)","\\d{2}","\\d{1,2}","\\d{2}","\\d{1,2}","\\d{2}","\\d{1,2}","\\d{2}","\\d{1,2}","\\d{2}","\\d{1,2}","\\d{3}","\\d{2,3}","\\d{1,3}","(上|下)午","(A|P)M"];
+            var dataReg = format;
+            for(var i=0;i<fields.length;i++){
+                var field = fields[i];
+                console.log(new RegExp(regs[i],"g"))
+                dataReg = dataReg.replace(fields[i],regs[i]);
+            }
+            var allReg = new RegExp(dataReg);
+            console.log(allReg);
+            return "11";
+
 
         }
     }
