@@ -55,8 +55,7 @@
         return map;
     }
     function loadLayUi(layuiConfig){
-        //document.write('<script src="' + layuiConfig.layuiAllPath+ '" type="text/javascript"></sc' + 'ript>');
-        document.write('<script src="' + layuiConfig.layuiPath+ '" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + layuiConfig.layuiAllPath+ '" type="text/javascript"></sc' + 'ript>');
     }
     function initCompatibleIE5(){
         /*增加string的trim方法*/
@@ -456,76 +455,6 @@
                     document.head = document.getElementsByTagName("head")[0];
                 }
                 document.head.appendChild(link);
-            },
-            init:function(callback){
-                if(!utils.initData || !utils.initData.status){
-                    utils.initData = {callback:callback,status:1};
-                }
-                if(utils.initData.status == 1){
-                    var map = utils.getLocalStorage("layuiModeCache");
-                    if(!map){
-                        var iframe = document.createElement("iframe");
-                        iframe.style = "display:none;";
-                        document.body.append(iframe);
-                        var srcipt = iframe.contentWindow.document.createElement("script");
-                        srcipt.src = config.layui.layuiAllPath;
-                        iframe.contentWindow.document.body.append(srcipt);
-                        utils.initData.iframe = iframe;
-                        utils.initData.status = 2;
-                        setTimeout(utils.init,10);
-                    }
-                }else if(utils.initData.status == 2){
-                    if(!utils.initData.iframe.contentWindow.layui){
-                        setTimeout(utils.init,10);
-                    }else{
-                        var allLayui = utils.initData.iframe.contentWindow.layui;
-                        var map = {};
-                        for(var key in allLayui){
-                            if(!allLayui.hasOwnProperty(key)){
-                                continue;
-                            }
-                            if(key =="$"){
-                                continue;
-                            }
-                            if(typeof allLayui[key] == "string"){
-                                continue;
-                            }
-                            if(typeof allLayui[key] == "function"){
-                                map[key] = [key];
-                            }else if(typeof allLayui[key] == "object"){
-                                var mode = allLayui[key];
-                                var list = [];
-                                for(var key2 in mode){
-                                    if(!mode.hasOwnProperty(key2)){
-                                        continue;
-                                    }
-                                    if(typeof mode[key2] != "function"){
-                                        continue;
-                                    }
-                                    list.push(key2);
-                                }
-                                map[key] = list;
-                            }
-                        }
-                        console.log(map);
-
-                    }
-                }else if(utils.initData.status == 3){
-
-                }else if(utils.initData.status == 4){
-
-                }else if(utils.initData.status == 5){
-
-                }else if(utils.initData.status == 6){
-
-                }else if(utils.initData.status == 7){
-
-                }
-                /*try{
-                    callback(window.layui);
-                }catch (e) {
-                    console.log(e.message);
-                }*/
             }
         }
     }
