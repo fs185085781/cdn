@@ -1,0 +1,39 @@
+.mini-row {
+    display: flex;
+}
+.mini-col-1,.mini-col-sm-1,.mini-col-md-1,.mini-col-lg-1{
+    flex:1;
+}
+.mini-col-2,.mini-col-sm-2,.mini-col-md-2,.mini-col-lg-2{
+    flex:2;
+}
+.mini-col-3,.mini-col-sm-3,.mini-col-md-3,.mini-col-lg-3{
+    flex:3;
+}
+.mini-col-4,.mini-col-sm-4,.mini-col-md-4,.mini-col-lg-4{
+    flex:4;
+}
+.mini-col-5,.mini-col-sm-5,.mini-col-md-5,.mini-col-lg-5{
+    flex:5;
+}
+.mini-col-6,.mini-col-sm-6,.mini-col-md-6,.mini-col-lg-6{
+    flex:6;
+}
+.mini-col-7,.mini-col-sm-7,.mini-col-md-7,.mini-col-lg-7{
+    flex:7;
+}
+.mini-col-8,.mini-col-sm-8,.mini-col-md-8,.mini-col-lg-8{
+    flex:8;
+}
+.mini-col-9,.mini-col-sm-9,.mini-col-md-9,.mini-col-lg-9{
+    flex:9;
+}
+.mini-col-10,.mini-col-sm-10,.mini-col-md-10,.mini-col-lg-10{
+    flex:10;
+}
+.mini-col-11,.mini-col-sm-11,.mini-col-md-11,.mini-col-lg-11{
+    flex:11;
+}
+.mini-col-12,.mini-col-sm-12,.mini-col-md-12,.mini-col-lg-12{
+    flex:12;
+}
