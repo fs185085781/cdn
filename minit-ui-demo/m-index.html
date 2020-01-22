@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="./minit-ui-1.0.0/boot/utils.js?from=m"></script>
+</head>
+<body>
+<div id="app">
+    <mt-button @click.native="handleClick">按钮</mt-button>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        methods: {
+            handleClick: function() {
+                this.$toast('Hello world!')
+            }
+        }
+    })
+</script>
+</html>
