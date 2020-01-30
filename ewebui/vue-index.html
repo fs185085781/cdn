@@ -90,7 +90,8 @@
 		<div class="mini-row">
 			<div class="mini-col-3">输入框</div>
 			<div class="mini-col-7">
-				<div class="mini-textbox" value="123456"></div>
+				<span>{{ui.textbox}}</span>
+				<div class="mini-textbox" :value="ui.textbox"></div>
 			</div>
 		</div>
 		<div class="mini-row">
@@ -201,7 +202,7 @@
 				>
 				    <!--toolbar-->
 				    <div property="toolbar">
-				        <div class='mini-button' text='工具栏按钮'></div>
+				        <div class='mini-button' text='工具栏按钮' @click="btnTest"></div>
 				    </div>
 				    <!--footer-->
 				    <div property="footer">
@@ -382,7 +383,8 @@
 					mode:mini.getMode(),
 					langData:JSON.stringify([]),
 					skinData:JSON.stringify([]),
-					modeData:JSON.stringify([])
+					modeData:JSON.stringify([]),
+					textbox:"你好啊"
 				},
 				filters:JSON.stringify([{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}])
 			},
@@ -395,6 +397,9 @@
 				},
 				setMode:function(e) {
 					mini.setMode(e.value)
+				},
+				btnTest:function(e){
+					mini.alert("aaa");
 				}
 			},
 			mounted:function(){

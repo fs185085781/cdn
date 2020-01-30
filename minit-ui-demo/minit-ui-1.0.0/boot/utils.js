@@ -1,12 +1,12 @@
 (function(){
-    /*拓展工具类*/
-    initExpand();
     /*初始化utils工具*/
     window.utils = initUtils();
     var jsSearch = getJsSearch("utils.js");
     if(jsSearch.from != "m"){
         jsSearch.from = "pc";
     }
+    /*拓展工具类*/
+    initExpand(jsSearch.from);
     var uiHost = utils.getJsPath("utils.js",2);
     var bootPathMap = {
         "m":uiHost+"/minit-m/js/boot.js",
@@ -165,9 +165,9 @@
             }
         }
     }
-    function initExpand(){
+    function initExpand(from){
         /*兼容低版本浏览器不支持的属性*/
-        initCompatibleIE5();
+        initCompatibleIE5(from);
         /**数值拓展----开始*/
         var numberMethods = ["floor","round","ceil"];
         for(var i=0;i<numberMethods.length;i++){
@@ -238,7 +238,7 @@
         }
         /**精准计算拓展---结束*/
     }
-    function initCompatibleIE5(){
+    function initCompatibleIE5(from){
         /*增加string的trim方法*/
         if(!String.prototype.trim) {
             String.prototype.trim = function() {
@@ -282,7 +282,7 @@
             }
         }
         /*增加json*/
-        if(!window.JSON){
+        if(!window.JSON || from=="m"){
             window.JSON = {
                 stringify:function(obj){
                     return jsonStrByData(obj);
@@ -344,7 +344,7 @@
                         str += M>9?M:("0"+M);
                         str += "-";
                         str += d>9?d:("0"+d);
-                        str += "T";
+                        str += " ";
                         str += h>9?h:("0"+h);
                         str += ":";
                         str += m>9?m:("0"+m);
@@ -386,7 +386,7 @@
                         return new Date(y,M,d,h,m,s,0);
                     }
                     function setDate(data,key){
-                        if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(data[key])){
+                        if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}/.test(data[key])){
                             data[key] = parseDate(data[key]);
                         }else{
                             parseDateDg(data[key]);

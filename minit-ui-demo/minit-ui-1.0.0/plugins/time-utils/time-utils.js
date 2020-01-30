@@ -96,8 +96,7 @@
             }
             return format;
         },
-        parseDate:function(A, $){
-            var str = A;
+        parseDate:function(str, ignoreTimeZone){
             try {
                 var date = eval(str);
                 if(date && date.getFullYear){
@@ -115,77 +114,93 @@
                 return isNaN(date) ? null : date;
             }
             if (typeof str == "string") {
-                m = str.match(/^([0-9]{4})([0-9]{2})([0-9]{0,2})$/);
+                var m = str.match(/^([0-9]{4})([0-9]{2})([0-9]{0,2})$/);
                 if (m) {
-                    var _ = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1);
-                    if (m[3]) _.setDate(m[3]);
-                    return _
+                    var date = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1);
+                    if (m[3]){
+                        date.setDate(m[3]);
+                    }
+                    return date;
                 }
-                m = A.match(/^([0-9]{4}).([0-9]*)$/);
+                m = str.match(/^([0-9]{4}).([0-9]*)$/);
                 if (m) {
-                    _ = new Date(m[1], m[2] - 1);
-                    return _
+                    var date = new Date(m[1], m[2] - 1);
+                    return date;
                 }
-                if (A.match(/^\d+(\.\d+)?$/)) {
-                    C = new Date(parseFloat(A) * 1000);
-                    if (C.getTime() != A) return null;
-                    else return C
+                if (str.match(/^\d+(\.\d+)?$/)) {
+                    var ms = parseInt(str);
+                    var date = new Date(ms);
+                    if(date.getTime() != ms) {
+                        return null;
+                    }
+                    return isNaN(date) ? null : date;
                 }
-                if ($ === undefined) $ = true;
-                C = this.parseISO8601(A, $) || (A ? new Date(A) : null);
-                return isNaN(C) ? null : C
+                if (ignoreTimeZone === undefined){
+                    ignoreTimeZone = true;
+                }
+                var date = this.parseISO8601(str,ignoreTimeZone) || (str ? new Date(str) : null);
+                return isNaN(date) ? null : date;
             }
-            return null
-        },parseISO8601:function(A, $) {
-            var D = A.match(/^([0-9]{4})([-\/]([0-9]{1,2})([-\/]([0-9]{1,2})([T ]([0-9]{1,2}):([0-9]{1,2})(:([0-9]{1,2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
-            if (!D) {
-                D = A.match(/^([0-9]{4})[-\/]([0-9]{2})[-\/]([0-9]{2})[T ]([0-9]{1,2})/);
-                if (D) {
-                    var _ = new Date(D[1], D[2] - 1, D[3], D[4]);
-                    return _
+            return null;
+        },parseISO8601:function(str, ignoreTimeZone) {
+            var m = str.match(/^([0-9]{4})([-\/]([0-9]{1,2})([-\/]([0-9]{1,2})([T ]([0-9]{1,2}):([0-9]{1,2})(:([0-9]{1,2})(\.([0-9]+))?)?(Z|(([-+])([0-9]{2})(:?([0-9]{2}))?))?)?)?)?$/);
+            if (!m) {
+                m = str.match(/^([0-9]{4})[-\/]([0-9]{2})[-\/]([0-9]{2})[T ]([0-9]{1,2})/);
+                if (m) {
+                    var date = new Date(m[1], m[2] - 1, m[3], m[4]);
+                    return date;
                 }
-                D = A.match(/^([0-9]{4}).([0-9]*)$/);
-                if (D) {
-                    _ = new Date(D[1], D[2] - 1);
-                    return _
+                m = str.match(/^([0-9]{4}).([0-9]*)$/);
+                if (m) {
+                    var date = new Date(m[1], m[2] - 1);
+                    return date;
                 }
-                D = A.match(/^([0-9]{4}).([0-9]*).([0-9]*)/);
-                if (D) {
-                    _ = new Date(D[1], D[2] - 1, D[3]);
-                    return _
+                m = str.match(/^([0-9]{4}).([0-9]*).([0-9]*)/);
+                if (m) {
+                    var date = new Date(m[1], m[2] - 1, m[3]);
+                    return date;
                 }
-                D = A.match(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/);
-                if (!D) return null;
-                else {
-                    _ = new Date(D[3], D[1] - 1, D[2]);
-                    return _
+                m = str.match(/^([0-9]{2})-([0-9]{2})-([0-9]{4})$/);
+                if (!m) {
+                    return null;
+                }else {
+                    var date = new Date(m[3], m[1] - 1, m[2]);
+                    return date;
                 }
             }
-            _ = new Date(D[1], 0, 1);
-            if ($ || !D[14]) {
-                var C = new Date(D[1], 0, 1, 9, 0);
-                if (D[3]) {
-                    _.setMonth(D[3] - 1);
-                    C.setMonth(D[3] - 1)
+            var date = new Date(m[1], 0, 1);
+            if (ignoreTimeZone || !m[14]) {
+                var tempDate = new Date(m[1], 0, 1, 9, 0);
+                if (m[3]) {
+                    date.setMonth(m[3] - 1);
+                    tempDate.setMonth(m[3] - 1);
                 }
-                if (D[5]) {
-                    _.setDate(D[5]);
-                    C.setDate(D[5])
+                if (m[5]) {
+                    date.setDate(m[5]);
+                    tempDate.setDate(m[5]);
                 }
-                mini.fixDate(_, C);
-                if (D[7]) _.setHours(D[7]);
-                if (D[8]) _.setMinutes(D[8]);
-                if (D[10]) _.setSeconds(D[10]);
-                if (D[12]) _.setMilliseconds(Number("0." + D[12]) * 1000);
-                mini.fixDate(_, C)
+                this.fixDate(date, tempDate);
+                if (m[7]){ date.setHours(m[7]);}
+                if (m[8]){ date.setMinutes(m[8]);}
+                if (m[10]){ date.setSeconds(m[10]);}
+                if (m[12]){ date.setMilliseconds(Number("0." + m[12]) * 1000);}
+                this.fixDate(date, tempDate);
             } else {
-                _.setUTCFullYear(D[1], D[3] ? D[3] - 1 : 0, D[5] || 1);
-                _.setUTCHours(D[7] || 0, D[8] || 0, D[10] || 0, D[12] ? Number("0." + D[12]) * 1000 : 0);
-                var B = Number(D[16]) * 60 + (D[18] ? Number(D[18]) : 0);
-                B *= D[15] == "-" ? 1 : -1;
-                _ = new Date(+_ + (B * 60 * 1000))
+                date.setUTCFullYear(m[1], m[3] ? m[3] - 1 : 0, m[5] || 1);
+                date.setUTCHours(m[7] || 0, m[8] || 0, m[10] || 0, m[12] ? Number("0." + m[12]) * 1000 : 0);
+                var num = Number(m[16]) * 60 + (m[18] ? Number(m[18]) : 0);
+                num *= m[15] == "-" ? 1 : -1;
+                date = new Date(+date + (num * 60 * 1000))
             }
-            return _
+            return date;
+        },
+        fixDate:function(date, tempDate) {
+            if (!(+date)){
+                return;
+            }
+            while (date.getDate() != tempDate.getDate()){
+                date.setTime(+date + (date < tempDate ? 1 : -1) * 3600000);
+            }
         }
     }
     /**时间拓展----开始*/
@@ -221,8 +236,9 @@
     Date.prototype.formatDate = function(format){
         return dateUtils.formatDate(this,format);
     }
-    Date.parseDate = function(str,format){
-        return dateUtils.parseDate(str,format);
+    Date.parseDate = function(str,ignoreTimeZone){
+        return dateUtils.parseDate(str,ignoreTimeZone);
     }
+    Date.UTC()
     /**时间拓展----结束*/
 })()
