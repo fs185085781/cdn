@@ -337,7 +337,7 @@
                     var h = date.getHours();
                     var m = date.getMinutes();
                     var s = date.getSeconds();
-                    var v = date.getMilliseconds();
+                    var ms = date.getMilliseconds();
                     var str = y;
                     str += "-";
                     str += M>9?M:("0"+M);
@@ -350,7 +350,7 @@
                     str += ":";
                     str += s>9?s:("0"+s);
                     str += ".";
-                    str += v>99?v:(v>9?("0"+v):("00"+v));
+                    str += ms>99?ms:(ms>9?("0"+ms):("00"+ms));
                     str += "Z";
                     return str;
                 }
