@@ -343,12 +343,15 @@
                     str += M>9?M:("0"+M);
                     str += "-";
                     str += d>9?d:("0"+d);
-                    str += " ";
+                    str += "T";
                     str += h>9?h:("0"+h);
                     str += ":";
                     str += m>9?m:("0"+m);
                     str += ":";
                     str += s>9?s:("0"+s);
+                    str += ".";
+                    str += v>99?v:(v>9?("0"+v):("00"+v));
+                    str += "Z";
                     return str;
                 }
             },
@@ -382,10 +385,11 @@
                     var h = str.substring(11,13)*1;
                     var m = str.substring(14,16)*1;
                     var s = str.substring(17,19)*1;
-                    return new Date(y,M,d,h,m,s,0);
+                    var ms = str.substring(20,23)*1;
+                    return new Date(y,M,d,h,m,s,ms);
                 }
                 function setDate(data,key){
-                    if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}/.test(data[key])){
+                    if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/.test(data[key])){
                         data[key] = parseDate(data[key]);
                     }else{
                         parseDateDg(data[key]);
