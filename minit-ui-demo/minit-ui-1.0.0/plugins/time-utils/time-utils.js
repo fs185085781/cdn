@@ -239,6 +239,5 @@
     Date.parseDate = function(str,ignoreTimeZone){
         return dateUtils.parseDate(str,ignoreTimeZone);
     }
-    Date.UTC()
     /**时间拓展----结束*/
 })()
