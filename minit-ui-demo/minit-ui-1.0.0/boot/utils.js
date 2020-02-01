@@ -3,10 +3,6 @@
     initExpand();
     /*初始化utils工具*/
     window.utils = initUtils();
-    var jsSearch = getJsSearch("utils.js");
-    if(jsSearch.from != "m"){
-        jsSearch.from = "pc";
-    }
     var uiHost = utils.getJsPath("utils.js",2);
     var bootPathMap = {
         "m":uiHost+"/minit-m/js/boot.js",
@@ -17,22 +13,14 @@
     /*加载vue*/
     document.write('<script src="' + uiHost + '/plugins/vue/vue.min.js" type="text/javascript"></sc' + 'ript>');
     /*加载框架*/
-    document.write('<script src="' + bootPathMap[jsSearch.from] + '" type="text/javascript"></sc' + 'ript>');
-    function getJsSearch(js){
-        var scripts = document.getElementsByTagName("script");
-        var map = {};
-        var c;
-        for (var i = 0, l = scripts.length; i < l; i++) {
-            var src = scripts[i].src;
-            if ((c = src.indexOf(js) ) != -1) {
-                map = utils.getSearchByStr(src.substring(c+js.length));
-                break;
-            }
-        }
-        return map;
-    }
+    document.write('<script src="' + bootPathMap[utils.from] + '" type="text/javascript"></sc' + 'ript>');
+    /*
+    utils拓展类
+     */
+    document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
+
     function initUtils(){
-        return {
+        var tools = {
             getParamer: function (key) {
                 var map = this.getSearch();
                 return map[key];
@@ -164,6 +152,25 @@
                 document.head.appendChild(link);
             }
         }
+        var jsSearch = getJsSearch("utils.js");
+        if(jsSearch.from != "m"){
+            jsSearch.from = "pc";
+        }
+        tools.from = jsSearch.from;
+        function getJsSearch(js){
+            var scripts = document.getElementsByTagName("script");
+            var map = {};
+            var c;
+            for (var i = 0, l = scripts.length; i < l; i++) {
+                var src = scripts[i].src;
+                if ((c = src.indexOf(js) ) != -1) {
+                    map = tools.getSearchByStr(src.substring(c+js.length));
+                    break;
+                }
+            }
+            return map;
+        }
+        return tools;
     }
     function initExpand(){
         /*兼容低版本浏览器不支持的属性*/
@@ -281,121 +288,156 @@
                 }
             }
         }
-        /*重写json*/
-        window.JSON = {
-            stringify:function(obj){
-                return jsonStrByData(obj);
-                function jsonStrByData(data){
-                    var type = Object.prototype.toString.call(data);
-                    if(type =="[object Array]"){
-                        var result = "[";
-                        for(var i=0;i<data.length;i++){
-                            if(i>0){
-                                result += ",";
+        /*改变json格式化*/
+        Date.prototype.toJSON = function () {
+            var date = this;
+            var y = date.getFullYear();
+            var M = date.getMonth()+1;
+            var d = date.getDate();
+            var h = date.getHours();
+            var m = date.getMinutes();
+            var s = date.getSeconds();
+            var ms = date.getMilliseconds();
+            var str = y;
+            str += "-";
+            str += M>9?M:("0"+M);
+            str += "-";
+            str += d>9?d:("0"+d);
+            str += " ";
+            str += h>9?h:("0"+h);
+            str += ":";
+            str += m>9?m:("0"+m);
+            str += ":";
+            str += s>9?s:("0"+s);
+            str += ".";
+            str += ms>99?ms:(ms>9?("0"+ms):("00"+ms));
+            return str;
+        }
+        if(!window.JSON){
+            /*增加json*/
+            window.JSON = {
+                stringify:function(obj){
+                    return jsonStrByData(obj);
+                    function jsonStrByData(data){
+                        var type = Object.prototype.toString.call(data);
+                        if(type =="[object Array]"){
+                            var result = "[";
+                            for(var i=0;i<data.length;i++){
+                                if(i>0){
+                                    result += ",";
+                                }
+                                result += jsonStrByData(data[i]);
                             }
-                            result += jsonStrByData(data[i]);
+                            result += "]";
+                            return result;
+                        }else if(type == "[object Date]"){
+                            return '"'+data.toJSON()+'"';
+                        }else if(type == "[object Object]"){
+                            if(!data){
+                                var res = "undefined";
+                                if(data === null){
+                                    res = "null";
+                                }
+                                return res;
+                            }
+                            var result = "{";
+                            var isFirst=true;
+                            for(var key in data){
+                                var str = jsonStrByData(data[key]);
+                                if(str == "undefined"){
+                                    continue;
+                                }
+                                if(!isFirst){
+                                    result += ",";
+                                }
+                                result += "\""+key+"\":"+str;
+                                isFirst = false;
+                            }
+                            result+="}";
+                            return result;
+                        }else if(type == "[object String]"){
+                            return '"'+data+'"';
+                        }else if(type == "[object Number]" || type == "[object Boolean]" || type == "[object Null]"){
+                            return String(data);
+                        }else{
+                            return "undefined";
                         }
-                        result += "]";
-                        return result;
-                    }else if(type == "[object Date]"){
-                        return '"'+dateFormat(data)+'"';
-                    }else if(type == "[object Object]"){
+                    }
+                },
+                parse:function(str){
+                    if(typeof str == "object"){
+                        return str;
+                    }
+                    var map = {data:eval("("+str+")")};
+                    parseDateDg(map);
+                    function parseDateDg(data){
                         if(!data){
-                            var res = "undefined";
-                            if(data === null){
-                                res = "null";
+                            return;
+                        }
+                        var type = Object.prototype.toString.call(data);
+                        if(type =="[object Array]"){
+                            for(var i=0;i<data.length;i++){
+                                setDate(data,i);
                             }
-                            return res;
-                        }
-                        var result = "{";
-                        var isFirst=true;
-                        for(var key in data){
-                            var str = jsonStrByData(data[key]);
-                            if(str == "undefined"){
-                                continue;
+                        }else if(type == "[object Object]"){
+                            for(var key in data){
+                                setDate(data,key);
                             }
-                            if(!isFirst){
-                                result += ",";
+                        }else{
+                            return;
+                        }
+                    }
+                    function parseDate(str){
+                        var y = str.substring(0,4)*1;
+                        var M = str.substring(5,7)*1-1;
+                        var d = str.substring(8,10)*1;
+                        var h = str.substring(11,13)*1;
+                        var m = str.substring(14,16)*1;
+                        var s = str.substring(17,19)*1;
+                        var ms = str.substring(20,23)*1;
+                        return new Date(y,M,d,h,m,s,ms);
+                    }
+                    function setDate(data,key){
+                        if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}/.test(data[key])){
+                            data[key] = parseDate(data[key]);
+                        }else{
+                            parseDateDg(data[key]);
+                        }
+                    }
+                    return map.data;
+                }
+            }
+        }else{
+            var strToObj = JSON.parse;
+            JSON.parse = function (text, reviver) {
+                if(!reviver){
+                    reviver = function(key,val){
+                        var type = Object.prototype.toString.call(val);
+                        if(type == "[object String]"){
+                            return toDate(val);
+                        }else{
+                            return val;
+                        }
+                        function toDate(data) {
+                            if(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}/.test(data)){
+                                function parseDate(str){
+                                    var y = str.substring(0,4)*1;
+                                    var M = str.substring(5,7)*1-1;
+                                    var d = str.substring(8,10)*1;
+                                    var h = str.substring(11,13)*1;
+                                    var m = str.substring(14,16)*1;
+                                    var s = str.substring(17,19)*1;
+                                    var ms = str.substring(20,23)*1;
+                                    return new Date(y,M,d,h,m,s,ms);
+                                }
+                                return parseDate(data);
+                            }else{
+                                return data;
                             }
-                            result += "\""+key+"\":"+str;
-                            isFirst = false;
                         }
-                        result+="}";
-                        return result;
-                    }else if(type == "[object String]"){
-                        return '"'+data+'"';
-                    }else if(type == "[object Number]" || type == "[object Boolean]" || type == "[object Null]"){
-                        return String(data);
-                    }else{
-                        return "undefined"
                     }
                 }
-                function dateFormat(date){
-                    var y = date.getFullYear();
-                    var M = date.getMonth()+1;
-                    var d = date.getDate();
-                    var h = date.getHours();
-                    var m = date.getMinutes();
-                    var s = date.getSeconds();
-                    var ms = date.getMilliseconds();
-                    var str = y;
-                    str += "-";
-                    str += M>9?M:("0"+M);
-                    str += "-";
-                    str += d>9?d:("0"+d);
-                    str += "T";
-                    str += h>9?h:("0"+h);
-                    str += ":";
-                    str += m>9?m:("0"+m);
-                    str += ":";
-                    str += s>9?s:("0"+s);
-                    str += ".";
-                    str += ms>99?ms:(ms>9?("0"+ms):("00"+ms));
-                    str += "Z";
-                    return str;
-                }
-            },
-            parse:function(str){
-                if(typeof str == "object"){
-                    return str;
-                }
-                var map = {data:eval("("+str+")")};
-                parseDateDg(map);
-                function parseDateDg(data){
-                    if(!data){
-                        return;
-                    }
-                    var type = Object.prototype.toString.call(data);
-                    if(type =="[object Array]"){
-                        for(var i=0;i<data.length;i++){
-                            setDate(data,i);
-                        }
-                    }else if(type == "[object Object]"){
-                        for(var key in data){
-                            setDate(data,key);
-                        }
-                    }else{
-                        return;
-                    }
-                }
-                function parseDate(str){
-                    var y = str.substring(0,4)*1;
-                    var M = str.substring(5,7)*1-1;
-                    var d = str.substring(8,10)*1;
-                    var h = str.substring(11,13)*1;
-                    var m = str.substring(14,16)*1;
-                    var s = str.substring(17,19)*1;
-                    var ms = str.substring(20,23)*1;
-                    return new Date(y,M,d,h,m,s,ms);
-                }
-                function setDate(data,key){
-                    if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/.test(data[key])){
-                        data[key] = parseDate(data[key]);
-                    }else{
-                        parseDateDg(data[key]);
-                    }
-                }
-                return map.data;
+                return strToObj(text,reviver);
             }
         }
     }
