@@ -1,3 +1,20 @@
-.success{
-    color:green;
+.mint-toast.success{
+    color: #468847;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.mint-toast.info{
+    color: #3a87ad;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.mint-toast.warning{
+    color: #c09853;
+    background-color: #fcf8e3;
+    border-color: #fbeed5;
+}
+.mint-toast.danger{
+    color: #b94a48;
+    background-color: #f2dede;
+    border-color: #eed3d7;
 }
