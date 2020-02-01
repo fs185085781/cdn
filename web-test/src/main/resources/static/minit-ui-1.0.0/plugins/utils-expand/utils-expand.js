@@ -65,7 +65,7 @@
             }else{
                 if(that.attrs.loadingId){
                     mini.hideMessageBox(that.attrs.loadingId);
-                    tools.removeProp(that,"loadingId");
+                    tools.removeProp(that.attrs,"loadingId");
                 }
             }
         },
@@ -257,7 +257,7 @@
                     formData, config).then(function(res){
                     that.attrs.uploadStatus = 0;
                     that.cancelLoading();
-                        var data = res.data;
+                    var data = res.data;
                     if (data.status == "SUCCESS") {
                         data.uploadId = that.attrs.uploadId;
                         var retData = data.data || {};

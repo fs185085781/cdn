@@ -65,7 +65,7 @@
             }else{
                 if(that.attrs.loadingId){
                     mini.hideMessageBox(that.attrs.loadingId);
-                    tools.removeProp(that,"loadingId");
+                    tools.removeProp(that.attrs,"loadingId");
                 }
             }
         },
