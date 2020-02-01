@@ -12,6 +12,8 @@
     document.write('<script src="' + uiHost + '/plugins/time-utils/time-utils.js" type="text/javascript"></sc' + 'ript>');
     /*加载vue*/
     document.write('<script src="' + uiHost + '/plugins/vue/vue.min.js" type="text/javascript"></sc' + 'ript>');
+    /*加载axios*/
+    document.write('<script src="' + uiHost + '/plugins/axios/axios.min.js" type="text/javascript"></sc' + 'ript>');
     /*加载框架*/
     document.write('<script src="' + bootPathMap[utils.from] + '" type="text/javascript"></sc' + 'ript>');
     /*
