@@ -178,7 +178,12 @@
                 searchStr += key+"="+map[key];
             }
             var realUrl = urlHost+searchStr;
-            window[callbackName] = callback;
+            (function (fname) {
+                window[fname] = function(res){
+                    tools.removeProp(window,fname);
+                    callback(res);
+                };
+            })(callbackName);
             var script = document.createElement("script");
             script.type = "text/javascript";
             script.src=realUrl;
