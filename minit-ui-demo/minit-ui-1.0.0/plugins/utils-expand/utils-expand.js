@@ -187,10 +187,11 @@
             var script = document.createElement("script");
             script.type = "text/javascript";
             script.src=realUrl;
-            document.getElementsByTagName("head")[0].appendChild(script);
+            var head = document.getElementsByTagName("head")[0];
+            head.appendChild(script);
             setTimeout(function () {
-                document.getElementsByTagName("head")[0].removeChild(script);
-            },500);
+                head.removeChild(script);
+            },10);
         },
         post: function (url, data, callback, callBackError) {
             return this.req(url, callback, data, "post", callBackError);
