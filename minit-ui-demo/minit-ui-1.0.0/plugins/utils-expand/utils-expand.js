@@ -150,6 +150,43 @@
                 });
             }
         },
+        jsonp:function(url,callback,jsonp,callbackName){
+            var map = {};
+            var index = url.indexOf("?");
+            var urlHost = url;
+            if(index!=-1){
+                map = tools.getSearchByStr(url.substring(index));
+                urlHost = url.substring(0,index);
+            }
+            if(!jsonp){
+                jsonp = "callback";
+            }
+            if(map[jsonp]){
+                callbackName = map[jsonp];
+            }
+            if(!callbackName){
+                callbackName = "jsonp_"+Date.now()+parseInt(Math.random()*100000);
+            }
+            map[jsonp] = callbackName;
+            var searchStr = "";
+            for(var key in map){
+                if(!searchStr){
+                    searchStr += "?";
+                }else{
+                    searchStr +="&";
+                }
+                searchStr += key+"="+map[key];
+            }
+            var realUrl = urlHost+searchStr;
+            window[callbackName] = callback;
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src=realUrl;
+            document.getElementsByTagName("head")[0].appendChild(script);
+            setTimeout(function () {
+                document.getElementsByTagName("head")[0].removeChild(script);
+            },500);
+        },
         post: function (url, data, callback, callBackError) {
             return this.req(url, callback, data, "post", callBackError);
         },
