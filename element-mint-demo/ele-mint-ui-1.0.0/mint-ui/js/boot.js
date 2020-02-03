@@ -5,7 +5,7 @@
     /*加载mint*/
     document.write('<script src="' + uiPath + '/index.js" type="text/javascript"></sc' + 'ript>');
     /*加载皮肤*/
-    document.write('<link href="' + uiPath + '/style.min.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="' + uiPath + '/style.css" rel="stylesheet" type="text/css" />');
     function getJsPath(js, length) {
         var scripts = document.getElementsByTagName("script");
         var path = "";
