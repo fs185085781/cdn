@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="./minit-ui-1.0.0/boot/utils.js?from=m"></script>
-    <title>2019新型管状病毒数据统计</title>
+    <title>2019新型冠状病毒实时数据统计</title>
 </head>
 <body>
 <div id="app">
@@ -68,14 +68,21 @@
             }
         },
         methods: {
+            initData:function(){
+                var that = this;
+                utils.$.jsonp("https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",function(res){
+                    if(res.ret == 0){
+                        that.allData = JSON.parse(res.data);
+                    }
+                });
+            }
         },
         mounted:function(){
             var that = this;
-            utils.$.jsonp("https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",function(res){
-                if(res.ret == 0){
-                    that.allData = JSON.parse(res.data);
-                }
-            });
+            that.initData();
+            setInterval(function(){
+                that.initData();
+            },60000);
         }
     })
 </script>
