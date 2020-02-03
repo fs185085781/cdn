@@ -1,0 +1,32 @@
+.mint-toast.success{
+    color: #67C23A;
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+}
+.mint-toast.info{
+    color: #909399;
+    background-color: #edf2fc;
+    border-color: #EBEEF5;
+}
+.mint-toast.warning{
+    color: #E6A23C;
+    background-color: #fdf6ec;
+    border-color: #faecd8;
+}
+.mint-toast.error{
+    color: #F56C6C;
+    background-color: #fef0f0;
+    border-color: #fde2e2;
+}
+.mint-toast.default{
+    color: #ffffff;
+    background-color: #000000b3;
+    border-color: #000000b3;
+}
+.el-message--default {
+    background-color: #000000b3;
+    border-color: #000000b3;
+}
+.el-message--default .el-message__content {
+    color: #ffffff;
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="./ele-mint-ui-1.0.0/boot/utils.js?from=pc"></script>
+    <title>PC端演示</title>
+</head>
+<body>
+<div id="app">
+    <el-button @click.native="handleClick" v-loading.fullscreen.lock="false">按钮</el-button>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        methods: {
+            handleClick: function() {
+                utils.$.successMsg("hello world")
+            }
+        }
+    })
+</script>
+</html>
