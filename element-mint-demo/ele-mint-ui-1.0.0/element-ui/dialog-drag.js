@@ -38,6 +38,10 @@
                         }
                     }
                 }
+                if(one["toOn"+type]){
+                    one.removeEventListener(type,one["toOn"+type]);
+                    one["toOn"+type] = undefined;
+                }
                 one["toOn"+type] = oneEvent;
                 one.addEventListener(type,one["toOn"+type]);
             }
@@ -70,6 +74,7 @@
                 var one = eles[i];
                 if(one["toOn"+type]){
                     one.removeEventListener(type,one["toOn"+type]);
+                    one["toOn"+type] = undefined;
                 }
             }
         })(ele,type);
