@@ -1,4 +1,4 @@
-.el-dialog{
+.el-dialog,.el-message-box{
     position: absolute !important;
     left:40vw;
     top:15vw;

@@ -1,8 +1,11 @@
 (function(){
     /*事件委托*/
-    function on(ele,type,selector,fn){
-        (function(ele,type,selector,fn){
+    function on(ele,type,selector,fn,key){
+        (function(ele,type,selector,fn,key){
             var eles = [];
+            if(!key){
+                key = "";
+            }
             var typeName = Object.prototype.toString.call(ele);
             if(typeName == "[object Array]" || typeName == "[object HTMLCollection]"){
                 for(var i=0;i<ele.length;i++){
@@ -38,18 +41,22 @@
                         }
                     }
                 }
-                if(one["toOn"+type]){
-                    one.removeEventListener(type,one["toOn"+type]);
-                    one["toOn"+type] = undefined;
+                var propName = "toOn"+key+type;
+                if(one[propName]){
+                    one.removeEventListener(type,one[propName]);
+                    one[propName] = undefined;
                 }
-                one["toOn"+type] = oneEvent;
-                one.addEventListener(type,one["toOn"+type]);
+                one[propName] = oneEvent;
+                one.addEventListener(type,one[propName]);
             }
-        })(ele,type,selector,fn);
+        })(ele,type,selector,fn,key);
     }
-    function off(ele,type) {
-        (function(ele,type){
+    function off(ele,type,key) {
+        (function(ele,type,key){
             var eles = [];
+            if(!key){
+                key = "";
+            }
             var typeName = Object.prototype.toString.call(ele);
             if(typeName == "[object Array]" || typeName == "[object HTMLCollection]"){
                 for(var i=0;i<ele.length;i++){
@@ -72,41 +79,54 @@
             }
             for(var i=0;i<eles.length;i++){
                 var one = eles[i];
-                if(one["toOn"+type]){
-                    one.removeEventListener(type,one["toOn"+type]);
-                    one["toOn"+type] = undefined;
+                var propName = "toOn"+key+type;
+                if(one[propName]){
+                    one.removeEventListener(type,one[propName]);
+                    one[propName] = undefined;
                 }
             }
-        })(ele,type);
+        })(ele,type,key);
     }
     var tool = {
+        attr:{},
         on:on,
         off:off,
+        bindDrag:function(attr,selector){
+            (function(attr,selector){
+                if(!tool.attr[attr]){
+                    tool.attr[attr] = {};
+                }
+                var bodys = document.getElementsByTagName("body");
+                var body = bodys[0];
+                tool.on(body,"mousedown",selector,function(e){
+                    this.style["-webkit-user-select"]="none";
+                    tool.attr[attr].dragele = this.parentElement;
+                    var dialog = tool.attr[attr].dragele;
+                    dialog.style["left"]=(dialog.offsetLeft)+"px";
+                    dialog.style["top"]=(dialog.offsetTop)+"px";
+                    tool.attr[attr].startX = e.clientX;
+                    tool.attr[attr].startY = e.clientY;
+                    tool.attr[attr].eleX = dialog.offsetLeft;
+                    tool.attr[attr].eleY = dialog.offsetTop;
+                    tool.attr[attr].dragstatus = "start";
+                },attr);
+                body.addEventListener("mouseup",function(){
+                    tool.attr[attr].dragstatus = "end";
+                });
+                body.addEventListener("mousemove",function(e){
+                    if(tool.attr[attr].dragstatus == "start"){
+                        var dialog = tool.attr[attr].dragele;
+                        dialog.style["left"]=(e.clientX-tool.attr[attr].startX+tool.attr[attr].eleX)+"px";
+                        dialog.style["top"]=(e.clientY-tool.attr[attr].startY+tool.attr[attr].eleY)+"px";
+                    }
+                });
+            })(attr,selector);
+        },
         init:function(){
             var bodys = document.getElementsByTagName("body");
             if(bodys && bodys.length>0){
-                var body = bodys[0];
-                tool.on(body,"mousedown",".el-dialog .el-dialog__header",function(e){
-                    tool.dragele = this.parentElement;
-                    var dialog = tool.dragele;
-                    dialog.style["left"]=(dialog.offsetLeft)+"px";
-                    dialog.style["top"]=(dialog.offsetTop)+"px";
-                    tool.startX = e.clientX;
-                    tool.startY = e.clientY;
-                    tool.eleX = dialog.offsetLeft;
-                    tool.eleY = dialog.offsetTop;
-                    tool.dragstatus = "start";
-                });
-                body.addEventListener("mouseup",function(){
-                    tool.dragstatus = "end";
-                });
-                body.addEventListener("mousemove",function(e){
-                    if(tool.dragstatus == "start"){
-                        var dialog = tool.dragele;
-                        dialog.style["left"]=(e.clientX-tool.startX+tool.eleX)+"px";
-                        dialog.style["top"]=(e.clientY-tool.startY+tool.eleY)+"px";
-                    }
-                });
+                tool.bindDrag("elDialog",".el-dialog .el-dialog__header");
+                tool.bindDrag("elMessageBox",".el-message-box .el-message-box__header");
             }else{
                 setTimeout(function(){
                     tool.init();
