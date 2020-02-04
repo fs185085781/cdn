@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.swing.text.html.parser.Entity;
 import java.io.InputStream;
 
 @Service
@@ -24,6 +25,16 @@ public class WebService implements NoControllerInterface {
         String aa = JSONUtil.toJsonStr(R.okData(PoData.create().set("fileId",fileId)));
         response.setHeader("Content-Type","application/json");
         response.getOutputStream().write(aa.getBytes());
+    }
+
+    public void test(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String aa = JSONUtil.toJsonStr(R.okData(PoData.create().set("msg","ok")));
+        response.setHeader("Content-Type","application/json");
+        response.getOutputStream().write(aa.getBytes());
+    }
+
+    public R test2(PoData param, Entity entity){
+        return R.okData(PoData.create().set("msg","ok"));
     }
 
     @Override

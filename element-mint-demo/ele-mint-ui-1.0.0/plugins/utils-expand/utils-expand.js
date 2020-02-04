@@ -18,9 +18,6 @@
             if(!type){
                 type = "default";
             }
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             if(tools.from == "m"){
                 that.attrs.vue.$toast({
                     message:text,
@@ -28,10 +25,17 @@
                     className:type,
                     position:"bottom"
                 });
-            }else{
+            }else if(tools.from == "pc"){
                 that.attrs.vue.$message({
                     message: text,
                     type: type
+                });
+            }else if(tools.from == "m2"){
+                that.attrs.vue.$toast({
+                    message:text,
+                    duration:3000,
+                    className:type,
+                    position:"bottom"
                 });
             }
         },
@@ -40,42 +44,41 @@
                 text = "";
             }
             var that = this;
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             that.cancelLoading();
             if(tools.from == "m"){
                 that.attrs.vue.$indicator.open({
                     text:text
                 });
-            }else{
+            }else if(tools.from == "pc"){
                 var loading = that.attrs.vue.$loading({
                     lock: true,
                     text: text,
                     spinner: 'el-icon-loading'
                 });
                 that.attrs.loading = loading;
+            }else if(tools.from == "m2"){
+                that.attrs.vue.$toast.loading({
+                    message: text,
+                    forbidClick: true,
+                    duration:0
+                });
             }
         },
         cancelLoading:function(){
             var that = this;
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             if(tools.from == "m"){
                 that.attrs.vue.$indicator.close();
-            }else{
+            }else if(tools.from == "pc"){
                 if(that.attrs.loading){
                     that.attrs.loading.close();
                     tools.removeProp(that.attrs,"loading");
                 }
+            }else if(tools.from == "m2"){
+                that.attrs.vue.$toast.clear();
             }
         },
         alert:function(text,callback){
             var that = this;
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             if(tools.from == "m"){
                 that.attrs.vue.$messagebox.alert(text).then(function(){
                     if(!callback){
@@ -83,7 +86,7 @@
                     }
                     callback(1);
                 });
-            }else{
+            }else if(tools.from == "pc"){
                 that.attrs.vue.$alert(text, '提示', {
                     confirmButtonText: '确定',
                     callback:function(action){
@@ -97,13 +100,20 @@
                         }
                     }
                 });
+            }else if(tools.from == "m2"){
+                that.attrs.vue.$dialog.alert({
+                    title: '提示',
+                    message: text
+                }).then(function(){
+                    if(!callback){
+                        return;
+                    }
+                    callback(1);
+                });
             }
         },
         confirm:function(text,callback){
             var that = this;
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             if(tools.from == "m"){
                 that.attrs.vue.$messagebox.confirm(text).then(function(){
                     if(callback){
@@ -114,7 +124,7 @@
                         callback(0);
                     }
                 });
-            }else{
+            }else if(tools.from == "pc"){
                 that.attrs.vue.$confirm(text, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -128,13 +138,23 @@
                         callback(0);
                     }
                 });
+            }else if(tools.from == "m2"){
+                that.attrs.vue.$dialog.confirm({
+                    title: '提示',
+                    message: text
+                }).then(function(){
+                    if(callback){
+                        callback(1);
+                    }
+                }).catch(function () {
+                    if(callback){
+                        callback(0);
+                    }
+                });
             }
         },
         prompt:function(text,callback){
             var that = this;
-            if(tools.from != "m" && tools.from != "pc"){
-                return;
-            }
             if(tools.from == "m"){
                 that.attrs.vue.$messagebox.prompt(text).then(function(data){
                     if(callback){
@@ -145,13 +165,33 @@
                         callback(0);
                     }
                 });
-            }else{
+            }else if(tools.from == "pc"){
                 that.attrs.vue.$prompt(text, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消'
                 }).then(function(data){
                     if(callback){
                         callback(1,data.value);
+                    }
+                }).catch(function () {
+                    if(callback){
+                        callback(0);
+                    }
+                });
+            }else if(tools.from == "m2"){
+                var id = "vant-prompt-"+Date.now()+parseInt(Math.random()*10000);
+                var input = '\n<input id="'+id+'" class="vant-prompt-input">';
+                that.attrs.vue.$dialog({
+                    title:"提示",
+                    message:text + input,
+                    showCancelButton:true
+                }).then(function(){
+                    var value = document.getElementById(id).value;
+                    if(!value){
+                        value = null;
+                    }
+                    if(callback){
+                        callback(1,value);
                     }
                 }).catch(function () {
                     if(callback){

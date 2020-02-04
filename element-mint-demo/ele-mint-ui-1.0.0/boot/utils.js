@@ -6,6 +6,7 @@
     var uiHost = utils.getJsPath("utils.js",2);
     var bootPathMap = {
         "m":uiHost+"/mint-ui/js/boot.js",
+        "m2":uiHost+"/vant-ui/js/boot.js",
         "pc":uiHost+"/element-ui/js/boot.js"
     }
     /*时间工具类*/
@@ -155,7 +156,7 @@
             }
         }
         var jsSearch = getJsSearch("utils.js");
-        if(jsSearch.from != "m"){
+        if(jsSearch.from != "m" && jsSearch.from != "m2"){
             jsSearch.from = "pc";
         }
         tools.from = jsSearch.from;
