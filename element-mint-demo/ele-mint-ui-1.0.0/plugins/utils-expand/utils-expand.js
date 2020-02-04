@@ -18,7 +18,7 @@
             if(!type){
                 type = "default";
             }
-            if(tools.from == "m"){
+            if(tools.from == "m" || tools.from == "m2"){
                 that.attrs.vue.$toast({
                     message:text,
                     duration:3000,
@@ -29,13 +29,6 @@
                 that.attrs.vue.$message({
                     message: text,
                     type: type
-                });
-            }else if(tools.from == "m2"){
-                that.attrs.vue.$toast({
-                    message:text,
-                    duration:3000,
-                    className:type,
-                    position:"bottom"
                 });
             }
         },
@@ -180,7 +173,7 @@
                 });
             }else if(tools.from == "m2"){
                 var id = "vant-prompt-"+Date.now()+parseInt(Math.random()*10000);
-                var input = '\n<input id="'+id+'" class="vant-prompt-input">';
+                var input = '\n<input id="'+id+'" class="vant-prompt-input"/>';
                 that.attrs.vue.$dialog({
                     title:"提示",
                     message:text + input,
@@ -200,7 +193,7 @@
                 });
             }
         },
-        jsonp:function(url,callback,jsonp,callbackName){
+        jsonp:function(url,callback,callbackName,jsonp){
             var map = {};
             var index = url.indexOf("?");
             var urlHost = url;

@@ -1,0 +1,6 @@
+.el-dialog{
+    position: absolute !important;
+    left:40vw;
+    top:15vw;
+    margin-top:0px !important;
+}

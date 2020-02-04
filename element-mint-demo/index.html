@@ -3,19 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <script src="./ele-mint-ui-1.0.0/boot/utils.js?from=pc"></script>
-    <title>PC端演示</title>
+    <script src="./jquery.js"></script>
+    <title>PC端演示(ElementUi)</title>
 </head>
 <body>
 <div id="app">
     <el-button @click.native="handleClick" v-loading.fullscreen.lock="false">按钮</el-button>
+    <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button>
+    <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%"
+            :close-on-click-modal="false"
+            :before-close="handleClose">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
 </div>
 </body>
 <script>
     new Vue({
         el: '#app',
+        data:{
+            dialogVisible:false
+        },
         methods: {
             handleClick: function() {
                 utils.$.successMsg("hello world")
+            },
+            handleClose:function(done){
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        done();
+                    })
+                    .catch(_ => {});
             }
         }
     })
