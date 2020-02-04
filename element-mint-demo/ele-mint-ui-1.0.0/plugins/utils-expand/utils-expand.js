@@ -381,8 +381,7 @@
     }
     if(window.Vue){
         Vue.app = function(options){
-            window.vm = new Vue(options);
-            return window.vm;
+            return window.vm = new Vue(options);
         }
     }
     var path = tools.getJsPath("utils-expand.js",1);
