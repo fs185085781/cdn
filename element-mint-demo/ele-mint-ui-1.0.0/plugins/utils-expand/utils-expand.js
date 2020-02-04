@@ -379,6 +379,12 @@
             document.querySelector("body").append(formDivEle);
         }
     }
+    if(window.Vue){
+        Vue.app = function(options){
+            window.vm = new Vue(options);
+            return window.vm;
+        }
+    }
     var path = tools.getJsPath("utils-expand.js",1);
     document.write('<link href="' + path + '/utils-expand.css" rel="stylesheet" type="text/css" />');
 })(utils);
