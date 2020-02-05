@@ -4,3 +4,6 @@
     top:15vw;
     margin-top:0px !important;
 }
+.el-dialog .el-dialog__header,.el-message-box .el-message-box__header{
+    cursor: pointer;
+}

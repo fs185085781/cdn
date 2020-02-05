@@ -2,26 +2,9 @@
     /*事件委托*/
     function on(ele,type,selector,fn,key){
         (function(ele,type,selector,fn,key){
-            var eles = [];
+            var eles = getEles(ele);
             if(!key){
                 key = "";
-            }
-            var typeName = Object.prototype.toString.call(ele);
-            if(typeName == "[object Array]" || typeName == "[object HTMLCollection]"){
-                for(var i=0;i<ele.length;i++){
-                    var temp = ele[i];
-                    if(temp instanceof HTMLElement){
-                        eles.push(temp);
-                    }else{
-                        throw "ele is not a element";
-                    }
-                }
-            }else if(ele instanceof HTMLElement){
-                eles.push(ele);
-            }else if(typeof ele == "string"){
-                eles = document.querySelectorAll(ele);
-            }else{
-                throw "ele is not a element";
             }
             if(eles.length == 0){
                 throw "ele is not a element";
@@ -53,26 +36,9 @@
     }
     function off(ele,type,key) {
         (function(ele,type,key){
-            var eles = [];
+            var eles = getEles(ele);
             if(!key){
                 key = "";
-            }
-            var typeName = Object.prototype.toString.call(ele);
-            if(typeName == "[object Array]" || typeName == "[object HTMLCollection]"){
-                for(var i=0;i<ele.length;i++){
-                    var temp = ele[i];
-                    if(temp instanceof HTMLElement){
-                        eles.push(temp);
-                    }else{
-                        throw "ele is not a element";
-                    }
-                }
-            }else if(ele instanceof HTMLElement){
-                eles.push(ele);
-            }else if(typeof ele == "string"){
-                eles = document.querySelectorAll(ele);
-            }else{
-                throw "ele is not a element";
             }
             if(eles.length == 0){
                 throw "ele is not a element";
@@ -86,6 +52,27 @@
                 }
             }
         })(ele,type,key);
+    }
+    function getEles(ele) {
+        var eles = [];
+        var typeName = Object.prototype.toString.call(ele);
+        if(typeName == "[object Array]" || typeName == "[object HTMLCollection]"){
+            for(var i=0;i<ele.length;i++){
+                var temp = ele[i];
+                if(temp instanceof HTMLElement){
+                    eles.push(temp);
+                }else{
+                    throw "ele is not a element";
+                }
+            }
+        }else if(ele instanceof HTMLElement){
+            eles.push(ele);
+        }else if(typeof ele == "string"){
+            eles = document.querySelectorAll(ele);
+        }else{
+            throw "ele is not a element";
+        }
+        return eles;
     }
     var tool = {
         attr:{},
