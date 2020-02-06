@@ -1,0 +1,9 @@
+.el-dialog,.el-message-box{
+    position: absolute !important;
+    left:40vw;
+    top:15vw;
+    margin-top:0px !important;
+}
+.el-dialog .el-dialog__header,.el-message-box .el-message-box__header{
+    cursor: pointer;
+}

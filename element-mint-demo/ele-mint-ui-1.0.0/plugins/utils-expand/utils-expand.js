@@ -18,14 +18,14 @@
             if(!type){
                 type = "default";
             }
-            if(tools.from == "m" || tools.from == "m2"){
+            if(tools.from == "mint" || tools.from == "vant"){
                 that.attrs.vue.$toast({
                     message:text,
                     duration:3000,
                     className:type,
                     position:"bottom"
                 });
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 that.attrs.vue.$message({
                     message: text,
                     type: type
@@ -38,18 +38,18 @@
             }
             var that = this;
             that.cancelLoading();
-            if(tools.from == "m"){
+            if(tools.from == "mint"){
                 that.attrs.vue.$indicator.open({
                     text:text
                 });
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 var loading = that.attrs.vue.$loading({
                     lock: true,
                     text: text,
                     spinner: 'el-icon-loading'
                 });
                 that.attrs.loading = loading;
-            }else if(tools.from == "m2"){
+            }else if(tools.from == "vant"){
                 that.attrs.vue.$toast.loading({
                     message: text,
                     forbidClick: true,
@@ -59,27 +59,27 @@
         },
         cancelLoading:function(){
             var that = this;
-            if(tools.from == "m"){
+            if(tools.from == "mint"){
                 that.attrs.vue.$indicator.close();
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 if(that.attrs.loading){
                     that.attrs.loading.close();
                     tools.removeProp(that.attrs,"loading");
                 }
-            }else if(tools.from == "m2"){
+            }else if(tools.from == "vant"){
                 that.attrs.vue.$toast.clear();
             }
         },
         alert:function(text,callback){
             var that = this;
-            if(tools.from == "m"){
+            if(tools.from == "mint"){
                 that.attrs.vue.$messagebox.alert(text).then(function(){
                     if(!callback){
                         return;
                     }
                     callback(1);
                 });
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 that.attrs.vue.$alert(text, '提示', {
                     confirmButtonText: '确定',
                     callback:function(action){
@@ -93,7 +93,7 @@
                         }
                     }
                 });
-            }else if(tools.from == "m2"){
+            }else if(tools.from == "vant"){
                 that.attrs.vue.$dialog.alert({
                     title: '提示',
                     message: text
@@ -107,7 +107,7 @@
         },
         confirm:function(text,callback){
             var that = this;
-            if(tools.from == "m"){
+            if(tools.from == "mint"){
                 that.attrs.vue.$messagebox.confirm(text).then(function(){
                     if(callback){
                         callback(1);
@@ -117,7 +117,7 @@
                         callback(0);
                     }
                 });
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 that.attrs.vue.$confirm(text, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -131,7 +131,7 @@
                         callback(0);
                     }
                 });
-            }else if(tools.from == "m2"){
+            }else if(tools.from == "vant"){
                 that.attrs.vue.$dialog.confirm({
                     title: '提示',
                     message: text
@@ -148,7 +148,7 @@
         },
         prompt:function(text,callback){
             var that = this;
-            if(tools.from == "m"){
+            if(tools.from == "mint"){
                 that.attrs.vue.$messagebox.prompt(text).then(function(data){
                     if(callback){
                         callback(1,data.value);
@@ -158,7 +158,7 @@
                         callback(0);
                     }
                 });
-            }else if(tools.from == "pc"){
+            }else if(tools.from == "element"){
                 that.attrs.vue.$prompt(text, '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消'
@@ -171,7 +171,7 @@
                         callback(0);
                     }
                 });
-            }else if(tools.from == "m2"){
+            }else if(tools.from == "vant"){
                 var id = "vant-prompt-"+Date.now()+parseInt(Math.random()*10000);
                 var input = '\n<input id="'+id+'" class="vant-prompt-input"/>';
                 that.attrs.vue.$dialog({

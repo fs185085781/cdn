@@ -3,9 +3,9 @@
     /*手机适应*/
     document.write('<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />');
     /*加载mint*/
-    document.write('<script src="' + uiPath + '/vant.min.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="https://unpkg.com/vant@2.4.7/lib/vant.min.js" type="text/javascript"></sc' + 'ript>');
     /*加载皮肤*/
-    document.write('<link href="' + uiPath + '/index.css" rel="stylesheet" type="text/css" />');
+    document.write('<link href="https://unpkg.com/vant@2.4.7/lib/index.css" rel="stylesheet" type="text/css" />');
     function getJsPath(js, length) {
         var scripts = document.getElementsByTagName("script");
         var path = "";
