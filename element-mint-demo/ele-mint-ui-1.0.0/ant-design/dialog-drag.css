@@ -3,6 +3,6 @@
     left:40vw;
     top:15vw;
 }
-.ant-modal .ant-modal-header{
+.ant-modal .ant-modal-header,.ant-modal .ant-modal-content{
     cursor: pointer;
 }

@@ -1,11 +1,20 @@
 (function(){
     /*事件委托*/
     function isOwnOrChildren(target,sources){
+        var flag = false;
         for(var i=0;i<sources.length;i++){
             if(target == sources[i]){
-                return true;
-            }else{
-                return isOwnOrChildren(target,sources[i].children);
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            return flag;
+        }
+        for(var i=0;i<sources.length;i++){
+            var temp = isOwnOrChildren(target,sources[i].children);
+            if(temp){
+                return temp;
             }
         }
         return false;

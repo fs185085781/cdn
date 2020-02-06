@@ -30,6 +30,11 @@
                     message: text,
                     type: type
                 });
+            }else if(tools.from == "antd"){
+                that.attrs.vue.$message.open({
+                    content: text,
+                    type: type
+                });
             }
         },
         loading:function(text){
@@ -103,6 +108,18 @@
                     }
                     callback(1);
                 });
+            }else if(tools.from == "antd"){
+                that.attrs.vue.$info({
+                    icon:"none",
+                    okText:"确定",
+                    title: '提示',
+                    content: text,
+                    onOk:function() {
+                        if(callback){
+                            callback(1);
+                        }
+                    }
+                });
             }
         },
         confirm:function(text,callback){
@@ -146,6 +163,9 @@
                 });
             }else if(tools.from == "antd"){
                 that.attrs.vue.$confirm({
+                    icon:"none",
+                    okText:"确定",
+                    cancelText:"取消",
                     title: '提示',
                     content: text,
                     onOk:function() {
@@ -204,6 +224,37 @@
                 }).catch(function () {
                     if(callback){
                         callback(0);
+                    }
+                });
+            }else if(tools.from == "antd"){
+                var id = "antd-prompt-"+Date.now()+parseInt(Math.random()*10000);
+                var input = '<br/><input class="ant-input"/>';
+                that.attrs.vue.$confirm({
+                    icon:"none",
+                    okText:"确定",
+                    cancelText:"取消",
+                    title: '提示',
+                    content: function(createElement){
+                        return createElement("div",{
+                            attrs:{id:id},
+                            domProps:{
+                                innerHTML:text+input
+                            }
+                        });
+                    },
+                    onOk:function() {
+                        var value = document.getElementById(id).getElementsByTagName("input")[0].value;
+                        if(!value){
+                            value = null;
+                        }
+                        if(callback){
+                            callback(1,value);
+                        }
+                    },
+                    onCancel:function() {
+                        if(callback){
+                            callback(0);
+                        }
                     }
                 });
             }

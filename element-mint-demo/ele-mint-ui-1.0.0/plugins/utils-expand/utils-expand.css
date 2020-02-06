@@ -36,3 +36,15 @@
     padding: 4px 5px;
     width: 100%;
 }
+.ant-message-success{
+    color:#52c41a;
+}
+.ant-message-warning{
+    color: #faad14;
+}
+.ant-message-error{
+    color: #f5222d;
+}
+.ant-message-info{
+    color: #1890ff;
+}

@@ -1,10 +1,19 @@
 (function(){
     function isOwnOrChildren(target,sources){
+        var flag = false;
         for(var i=0;i<sources.length;i++){
             if(target == sources[i]){
-                return true;
-            }else{
-                return isOwnOrChildren(target,sources[i].children);
+                flag = true;
+                break;
+            }
+        }
+        if(flag){
+            return flag;
+        }
+        for(var i=0;i<sources.length;i++){
+            var temp = isOwnOrChildren(target,sources[i].children);
+            if(temp){
+                return temp;
             }
         }
         return false;
@@ -88,8 +97,8 @@
         attr:{},
         on:on,
         off:off,
-        bindDrag:function(attr,selector){
-            (function(attr,selector){
+        bindDrag:function(attr,selector,nums){
+            (function(attr,selector,nums){
                 if(!tool.attr[attr]){
                     tool.attr[attr] = {};
                 }
@@ -97,7 +106,11 @@
                 var body = bodys[0];
                 tool.on(body,"mousedown",selector,function(e){
                     this.style["-webkit-user-select"]="none";
-                    tool.attr[attr].dragele = this.parentElement.parentElement;
+                    var temp = this;
+                    for(var i=0;i<nums;i++){
+                        temp = temp.parentElement;
+                    }
+                    tool.attr[attr].dragele = temp;
                     var dialog = tool.attr[attr].dragele;
                     dialog.style["left"]=(dialog.offsetLeft)+"px";
                     dialog.style["top"]=(dialog.offsetTop)+"px";
@@ -117,13 +130,13 @@
                         dialog.style["top"]=(e.clientY-tool.attr[attr].startY+tool.attr[attr].eleY)+"px";
                     }
                 });
-            })(attr,selector);
+            })(attr,selector,nums);
         },
         init:function(){
             var bodys = document.getElementsByTagName("body");
             if(bodys && bodys.length>0){
-                tool.bindDrag("elDialog",".ant-modal .ant-modal-header");
-                //tool.bindDrag("elMessageBox",".el-message-box .el-message-box__header");
+                tool.bindDrag("elDialog",".ant-modal .ant-modal-header",2);
+                tool.bindDrag("elMessageBox",".ant-modal .ant-modal-content",1);
             }else{
                 setTimeout(function(){
                     tool.init();
