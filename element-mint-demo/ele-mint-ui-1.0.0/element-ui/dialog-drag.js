@@ -1,5 +1,15 @@
 (function(){
     /*事件委托*/
+    function isOwnOrChildren(target,sources){
+        for(var i=0;i<sources.length;i++){
+            if(target == sources[i]){
+                return true;
+            }else{
+                return isOwnOrChildren(target,sources[i].children);
+            }
+        }
+        return false;
+    }
     function on(ele,type,selector,fn,key){
         (function(ele,type,selector,fn,key){
             var eles = getEles(ele);
@@ -16,7 +26,7 @@
                     var list = oneEle.querySelectorAll(selector);
                     for(var n=0;n<list.length;n++){
                         var temp = list[n];
-                        if(e.target == temp){
+                        if(isOwnOrChildren(e.target,[temp])){
                             if(fn){
                                 temp["toOn"+type] = fn;
                                 temp["toOn"+type](e);

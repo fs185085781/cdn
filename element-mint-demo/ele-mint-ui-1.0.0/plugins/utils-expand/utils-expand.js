@@ -144,6 +144,21 @@
                         callback(0);
                     }
                 });
+            }else if(tools.from == "antd"){
+                that.attrs.vue.$confirm({
+                    title: '提示',
+                    content: text,
+                    onOk:function() {
+                        if(callback){
+                            callback(1);
+                        }
+                    },
+                    onCancel:function() {
+                        if(callback){
+                            callback(0);
+                        }
+                    }
+                });
             }
         },
         prompt:function(text,callback){

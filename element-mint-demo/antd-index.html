@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="./ele-mint-ui-1.0.0/boot/utils.js?from=antd"></script>
+    <title>PC端演示(Antd)</title>
+</head>
+<body>
+<div id="app">
+    <a-button type="primary" @click.native="handleClick">按钮</a-button>
+    <a-modal
+            title="Title"
+            :visible="visible"
+            @ok="handleOk"
+            :confirmLoading="confirmLoading"
+            @cancel="handleCancel"
+    >
+        <p>{{ModalText}}</p>
+    </a-modal>
+</div>
+</body>
+<script>
+    Vue.app({
+        data:{
+            ModalText: 'Content of the modal',
+            visible: false,
+            confirmLoading: false
+        },
+        el: '#app',
+        methods: {
+            handleClick: function() {
+                utils.$.successMsg("hello world")
+                this.visible = !this.visible;
+            },
+            handleOk(e) {
+                this.ModalText = 'The modal will be closed after two seconds';
+                this.confirmLoading = true;
+                setTimeout(() => {
+                    this.visible = false;
+                    this.confirmLoading = false;
+                }, 2000);
+            },
+            handleCancel(e) {
+                console.log('Clicked cancel button');
+                this.visible = false;
+            }
+        }
+    });
+</script>
+</html>

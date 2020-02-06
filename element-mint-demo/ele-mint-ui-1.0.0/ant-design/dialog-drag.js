@@ -1,4 +1,14 @@
 (function(){
+    function isOwnOrChildren(target,sources){
+        for(var i=0;i<sources.length;i++){
+            if(target == sources[i]){
+                return true;
+            }else{
+                return isOwnOrChildren(target,sources[i].children);
+            }
+        }
+        return false;
+    }
     /*事件委托*/
     function on(ele,type,selector,fn,key){
         (function(ele,type,selector,fn,key){
@@ -16,7 +26,7 @@
                     var list = oneEle.querySelectorAll(selector);
                     for(var n=0;n<list.length;n++){
                         var temp = list[n];
-                        if(e.target == temp){
+                        if(isOwnOrChildren(e.target ,[temp])){
                             if(fn){
                                 temp["toOn"+type] = fn;
                                 temp["toOn"+type](e);
@@ -87,7 +97,7 @@
                 var body = bodys[0];
                 tool.on(body,"mousedown",selector,function(e){
                     this.style["-webkit-user-select"]="none";
-                    tool.attr[attr].dragele = this.parentElement;
+                    tool.attr[attr].dragele = this.parentElement.parentElement;
                     var dialog = tool.attr[attr].dragele;
                     dialog.style["left"]=(dialog.offsetLeft)+"px";
                     dialog.style["top"]=(dialog.offsetTop)+"px";
@@ -112,8 +122,8 @@
         init:function(){
             var bodys = document.getElementsByTagName("body");
             if(bodys && bodys.length>0){
-                tool.bindDrag("elDialog",".el-dialog .el-dialog__header");
-                tool.bindDrag("elMessageBox",".el-message-box .el-message-box__header");
+                tool.bindDrag("elDialog",".ant-modal .ant-modal-header");
+                //tool.bindDrag("elMessageBox",".el-message-box .el-message-box__header");
             }else{
                 setTimeout(function(){
                     tool.init();
