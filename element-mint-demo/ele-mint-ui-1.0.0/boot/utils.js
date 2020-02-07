@@ -26,11 +26,14 @@
     document.write('<script src="'+config.axios[config.env+"Path"]+'" type="text/javascript"></sc' + 'ript>');
     /*加载框架*/
     document.write('<script src="' + bootPathMap[utils.from] + '" type="text/javascript"></sc' + 'ript>');
-    /*
-    utils拓展类
-     */
+    /*utils拓展类*/
     document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
     /*加载插件*/
+    utils.pluginPath = uiHost+"/plugins";
+    /*调试页面*/
+    if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
+        document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
+    }
     document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
 
     function initUtils(){
@@ -173,7 +176,14 @@
         if(jsSearch.from != "mint" && jsSearch.from != "vant" && jsSearch.from != "antd"){
             jsSearch.from = "element";
         }
-        tools.from = jsSearch.from;
+        var plugins = [];
+        if(jsSearch.plugins && jsSearch.plugins.trim()){
+            plugins=jsSearch.plugins.trim().split(",");
+        }
+        jsSearch.plugins = plugins;
+        for(var key in jsSearch){
+            tools[key] = jsSearch[key];
+        }
         function getJsSearch(js){
             var scripts = document.getElementsByTagName("script");
             var map = {};

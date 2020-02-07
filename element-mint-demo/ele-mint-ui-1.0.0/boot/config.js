@@ -1,8 +1,7 @@
 (function(){
     var c ={
         env:"test",
-        configType:"local",
-        debug:false
+        configType:"local"
     }
     window.config = c;
 })()
