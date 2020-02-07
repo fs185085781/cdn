@@ -33,8 +33,5 @@
             prodCssPath:"https://unpkg.com/ant-design-vue@1.4.10/dist/antd.min.css"
         }
     }
-    function rp(){
-        return utils.getRelativePath();
-    }
     window.config = c;
 })()
