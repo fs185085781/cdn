@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <script src="./ele-mint-ui-1.0.0/boot/utils.js?from=element&plugins=md5"></script>
-    <script src="./jquery.js"></script>
     <title>PC端演示(ElementUi)</title>
 </head>
 <body>
@@ -35,11 +34,11 @@
                 utils.$.successMsg("hello world")
             },
             handleClose:function(done){
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        done();
-                    })
-                    .catch(_ => {});
+                utils.$.confirm("确认关闭么?",function(action){
+                    if(action){
+                        vm.dialogVisible = false;
+                    }
+                });
             }
         }
     })

@@ -32,15 +32,15 @@
                 utils.$.successMsg("hello world")
                 this.visible = !this.visible;
             },
-            handleOk(e) {
+            handleOk:function(e) {
                 this.ModalText = 'The modal will be closed after two seconds';
                 this.confirmLoading = true;
-                setTimeout(() => {
+                setTimeout(function(){
                     this.visible = false;
                     this.confirmLoading = false;
                 }, 2000);
             },
-            handleCancel(e) {
+            handleCancel:function(e) {
                 console.log('Clicked cancel button');
                 this.visible = false;
             }

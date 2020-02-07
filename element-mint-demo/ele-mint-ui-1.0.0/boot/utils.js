@@ -33,17 +33,12 @@
     document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
     /*调试页面*/
     if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
-        if(!Object.assign){
-            Object.assign = function(a,b){
-                var t = JSON.parse(JSON.stringify(b));
-                for(var k in a){
-                    t[k] = a[k];
-                }
-                return t;
-            }
-        }
         document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
-        document.write('<script type="text/javascript">eruda.init();</sc' + 'ript>');
+        utils.delayAction(function(){
+            return window.eruda!=null;
+        },function(){
+            window.eruda.init();
+        });
     }
     function initUtils(){
         var tools = {
@@ -179,6 +174,30 @@
                     document.head = document.getElementsByTagName("head")[0];
                 }
                 document.head.appendChild(link);
+            },
+            delayAction:function(tjFn,acFn,maxDelay){
+                var that = this;
+                if(!maxDelay){
+                    maxDelay = 10000;
+                }
+                var key = "da"+Date.now()+parseInt(Math.random()*10000);
+                var timeKey = "time"+key;
+                that[timeKey]=Date.now();
+                that[key]=function () {
+                    if(Date.now()-that[timeKey]>maxDelay){
+                        that.removeProp(that,key);
+                        that.removeProp(that,timeKey);
+                    }else{
+                        if(tjFn()){
+                            acFn();
+                            that.removeProp(that,key);
+                            that.removeProp(that,timeKey);
+                        }else{
+                            setTimeout(that[key],100);
+                        }
+                    }
+                }
+                that[key]();
             }
         }
         var jsSearch = getJsSearch("utils.js");
@@ -289,7 +308,85 @@
         }
         /**精准计算拓展---结束*/
     }
-    function initCompatibleIE5(from){
+    function initCompatibleIE5(){
+        if(!Array.prototype.includes){
+            Array.prototype.includes = function(n){
+                for(var i=0;i<this.length;i++){
+                    if(this[i] == n){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        if(!Object.entries){
+            Object.entries = function (obj) {
+                var keys = Object.keys(obj);
+                var data = [];
+                for(var i=0;i<keys.length;i++){
+                    data.push([keys[i],obj[keys[i]]]);
+                }
+                return data;
+            }
+        }
+        /*解决Promise问题*/
+        if(!window.Promise){
+            window.Promise = function(func){
+                var that = this;
+                that.status = "pending";
+                try{
+                    func(function(a){
+                            if(that.status=="pending"){
+                                that.status = "resolved";
+                                that.value = a;
+                            }
+                        },
+                        function(b){
+                            if(that.status=="pending"){
+                                that.status = "rejected";
+                                that.value = b;
+                            }
+                        });
+                }catch (e) {
+                    if(that.status=="pending"){
+                        that.status = "rejected";
+                        that.value = e;
+                    }
+                }
+                utils.delayAction(function(){
+                    var flag = false;
+                    if(that.status == "resolved" && that.resolve){
+                        flag = true;
+                    }
+                    if(that.status == "rejected" && that.reject){
+                        flag = true;
+                    }
+                    return flag;
+                },function () {
+                    if(that.status == "resolved" && that.resolve){
+                        that.resolve(that.value);
+                    }else if(that.status == "rejected" && that.reject){
+                        that.reject(that.value);
+                    }
+                    if(that.finally){
+                        that.finally();
+                    }
+                },60*60*1000);
+                return that;
+            }
+            Promise.prototype.then = function(func){
+                this.resolve = func;
+                return this;
+            }
+            Promise.prototype.catch = function(func){
+                this.reject = func;
+                return this;
+            }
+            Promise.prototype.finally = function(func){
+                this.finally = func;
+                return this;
+            }
+        }
         /*增加string的trim方法*/
         if(!String.prototype.trim) {
             String.prototype.trim = function() {
@@ -306,6 +403,18 @@
         if(!Date.now) {
             Date.now = function() {
                 return new Date().getTime();
+            }
+        }
+        /*增加深克隆方法*/
+        if(!Object.assign){
+            Object.assign = function(a,b){
+                if(!b){
+                    b = {};
+                }
+                for(var k in b){
+                    a[k] = b[k];
+                }
+                return a;
             }
         }
         /*增加localStorage*/
