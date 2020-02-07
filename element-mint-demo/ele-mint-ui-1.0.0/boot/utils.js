@@ -33,6 +33,7 @@
     /*调试页面*/
     if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
         document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script type="text/javascript">eruda.init();</sc' + 'ript>');
     }
     document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
 
