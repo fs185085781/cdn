@@ -32,6 +32,15 @@
     utils.pluginPath = uiHost+"/plugins";
     /*调试页面*/
     if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
+        if(!Object.assign){
+            Object.assign = function(a,b){
+                var t = JSON.parse(JSON.stringify(b));
+                for(var k in a){
+                    t[k] = a[k];
+                }
+                return t;
+            }
+        }
         document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script type="text/javascript">eruda.init();</sc' + 'ript>');
     }
