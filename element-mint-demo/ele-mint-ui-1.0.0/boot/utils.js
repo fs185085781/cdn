@@ -30,6 +30,7 @@
     document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
     /*加载插件*/
     utils.pluginPath = uiHost+"/plugins";
+    document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
     /*调试页面*/
     if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
         if(!Object.assign){
@@ -44,8 +45,6 @@
         document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
         document.write('<script type="text/javascript">eruda.init();</sc' + 'ript>');
     }
-    document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
-
     function initUtils(){
         var tools = {
             getParamer: function (key) {
