@@ -60,6 +60,36 @@
                     forbidClick: true,
                     duration:0
                 });
+            }else if(tools.from == "antd"){
+                var body = document.getElementsByTagName("body")[0];
+                var className = body.className+"";
+                if(className){
+                    var cls = className.split(" ");
+                    var clsz = [];
+                    for(var i=0;i<cls.length;i++){
+                        if(cls[i] != "ant-spin-nested-loading"){
+                            clsz.push(cls[i]);
+                        }
+                    }
+                    className = "";
+                    for(var i=0;i<clsz.length;i++){
+                        if(i>0){
+                            className += " ";
+                        }
+                        className += clsz[i];
+                    }
+                }
+                if(className){
+                    className += " ";
+                }
+                className += "ant-spin-nested-loading";
+                body.className = className;
+                var div = document.createElement("div");
+                that.attrs.loading = "antd-loading-"+Date.now()+parseInt(Math.random()*10000);
+                div.id = that.attrs.loading;
+                div.className = "ant-spin-body";
+                div.innerHTML = "<div class=\"ant-spin ant-spin-spinning ant-spin-show-text\"><span class=\"ant-spin-dot ant-spin-dot-spin\"><i></i><i></i><i></i><i></i></span><div class=\"ant-spin-text\">"+text+"</div></div>";
+                body.append(div);
             }
         },
         cancelLoading:function(){
@@ -73,6 +103,29 @@
                 }
             }else if(tools.from == "vant"){
                 that.attrs.vue.$toast.clear();
+            }else if(tools.from == "antd"){
+                var body = document.getElementsByTagName("body")[0];
+                var className = body.className+"";
+                if(className){
+                    var cls = className.split(" ");
+                    var clsz = [];
+                    for(var i=0;i<cls.length;i++){
+                        if(cls[i] != "ant-spin-nested-loading"){
+                            clsz.push(cls[i]);
+                        }
+                    }
+                    className = "";
+                    for(var i=0;i<clsz.length;i++){
+                        if(i>0){
+                            className += " ";
+                        }
+                        className += clsz[i];
+                    }
+                }
+                body.className = className;
+                if(that.attrs.loading){
+                    document.getElementById(that.attrs.loading).remove();
+                }
             }
         },
         alert:function(text,callback){

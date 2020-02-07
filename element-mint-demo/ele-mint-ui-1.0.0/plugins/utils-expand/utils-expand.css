@@ -48,3 +48,9 @@
 .ant-message-info{
     color: #1890ff;
 }
+.ant-spin-body .ant-spin {
+    position: fixed !important;
+    top: 0px;
+    left: 0px;
+    max-height:none !important;
+}
