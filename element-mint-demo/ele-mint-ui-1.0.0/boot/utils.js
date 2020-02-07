@@ -189,9 +189,9 @@
                         that.removeProp(that,timeKey);
                     }else{
                         if(tjFn()){
-                            acFn();
                             that.removeProp(that,key);
                             that.removeProp(that,timeKey);
+                            acFn();
                         }else{
                             setTimeout(that[key],100);
                         }
