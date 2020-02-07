@@ -3,7 +3,8 @@
     initExpand();
     /*初始化utils工具*/
     window.utils = initUtils();
-    var uiHost = utils.getJsPath("utils.js",2);
+    initConfig(utils.getJsPath("utils.js",1)+"/config.js");
+    var uiHost = utils.getRelativePath();
     var bootPathMap = {
         "mint":uiHost+"/mint-ui/js/boot.js",
         "vant":uiHost+"/vant-ui/js/boot.js",
@@ -13,9 +14,9 @@
     /*时间工具类*/
     document.write('<script src="' + uiHost + '/plugins/time-utils/time-utils.js" type="text/javascript"></sc' + 'ript>');
     /*加载vue*/
-    document.write('<script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="'+config.vue[config.env+"Path"]+'" type="text/javascript"></sc' + 'ript>');
     /*加载axios*/
-    document.write('<script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="'+config.axios[config.env+"Path"]+'" type="text/javascript"></sc' + 'ript>');
     /*加载框架*/
     document.write('<script src="' + bootPathMap[utils.from] + '" type="text/javascript"></sc' + 'ript>');
     /*
@@ -87,6 +88,9 @@
                 }catch (e) {
                     callback({status:0,text:e.toString()});
                 }
+            },
+            getRelativePath:function(){
+                return this.getJsPath("utils.js",2);
             },
             getJsPath:function(js, length) {
                 var scripts = document.getElementsByTagName("script");
@@ -175,6 +179,14 @@
             return map;
         }
         return tools;
+    }
+    function initConfig(url){
+        url += "?_="+new Date().getTime();
+        utils.getRemoteData(url,false,function(res){
+            if(res.status == 1){
+                eval(res.text);
+            }
+        });
     }
     function initExpand(){
         /*兼容低版本浏览器不支持的属性*/
