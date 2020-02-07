@@ -31,12 +31,7 @@
             prodJsPath:"https://unpkg.com/ant-design-vue@1.4.10/dist/antd.min.js",
             testCssPath:"https://unpkg.com/ant-design-vue@1.4.10/dist/antd.css",
             prodCssPath:"https://unpkg.com/ant-design-vue@1.4.10/dist/antd.min.css"
-        },
-        plugins:{
-            md5:rp()+"/compatible/md5.js",
-            jsx:rp()+"/libs/babel.min.js"
-        },
-        env:"test"
+        }
     }
     function rp(){
         return utils.getRelativePath();

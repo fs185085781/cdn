@@ -3,7 +3,14 @@
     initExpand();
     /*初始化utils工具*/
     window.utils = initUtils();
-    initConfig(utils.getJsPath("utils.js",1)+"/config.js");
+    var utilsPath = utils.getJsPath("utils.js",1);
+    initConfig(utilsPath+"/config.js");
+    var tempConfig = window.config;
+    utils.removeProp(window,"config");
+    initConfig(utilsPath+"/"+tempConfig.configType+"-path.js");
+    for(var key in tempConfig){
+        window.config[key] = tempConfig[key];
+    }
     var uiHost = utils.getRelativePath();
     var bootPathMap = {
         "mint":uiHost+"/mint-ui/js/boot.js",
@@ -23,6 +30,8 @@
     utils拓展类
      */
     document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
+    /*加载插件*/
+    document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
 
     function initUtils(){
         var tools = {
