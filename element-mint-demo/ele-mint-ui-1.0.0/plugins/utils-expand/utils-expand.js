@@ -393,10 +393,19 @@
             });
             return http;
         },
-        initFileUpload: function (fileCallBack,accept) {
+        initFileUpload: function (fileCallBack,accept,url) {
             var that = this;
             accept = accept || "";
             accept = accept.toLowerCase();
+            if(!url){
+                if(window.uploadUrlHook){
+                    url = window.uploadUrlHook();
+                }
+            }
+            if(!url){
+                throw "请配置上传链接";
+                return;
+            }
             if (!fileCallBack) {
                 throw "回调函数不可为空";
                 return;
@@ -435,7 +444,7 @@
                         that.loading(complete+"...请稍后");
                     }
                 }
-                axios.post("http://localhost:8080/selevt/webService/uploadFile",
+                axios.post(url,
                     formData, config).then(function(res){
                     that.attrs.uploadStatus = 0;
                     that.cancelLoading();
