@@ -33,12 +33,17 @@
                 this.visible = !this.visible;
             },
             handleOk:function(e) {
-                this.ModalText = 'The modal will be closed after two seconds';
-                this.confirmLoading = true;
-                setTimeout(function(){
+                var that = this;
+                that.ModalText = 'The modal will be closed after two seconds';
+                that.confirmLoading = true;
+                /*setTimeout(function(){
+                    that.visible = false;
+                    that.confirmLoading = false;
+                }, 2000);*/
+                setTimeout(() => {
                     this.visible = false;
                     this.confirmLoading = false;
-                }, 2000);
+                }, 5000);
             },
             handleCancel:function(e) {
                 console.log('Clicked cancel button');
