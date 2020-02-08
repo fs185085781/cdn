@@ -63,22 +63,8 @@
             }else if(tools.from == "antd"){
                 var body = document.getElementsByTagName("body")[0];
                 var className = body.className+"";
-                if(className){
-                    var cls = className.split(" ");
-                    var clsz = [];
-                    for(var i=0;i<cls.length;i++){
-                        if(cls[i] != "ant-spin-nested-loading"){
-                            clsz.push(cls[i]);
-                        }
-                    }
-                    className = "";
-                    for(var i=0;i<clsz.length;i++){
-                        if(i>0){
-                            className += " ";
-                        }
-                        className += clsz[i];
-                    }
-                }
+                className = className.replace("ant-spin-nested-loading","");
+                className = className.replace("  "," ").trim();
                 if(className){
                     className += " ";
                 }
@@ -104,27 +90,14 @@
             }else if(tools.from == "vant"){
                 that.attrs.vue.$toast.clear();
             }else if(tools.from == "antd"){
-                var body = document.getElementsByTagName("body")[0];
-                var className = body.className+"";
-                if(className){
-                    var cls = className.split(" ");
-                    var clsz = [];
-                    for(var i=0;i<cls.length;i++){
-                        if(cls[i] != "ant-spin-nested-loading"){
-                            clsz.push(cls[i]);
-                        }
-                    }
-                    className = "";
-                    for(var i=0;i<clsz.length;i++){
-                        if(i>0){
-                            className += " ";
-                        }
-                        className += clsz[i];
-                    }
-                }
-                body.className = className;
                 if(that.attrs.loading){
+                    var body = document.getElementsByTagName("body")[0];
+                    var className = body.className+"";
+                    className = className.replace("ant-spin-nested-loading","");
+                    className = className.replace("  "," ").trim();
+                    body.className = className;
                     document.getElementById(that.attrs.loading).remove();
+                    tools.removeProp(that.attrs,"loading");
                 }
             }
         },
@@ -340,12 +313,10 @@
                 searchStr += key+"="+map[key];
             }
             var realUrl = urlHost+searchStr;
-            (function (fname) {
-                window[fname] = function(res){
-                    tools.removeProp(window,fname);
-                    callback(res);
-                };
-            })(callbackName);
+            window[callbackName] = function(res){
+                tools.removeProp(window,callbackName);
+                callback(res);
+            };
             var script = document.createElement("script");
             script.type = "text/javascript";
             script.src=realUrl;
@@ -403,13 +374,19 @@
                 if(typeof xhr.data == "string"){
                     throw "当前返回值非json数据";
                 }
-                /*
-                * 此处可以根据实际情况灵活运用
-                * */
-                callback({status:xhr.status,data:xhr.data});
+                var res = {flag:true,msg:"操作成功",data:xhr.data};
+                if(window.reqHook){
+                    /*此处是拦截器,用于过滤返回值,返回类型{flag:true,msg:"",data:{}}*/
+                    res = window.reqHook(xhr.data);
+                }
+                if(res.flag || callBackError){
+                    callback(res);
+                }else{
+                    that.dangerMsg(res.msg);
+                }
             }).catch(function(error){
                 if(callBackError && callback){
-                    callback({status:0,msg:error});
+                    callback({flag:false,msg:error.toString()});
                 }else{
                     that.dangerMsg(error);
                 }
