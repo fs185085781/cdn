@@ -32,7 +32,7 @@
     utils.pluginPath = uiHost+"/plugins";
     document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
     /*调试页面*/
-    if(utils.getParamer("debug") == "true" && (utils.from == "mint" || utils.from == "vant")){
+    if(utils.getParamer("debug") == "true"){
         document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
         utils.delayAction(function(){
             return window.eruda!=null;
@@ -178,7 +178,7 @@
             delayAction:function(tjFn,acFn,maxDelay){
                 var that = this;
                 if(!maxDelay){
-                    maxDelay = 10000;
+                    maxDelay = 24*60*60*1000;
                 }
                 var key = "da"+Date.now()+parseInt(Math.random()*10000);
                 var timeKey = "time"+key;
@@ -324,7 +324,8 @@
                 var keys = Object.keys(obj);
                 var data = [];
                 for(var i=0;i<keys.length;i++){
-                    data.push([keys[i],obj[keys[i]]]);
+                    var key = keys[i];
+                    data.push([key,obj[key]]);
                 }
                 return data;
             }
@@ -371,7 +372,7 @@
                     if(that.finally){
                         that.finally();
                     }
-                },60*60*1000);
+                });
                 return that;
             }
             Promise.prototype.then = function(func){
