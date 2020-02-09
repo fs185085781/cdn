@@ -4,5 +4,6 @@
         if(plugin=="md5"){
             document.write('<script src="' + path + '/md5/md5.js" type="text/javascript"></sc' + 'ript>');
         }
+        /*请自行添加插件*/
     }
 })(utils.pluginPath,utils.plugins);
