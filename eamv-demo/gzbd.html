@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="./eamv-ui-1.0.0/boot/utils.js?from=mint"></script>
+    <title>2019新型冠状病毒实时数据统计</title>
+</head>
+<body>
+<div id="app">
+    <mt-navbar v-model="selected">
+        <mt-tab-item id="today_all">国内当前数</mt-tab-item>
+        <mt-tab-item id="day_all">每日数量</mt-tab-item>
+        <mt-tab-item id="day_add">每日增长数</mt-tab-item>
+    </mt-navbar>
+    <mt-tab-container v-model="selected">
+        <mt-tab-container-item id="today_all">
+            <mt-cell title="确诊">
+                <span style="color:#F55253">{{allData.chinaTotal.confirm}}</span>
+            </mt-cell>
+            <mt-cell title="疑似">
+                <span style="color:#FF961E">{{allData.chinaTotal.suspect}}</span>
+            </mt-cell>
+            <mt-cell title="治愈">
+                <span style="color:#178B50">{{allData.chinaTotal.heal}}</span>
+            </mt-cell>
+            <mt-cell title="死亡">
+                <span style="color:#66666c">{{allData.chinaTotal.dead}}</span>
+            </mt-cell>
+        </mt-tab-container-item>
+        <mt-tab-container-item id="day_all">
+            <mt-cell title="日期">
+                <span style="color:#F55253">确诊</span>|
+                <span style="color:#FF961E">疑似</span>|
+                <span style="color:#178B50">治愈</span>|
+                <span>死亡</span>
+            </mt-cell>
+            <mt-cell v-for="one in allData.chinaDayList" :title="one.date">
+                <span style="color:#F55253">{{one.confirm}}</span>|
+                <span style="color:#FF961E">{{one.suspect}}</span>|
+                <span style="color:#178B50">{{one.heal}}</span>|
+                <span style="color:#66666c">{{one.dead}}</span>
+            </mt-cell>
+        </mt-tab-container-item>
+        <mt-tab-container-item id="day_add">
+            <mt-cell title="日期">
+                <span style="color:#F55253">确诊</span>|
+                <span style="color:#FF961E">疑似</span>|
+                <span style="color:#178B50">治愈</span>|
+                <span>死亡</span>
+            </mt-cell>
+            <mt-cell v-for="one in allData.chinaDayAddList" :title="one.date">
+                <span style="color:#F55253">{{one.confirm}}</span>|
+                <span style="color:#FF961E">{{one.suspect}}</span>|
+                <span style="color:#178B50">{{one.heal}}</span>|
+                <span style="color:#66666c">{{one.dead}}</span>
+            </mt-cell>
+        </mt-tab-container-item>
+    </mt-tab-container>
+</div>
+</body>
+<script>
+    Vue.app({
+        el: '#app',
+        data:{
+            selected:"today_all",
+            allData:{
+                chinaTotal:{}
+            }
+        },
+        methods: {
+            initData:function(){
+                var that = this;
+                utils.$.jsonp("https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",function(res){
+                    if(res.ret == 0){
+                        that.allData = JSON.parse(res.data);
+                    }
+                });
+            }
+        },
+        mounted:function(){
+            var that = this;
+            that.initData();
+            setInterval(function(){
+                that.initData();
+            },60000);
+        }
+    })
+</script>
+</html>

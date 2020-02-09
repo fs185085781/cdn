@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="./eamv-ui-1.0.0/boot/utils.js?from=mint&plugins=md5"></script>
+    <title>手机端演示(Mint)</title>
+</head>
+<body>
+<div id="app">
+    <mt-button @click.native="handleClick">按钮</mt-button>
+</div>
+</body>
+<script>
+    Vue.app({
+        el: '#app',
+        methods: {
+            handleClick: function() {
+                utils.$.successMsg("hello world")
+            }
+        }
+    });
+</script>
+</html>
