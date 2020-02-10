@@ -34,7 +34,7 @@
         }
     }
     function rp(){
-        return utils.getRelativePath();
+        return getJsPath("eamv.js",2);
     }
-    window.config = c;
+    Object.assign(window.config,c);
 })()

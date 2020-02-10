@@ -489,6 +489,6 @@
             return window.vm = new Vue(options);
         }
     }
-    var path = tools.getJsPath("utils-expand.js",1);
+    var path = getJsPath("utils-expand.js",1);
     document.write('<link href="' + path + '/utils-expand.css" rel="stylesheet" type="text/css" />');
 })(utils);

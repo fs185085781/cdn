@@ -33,5 +33,5 @@
             prodCssPath:"https://unpkg.com/ant-design-vue/dist/antd.min.css"
         }
     }
-    window.config = c;
+    Object.assign(window.config,c);
 })()

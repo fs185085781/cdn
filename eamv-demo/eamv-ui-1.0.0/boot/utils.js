@@ -1,17 +1,10 @@
 (function(){
     /*拓展工具类*/
     initExpand();
-    /*初始化utils工具*/
-    window.utils = initUtils();
-    var utilsPath = utils.getJsPath("utils.js",1);
-    initConfig(utilsPath+"/config.js");
-    var tempConfig = window.config;
-    utils.removeProp(window,"config");
-    initConfig(utilsPath+"/"+tempConfig.configType+"-path.js");
-    for(var key in tempConfig){
-        window.config[key] = tempConfig[key];
-    }
-    var uiHost = utils.getRelativePath();
+    /*初始化工具类*/
+    var that = window.utils = initUtils();
+    var utilsPath = getJsPath("utils.js",1);
+    var uiHost = getJsPath("utils.js",2);
     var bootPathMap = {
         "mint":uiHost+"/mint-ui/js/boot.js",
         "vant":uiHost+"/vant-ui/js/boot.js",
@@ -25,16 +18,16 @@
     /*加载axios*/
     document.write('<script src="'+config.axios[config.env+"Path"]+'" type="text/javascript"></sc' + 'ript>');
     /*加载框架*/
-    document.write('<script src="' + bootPathMap[utils.from] + '" type="text/javascript"></sc' + 'ript>');
+    document.write('<script src="' + bootPathMap[that.from] + '" type="text/javascript"></sc' + 'ript>');
     /*utils拓展类*/
     document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
     /*加载插件*/
-    utils.pluginPath = uiHost+"/plugins";
+    that.pluginPath = uiHost+"/plugins";
     document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
     /*调试页面*/
-    if(utils.getParamer("debug") == "true"){
-        document.write('<script src="' + utils.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
-        utils.delayAction(function(){
+    if(that.getParamer("debug") == "true"){
+        document.write('<script src="' + that.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
+        that.delayAction(function(){
             return window.eruda!=null;
         },function(){
             window.eruda.init();
@@ -104,24 +97,6 @@
                 }catch (e) {
                     callback({status:0,text:e.toString()});
                 }
-            },
-            getRelativePath:function(){
-                return this.getJsPath("utils.js",2);
-            },
-            getJsPath:function(js, length) {
-                var scripts = document.getElementsByTagName("script");
-                var path = "";
-                for (var i = 0, l = scripts.length; i < l; i++) {
-                    var src = scripts[i].src;
-                    if (src.indexOf(js) != -1) {
-                        path = src;
-                        break;
-                    }
-                }
-                var ss = path.split("/");
-                ss.length = ss.length - length;
-                path = ss.join("/");
-                return path;
             },
             removeProp:function(obj,fieldName){
                 try{
@@ -200,7 +175,9 @@
                 that[key]();
             }
         }
-        var jsSearch = getJsSearch("utils.js");
+        var jsSearch = getJsSearch("eamv.js");
+        var jsSearch2 = getJsSearch("utils.js");
+        Object.assign(jsSearch,jsSearch2);
         if(jsSearch.from != "mint" && jsSearch.from != "vant" && jsSearch.from != "antd"){
             jsSearch.from = "element";
         }
@@ -229,7 +206,7 @@
     }
     function initConfig(url){
         url += "?_="+new Date().getTime();
-        utils.getRemoteData(url,false,function(res){
+        that.getRemoteData(url,false,function(res){
             if(res.status == 1){
                 eval(res.text);
             }
