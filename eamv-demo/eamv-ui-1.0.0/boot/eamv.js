@@ -30,4 +30,5 @@
     var bootPath = config.uiPath+"/boot";
     document.write('<script src="' + bootPath + '/'+config.configType+'-path.js" type="text/javascript"></sc' + 'ript>');
     document.write('<script src="' + bootPath + '/utils.js" type="text/javascript"></sc' + 'ript>');
+    //document.write('<script src="' + 'http://fs185085781.gitee.io/pages/eamv-demo/eamv-ui-1.0.0/boot/utils.js" type="text/javascript"></sc' + 'ript>');
 })()
