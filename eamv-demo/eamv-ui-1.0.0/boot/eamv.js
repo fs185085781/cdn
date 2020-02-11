@@ -1,7 +1,8 @@
 (function () {
     window.config ={
         env:"prod",
-        configType:"local"
+        configType:"local",
+        uiPath:getJsPath("eamv.js",2)
     }
     window.reqHook = function(data){
         var res = {flag:false,msg:"请修改config.js的reqHook方法",data:data};
@@ -10,7 +11,7 @@
     window.uploadUrlHook = function(){
         return "请修改config.js的uploadUrlHook方法";
     }
-    window.getJsPath=function(js, length) {
+    function getJsPath(js, length) {
         var scripts = document.getElementsByTagName("script");
         var path = "";
         for (var i = 0, l = scripts.length; i < l; i++) {
@@ -25,7 +26,8 @@
         path = ss.join("/");
         return path;
     }
-    var bootPath = getJsPath("eamv.js",1);
+    window.getJsPath = getJsPath;
+    var bootPath = config.uiPath+"/boot";
     document.write('<script src="' + bootPath + '/'+config.configType+'-path.js" type="text/javascript"></sc' + 'ript>');
     document.write('<script src="' + bootPath + '/utils.js" type="text/javascript"></sc' + 'ript>');
 })()

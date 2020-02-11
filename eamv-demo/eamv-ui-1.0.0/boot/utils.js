@@ -3,7 +3,6 @@
     initExpand();
     /*初始化工具类*/
     var that = window.utils = initUtils();
-    var utilsPath = getJsPath("utils.js",1);
     var uiHost = getJsPath("utils.js",2);
     var bootPathMap = {
         "mint":uiHost+"/mint-ui/js/boot.js",
@@ -22,11 +21,11 @@
     /*utils拓展类*/
     document.write('<script src="' + uiHost + '/plugins/utils-expand/utils-expand.js" type="text/javascript"></sc' + 'ript>');
     /*加载插件*/
-    that.pluginPath = uiHost+"/plugins";
-    document.write('<script src="' + utilsPath + '/plugins.js" type="text/javascript"></sc' + 'ript>');
+    that.pluginPath = config.uiPath+"/plugins";
+    document.write('<script src="' + config.uiPath + '/boot/plugins.js" type="text/javascript"></sc' + 'ript>');
     /*调试页面*/
     if(that.getParamer("debug") == "true"){
-        document.write('<script src="' + that.pluginPath + '/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
+        document.write('<script src="' + uiHost + '/plugins/eruda/eruda.js" type="text/javascript"></sc' + 'ript>');
         that.delayAction(function(){
             return window.eruda!=null;
         },function(){
@@ -213,6 +212,23 @@
         });
     }
     function initExpand(){
+        if(!window.getJsPath){
+            window.getJsPath = function(js, length) {
+                var scripts = document.getElementsByTagName("script");
+                var path = "";
+                for (var i = 0, l = scripts.length; i < l; i++) {
+                    var src = scripts[i].src;
+                    if (src.indexOf(js) != -1) {
+                        path = src;
+                        break;
+                    }
+                }
+                var ss = path.split("/");
+                ss.length = ss.length - length;
+                path = ss.join("/");
+                return path;
+            }
+        }
         /*兼容低版本浏览器不支持的属性*/
         initCompatibleIE5();
         /**数值拓展----开始*/
