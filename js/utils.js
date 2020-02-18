@@ -1,63 +1,6 @@
 (function(){
     "use strict";
     /**时间拓展----开始*/
-    function numToMonth(m,flag){
-        function numToStr(i){
-            switch (i) {
-                case 1:return "一";
-                case 2:return "二";
-                case 3:return "三";
-                case 4:return "四";
-                case 5:return "五";
-                case 6:return "六";
-                case 7:return "七";
-                case 8:return "八";
-                case 9:return "九";
-                case 10:return "十";
-                case 11:return "十一";
-                case 12:return "十二";
-            }
-            return "NaN";
-        }
-        if(flag){
-            return numToStr(m)+"月";
-        }else{
-            return m+"月";
-        }
-    }
-    function numToWeek(w,flag){
-        function numToStr(i){
-            switch (i) {
-                case 0:return "日";
-                case 1:return "一";
-                case 2:return "二";
-                case 3:return "三";
-                case 4:return "四";
-                case 5:return "五";
-                case 6:return "六";
-            }
-            return "NaN";
-        }
-        var r = numToStr(w);
-        if(flag){
-            r = "星期"+r;
-        }
-        return r;
-    }
-    function numToQuarter(m,flag){
-        if(m>9){
-            return flag?"四季度":"Q4";
-        }else if(m>6){
-            return flag?"三季度":"Q3";
-        }else if(m>3){
-            return flag?"二季度":"Q2";
-        }else{
-            return flag?"一季度":"Q1";
-        }
-    }
-    function numToHealthyYear(m){
-        return m>6?"下半年":"上半年";
-    }
     var dateUtils = {
         formatDate:function(date,format){
             if(!date || !(date instanceof Date)){
@@ -66,7 +9,7 @@
             if(!format){
                 format = "yyyy-MM-dd HH:mm:ss";
             }
-            var fields = ["yyyy","yy","hy","y","Q","q","MMMM","MMM","MM","M","dddd","ddd","dd","d","HH","H","hh","h","mm","m","ss","s","fff","ff","f","tt","t"];
+            var fields = ["yyyy","yy","y","MM","M","dd","d","HH","H","hh","h","mm","m","ss","s","fff","ff","f"];
             var yyyy = date.getFullYear();
             var data = {
                 y:yyyy - parseInt(yyyy/100)*100,
@@ -81,17 +24,8 @@
             for(var key in data){
                 data[key+key] = data[key]<10?"0"+data[key]:""+data[key];
             }
-            data.MMM = numToMonth(data.M);
-            data.MMMM = numToMonth(data.M,true);
-            data.ddd = numToWeek(date.getDay());
-            data.dddd = numToWeek(date.getDay(),true);
             data.yyyy = yyyy;
             data.fff = data.f<100?(data.f<10?"00"+data.f:"0"+data.f):data.f;
-            data.tt = data.H>=12?"下午":"上午";
-            data.t = data.H>=12?"PM":"AM";
-            data.Q=numToQuarter(data.M,true);
-            data.q=numToQuarter(data.M);
-            data.hy=numToHealthyYear(data.M);
             for(var i=0;i<fields.length;i++){
                 var field = fields[i];
                 format = format.replace(new RegExp(field,"g"),data[field]);
@@ -243,28 +177,7 @@
     /**时间拓展----结束*/
     /*改变json格式化--开始*/
     Date.prototype.toJSON = function () {
-        var date = this;
-        var y = date.getFullYear();
-        var M = date.getMonth()+1;
-        var d = date.getDate();
-        var h = date.getHours();
-        var m = date.getMinutes();
-        var s = date.getSeconds();
-        var ms = date.getMilliseconds();
-        var str = y;
-        str += "-";
-        str += M>9?M:("0"+M);
-        str += "-";
-        str += d>9?d:("0"+d);
-        str += " ";
-        str += h>9?h:("0"+h);
-        str += ":";
-        str += m>9?m:("0"+m);
-        str += ":";
-        str += s>9?s:("0"+s);
-        str += ".";
-        str += ms>99?ms:(ms>9?("0"+ms):("00"+ms));
-        return str;
+        return this.formatDate("yyyy-MM-dd HH:mm:ss.fff");
     };
     if(!window.JSON){
         /*增加json*/
@@ -340,19 +253,9 @@
                         return;
                     }
                 }
-                function parseDate(str){
-                    var y = str.substring(0,4)*1;
-                    var M = str.substring(5,7)*1-1;
-                    var d = str.substring(8,10)*1;
-                    var h = str.substring(11,13)*1;
-                    var m = str.substring(14,16)*1;
-                    var s = str.substring(17,19)*1;
-                    var ms = str.substring(20,23)*1;
-                    return new Date(y,M,d,h,m,s,ms);
-                }
                 function setDate(data,key){
                     if(typeof data[key] == "string" && /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}/.test(data[key])){
-                        data[key] = parseDate(data[key]);
+                        data[key] = Date.parseDate(data[key]);
                     }else{
                         parseDateDg(data[key]);
                     }
@@ -373,17 +276,7 @@
                     }
                     function toDate(data) {
                         if(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}/.test(data)){
-                            function parseDate(str){
-                                var y = str.substring(0,4)*1;
-                                var M = str.substring(5,7)*1-1;
-                                var d = str.substring(8,10)*1;
-                                var h = str.substring(11,13)*1;
-                                var m = str.substring(14,16)*1;
-                                var s = str.substring(17,19)*1;
-                                var ms = str.substring(20,23)*1;
-                                return new Date(y,M,d,h,m,s,ms);
-                            }
-                            return parseDate(data);
+                            return Date.parseDate(data);
                         }else{
                             return data;
                         }
