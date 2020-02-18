@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="./ewebui-ui-1.0.0/boot/utils.js?from=pc&lib=vue&env=test"></script>
+	</head>
+	<body>
+		<div id="app">
+		<div class="mini-row" style="margin-top:200px;"></div>
+		<div class="mini-row">
+			<div class="mini-col-3">语言</div>
+			<div class="mini-col-7">
+				<div id="language" class="mini-combobox" :data="ui.langData" :value="ui.lang" @valuechanged="setLange" ></div>
+			</div>
+			<div class="mini-col-2"></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">皮肤</div>
+			<div class="mini-col-7">
+				<div id="skinbox" class="mini-combobox" :data="ui.skinData" :value="ui.skin" @valuechanged="setSkin"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">模式</div>
+			<div class="mini-col-7">
+				<div id="modebox" class="mini-combobox" :data="ui.modeData" :value="ui.mode" @valuechanged="setMode"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">进度条</div>
+			<div class="mini-col-7"><div class="mini-progressbar" value="55"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">下拉输入框</div>
+			<div class="mini-col-7"><div class="mini-combobox" data="[{id:'1',text:'测试一下'}]"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">多选输入框</div>
+			<div class="mini-col-7"><div class="mini-textboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1,2" text="测试一下,测试一下2"></div></div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">按钮</div>
+			<div class="mini-col-7">
+				<div class="mini-button" iconCls="icon-edit">编辑</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">复选框</div>
+			<div class="mini-col-7">
+				<div class="mini-checkbox" checked="true" readOnly="false" text="复选框"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">列表</div>
+			<div class="mini-col-7">
+				<div class="mini-listbox" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="1"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">复选框组</div>
+			<div class="mini-col-7">
+				<div class="mini-checkboxlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">单选框组</div>
+			<div class="mini-col-7">
+				<div class="mini-radiobuttonlist" data="[{id:'1',text:'测试一下'},{id:'2',text:'测试一下2'}]" value="2"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">日历</div>
+			<div class="mini-col-7">
+				<div class="mini-calendar"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">按钮输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-buttonedit"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">过滤输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-filteredit" value="11" filterValue=">" :filterData="filters" showClose="true"  ></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">输入框</div>
+			<div class="mini-col-7">
+				<span>{{ui.textbox}}</span>
+				<div class="mini-textbox" :value="ui.textbox"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">密码框</div>
+			<div class="mini-col-7">
+				<div class="mini-password" value="123456"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">多行输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-textarea" emptyText="请输入备注"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">日期框</div>
+			<div class="mini-col-7">
+				<div class="mini-datepicker"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">年月框</div>
+			<div class="mini-col-7">
+				<div class="mini-monthpicker"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">数值框</div>
+			<div class="mini-col-7">
+				<div class="mini-spinner" minValue="200" maxValue="250" ></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">时间输入框</div>
+			<div class="mini-col-7">
+				<div class="mini-timespinner" format="HH:mm:ss" ></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">树形下拉框</div>
+			<div class="mini-col-7">
+				<div class="mini-treeselect" url="./json/listTree.json" valueField="id" textField="text"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">下拉搜索选择框</div>
+			<div class="mini-col-7">
+				<div class="mini-lookup" textField="name" valueField="id" popupWidth="auto" popup="#lookupPanel" grid="#lookupGrid" multiSelect="true"></div>
+				<div id="lookupPanel" class="mini-panel" title="header" iconCls="icon-add" style="width:450px;height:250px;display:none;" showCloseButton="true" showHeader="false" bodyStyle="padding:0" borderStyle="border:0">
+					<div id="lookupGrid" class="mini-datagrid" style="width:100%;height:100%;" borderStyle="border:0" showPageSize="false" showPageIndex="false" url="./json/datagrid.json">
+						<div property="columns">
+							<div type="checkcolumn" ></div>
+							<div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
+							<div field="name" width="120" headerAlign="center" allowSort="true">姓名</div>
+							<div field="createtime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd" allowSort="true">创建日期</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">文件上传(html)</div>
+			<div class="mini-col-7">
+				<div class="mini-htmlfile" limitType="*.txt" ></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">表格</div>
+			<div class="mini-col-7">
+				<div class="mini-datagrid" autoLoad="true" style="width:750px;height:250px;" borderStyle="border:0" url="./json/datagrid.json">
+					<div property="columns">
+						<div type="indexcolumn" ></div>
+						<div field="loginname" width="120" headerAlign="center" allowSort="true">员工帐号</div>
+						<div field="name" width="120" headerAlign="center" allowSort="true">姓名</div>
+						<div field="createtime" width="100" headerAlign="center" dateFormat="yyyy-MM-dd" allowSort="true">创建日期</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">树形</div>
+			<div class="mini-col-7">
+				<div class="mini-tree" autoLoad="true" url="./json/tree.json" style="width:300px;" showTreeIcon="true" textField="text" idField="id" value="base" expandOnNodeClick="true"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">树形表格</div>
+			<div class="mini-col-7">
+				<div class="mini-treegrid" style="width:700px;height:280px;" url="./json/tasks.json" showTreeIcon="true" 
+				treeColumn="taskname" idField="UID" parentField="ParentTaskUID" resultAsTree="false" allowResize="true" 
+				expandOnLoad="true">
+					<div property="columns">
+						<div type="indexcolumn"></div>
+						<div name="taskname" field="Name" width="160" >任务名称</div>
+						<div field="PercentComplete" width="80">进度</div> 
+						<div field="Duration" width="60" align="right">工期</div>
+						<div field="Start" width="80" dateFormat="yyyy-MM-dd">开始日期</div>
+						<div field="Finish" width="80" dateFormat="yyyy-MM-dd">完成日期</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">面板</div>
+			<div class="mini-col-7">
+				<div class="mini-panel" title="header" iconCls="icon-add" style="width:300px;height:200px;"
+				    showToolbar="true" showCloseButton="true" showFooter="true"
+				>
+				    <!--toolbar-->
+				    <div property="toolbar">
+				        <div class='mini-button' text='工具栏按钮' @click="btnTest"></div>
+				    </div>
+				    <!--footer-->
+				    <div property="footer">
+				        <div class='mini-button' text='底部按钮'></div>
+				    </div>
+				    <!--body-->
+				    <div>
+						主面板内容
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">弹出窗口</div>
+			<div class="mini-col-7">
+				<div class="mini-button" onclick="mini.get('win').show()">弹出窗口</div>
+				<div id="win" class="mini-window" title="Window" style="width:400px;height:250px;"
+				 showMaxButton="true" showCollapseButton="true" showShadow="true" showToolbar="true" 
+				 showFooter="true" showModal="false" allowResize="true" allowDrag="true">
+					<div property="toolbar" style="padding:5px;">
+						<div class='mini-button' text='工具栏按钮'></div>
+					</div>
+					<div property="footer" style="text-align:right;padding:5px;padding-right:15px;">
+						<div class='mini-button' text='底部按钮'></div>
+					</div> 
+					<div>
+						窗口主内容
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">分离器</div>
+			<div class="mini-col-7">
+				<div class="mini-splitter" style="width:350px;height:200px;">
+				    <div size="30%" showCollapseButton="true">
+				        1
+				    </div>
+				    <div showCollapseButton="true">
+				        2
+				    </div>        
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">分页控件</div>
+			<div class="mini-col-7">
+				<div class="mini-pager" style="width:700px;" 
+				    totalCount="123" sizeList="[5,10,20,100]">        
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">布局管理器</div>
+			<div class="mini-col-7">
+				<div id="layout1" class="mini-layout" style="width:600px;height:400px;">
+				    <div title="north" region="north" height="80" >
+				        north
+				    </div>
+				    <div title="south" region="south" showSplit="false" showHeader="true" height="80"  >
+				        south
+				    </div>
+				    <div title="west" region="west" width="200" >
+				        west
+				    </div>
+				    <div title="east" region="east"  showCloseButton="true" >
+				        east
+				    </div>
+				    <div title="center" region="center" >
+				        center
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">折叠面板组</div>
+			<div class="mini-col-7">
+				<div class="mini-outlookbar " activeIndex="0" style="width:180px;height:200px;" autoCollapse="true">
+				    <div title="Small Items">            
+				        1
+				    </div>
+				    <div title="Large Items">
+				        2
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">菜单导航</div>
+			<div class="mini-col-7">
+				<div class="mini-outlookmenu" style="width:400px;height:300px;" url="./json/outlookmenu.json" idField="id" parentField="pid"
+					textField="text" borderStyle="border:0" expandOnLoad="false"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">树形导航</div>
+			<div class="mini-col-7">
+				<div class="mini-outlooktree" style="width:400px;height:300px;" url="./json/outlooktree.json" textField="text" idField="id" parentField="pid"></div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">标签页</div>
+			<div class="mini-col-7">
+				<div class="mini-tabs" activeIndex="0"  style="width:350px;height:200px;">
+				    <div title="Tab1">
+				        1
+				    </div>
+				    <div title="Tab2" iconCls="icon-cut" >
+				        2
+				    </div>
+				    <div title="Tab3" showCloseButton="true" >
+				        3
+				    </div>
+				    <div title="Tab4" showCloseButton="true" enabled="false">
+				        4
+				    </div>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">菜单</div>
+			<div class="mini-col-7">
+				<ul class="mini-menu">
+				    <li>
+				        <span >操作</span>
+				        <ul>
+				            <li iconCls="icon-new">新建</li>
+				            <li class="separator"></li>
+				            <li iconCls="icon-add">增加</li>    
+				            <li iconCls="icon-edit">修改</li>
+				            <li iconCls="icon-remove">删除</li>                      
+				        </ul>
+				    </li>
+				    <li class="separator"></li>
+				    <li iconCls="icon-open">打开</li>
+				    <li iconCls="icon-remove">关闭</li>
+				</ul>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3">工具栏</div>
+			<div class="mini-col-7">
+				<div class="mini-toolbar">
+				    <a class="mini-button" iconCls="icon-add">增加</a>
+				    <a class="mini-button" iconCls="icon-edit">修改</a>
+				    <a class="mini-button" iconCls="icon-remove">删除</a>
+				    <span class="separator"></span>
+				    <a class="mini-button" plain="true">增加</a>
+				    <a class="mini-button" plain="true">修改</a>
+				    <a class="mini-button" plain="true">删除</a>
+				    <span class="separator"></span>
+				    <div class="mini-textbox"></div>
+				    <a class="mini-button" plain="true">查询</a>
+				</div>
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
+				
+			</div>
+		</div>
+		<div class="mini-row">
+			<div class="mini-col-3"></div>
+			<div class="mini-col-7">
+				
+			</div>
+		</div>
+		</div>
+	</body>
+	<script>
+		var app = new Vue({
+			el: '#app',
+			data: {
+				ui:{
+					lang:mini.getLange(),
+					skin:mini.getSkin(),
+					mode:mini.getMode(),
+					langData:JSON.stringify([]),
+					skinData:JSON.stringify([]),
+					modeData:JSON.stringify([]),
+					textbox:"你好啊"
+				},
+				filters:JSON.stringify([{ text: '大于', value: '>' }, { text: '小于', value: '<' }, { text: '等于', value: '=='}])
+			},
+			methods:{
+				setLange:function(e){
+					mini.setLange(e.value);
+				},
+				setSkin:function(e) {
+					mini.setSkin(e.value)
+				},
+				setMode:function(e) {
+					mini.setMode(e.value)
+				},
+				btnTest:function(e){
+					mini.alert("aaa");
+				}
+			},
+			mounted:function(){
+				var that = this;
+				var languageStrs = "en_US,zh_CN";
+				var skinStrs = "default,blue,pure,gray,olive2003,blue2003,blue2010,bootstrap,jqueryui-cupertino,jqueryui-smoothness,cupertino,metro-white,metro-green,metro-orange,metro-gray,metro-blue";
+				var modeStrs = "default,medium,large,huge";
+				initCombobox(languageStrs,function(list){
+					that.ui.langData = JSON.stringify(list)
+				});
+				initCombobox(skinStrs,function(list){
+					that.ui.skinData = JSON.stringify(list)
+				});
+				initCombobox(modeStrs,function(list){
+					that.ui.modeData = JSON.stringify(list)
+				});
+				function initCombobox(strs,callback){
+					var strsz = strs.split(",");
+					var list = [];
+					$.each(strsz,function(i,item){
+						list.push({id:item,text:item});
+					});
+					callback(list);
+				}
+
+			}
+		})
+	</script>
+	<style type="text/css">
+		.mini-row{
+			margin-top: 10px;
+		}
+	</style>
+</html>
