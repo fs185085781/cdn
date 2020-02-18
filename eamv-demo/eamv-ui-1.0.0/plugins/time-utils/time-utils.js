@@ -1,4 +1,5 @@
 (function(){
+    /**时间拓展----开始*/
     function numToMonth(m,flag){
         function numToStr(i){
             switch (i) {
@@ -203,7 +204,6 @@
             }
         }
     }
-    /**时间拓展----开始*/
     Date.prototype.addMilliseconds = function(x){
         var v = this.getTime() + x;
         return new Date(v);

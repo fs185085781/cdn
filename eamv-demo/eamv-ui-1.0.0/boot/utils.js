@@ -435,7 +435,7 @@
                 }
             }
         }
-        /*改变json格式化*/
+        /*改变json格式化--开始*/
         Date.prototype.toJSON = function () {
             var date = this;
             var y = date.getFullYear();
@@ -587,5 +587,6 @@
                 return strToObj(text,reviver);
             }
         }
+        /*改变json格式化--结束*/
     }
 })()

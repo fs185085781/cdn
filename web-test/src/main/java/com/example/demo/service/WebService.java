@@ -2,10 +2,14 @@ package com.example.demo.service;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.tenfell.tools.nocontroller.inface.NoControllerInterface;
 import cn.tenfell.tools.nocontroller.utilsentity.PoData;
 import cn.tenfell.tools.nocontroller.utilsentity.R;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.swing.text.html.parser.Entity;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class WebService implements NoControllerInterface {
@@ -40,5 +46,9 @@ public class WebService implements NoControllerInterface {
     @Override
     public Object getLoginUser(HttpServletRequest request) {
         return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(IdUtil.createSnowflake(0,1).nextIdStr());
     }
 }
