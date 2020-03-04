@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartUi-miniui</title>
+    <script src="./smart-ui-1.0.0/boot/utils.js?from=miniui"></script>
+    <script src="./smart-ui-1.0.0/miniui3.9.2/router.js"></script>
+    <style>
+        .logo-btn{
+            display: flex;
+            align-items: center;
+            height: 64px;
+            text-decoration:none;
+        }
+        .logo-btn img{
+            height: 32px;
+            margin: 0px 12px;
+        }
+        .logo-btn h1{
+            margin-top: auto;
+            margin-bottom: auto;
+            color:#000000;
+        }
+    </style>
+</head>
+<body>
+<div class="mini-layout" style="width:100%;height:100%;">
+    <div class="app-header" region="north" height="70" showSplit="false" showHeader="false">
+        <a class="logo-btn" href="">
+            <img src="./asserts/images/logo.png"/>
+            <h1>SmartUi-miniui</h1>
+        </a>
+        <div style="position:absolute;top:12px;right:10px;">
+            <span id="user-name-span"></span>
+            <a class="mini-button mini-button-iconTop" iconCls="icon-close" onclick="toLogout()"  plain="true" >退出</a>
+        </div>
+    </div>
+    <div title="south" region="south" showSplit="false" showHeader="false" height="30" >
+        <div style="line-height:28px;text-align:center;cursor:default">Copyright © Power By QQ:185085781 WX:qiantangxiaobei</div>
+    </div>
+    <div title="center" region="center" bodyStyle="overflow:hidden;" style="border:0;">
+        <div class="mini-splitter" style="width:100%;height:100%;" borderStyle="border:0;">
+            <div size="180" maxSize="250" minSize="100" showCollapseButton="true" style="border-width:1px;">
+                <!--Tree-->
+                <ul id="menu-tree" class="mini-tree" style="width:100%;height:100%;">
+                </ul>
+            </div>
+            <div showCollapseButton="false" style="border:0px;" >
+                <!--Tabs-->
+                <div id="main-tabs" class="mini-tabs" style="width:100%;height:100%;"
+                >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var user = {
+        getInfo:function(callback){
+            callback({username:"张三"});
+        },
+        logout:function(){
+
+        },
+        getMenus:function(callback){
+            var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
+            callback(data);
+        }
+    };
+</script>
+<script type="text/javascript">
+    mini.parse();
+    user.getInfo(function(data){
+        $("#user-name-span").html("您好,"+data.username);
+    });
+    $(function(){
+        user.getMenus(function(data){
+            var options={
+                tree:mini.get("menu-tree"),
+                tabs:mini.get("main-tabs"),
+                data:data,
+                idField:"id",
+                pidField:"pid",
+                textField:"text",
+                menuField:"url",
+                htmlHost:utils.host+"/html"
+            }
+            router.init(options);
+            if(window.location.hash){
+                router.routerPageUrl(window.location.hash.substring(1));
+            }
+        });
+    });
+    function toLogout(){
+        user.logout();
+    }
+</script>
+</html>

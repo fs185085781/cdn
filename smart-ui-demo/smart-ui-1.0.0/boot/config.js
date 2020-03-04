@@ -2,7 +2,7 @@
     var c = {
         miniui:"/miniui3.9.2/boot.js",
         vant:"/vant2.5.1/boot.js",
-        antd:"/antd1.4.10/boot.js",
+        antd:"/antd1.4.12/boot.js",
         element:"/element2.13.0/boot.js",
         plugins:{
             md5:[{js:"/plugins/md5/md5.js"}]

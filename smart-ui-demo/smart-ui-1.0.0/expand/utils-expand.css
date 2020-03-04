@@ -55,3 +55,10 @@
     max-height:none !important;
     z-index:999999 !important;
 }
+/*通用样式*/
+html,html body
+{
+    padding:0;border:0;margin:0;
+    width:100%;height:100%;overflow:hidden;
+}
+

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartUi-antd</title>
+    <script src="./smart-ui-1.0.0/boot/utils.js?from=antd"></script>
+    <style>
+        .logo-btn{
+            display: flex;
+            align-items: center;
+            height: 64px;
+            text-decoration:none;
+        }
+        .logo-btn img{
+            height: 32px;
+            margin: 0px 12px;
+        }
+        .logo-btn h1{
+            margin-top: auto;
+            margin-bottom: auto;
+            color:#000000;
+        }
+        .index-menu{
+            border-right:none;
+            width:256px;
+        }
+        .index-tabs{
+            background: #ffffff;
+        }
+        .ant-tabs-extra-content{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" style="height:100%;width:100%;">
+    <a-layout style="height:100%;">
+        <a-layout-sider width="256" style="background:#ffffff;">
+            <div class="ant-pro-sider-menu-logo" id="logo">
+                <a class="logo-btn" href="">
+                    <img src="./asserts/images/logo.png"/>
+                    <h1>SmartUi-antd</h1>
+                </a>
+            </div>
+            <a-menu class="index-menu"
+                    mode="inline"
+                    :defaultOpenKeys ="openKeys"
+                    @click="selectMenuItem"
+                    v-model="menuSelectedKey"
+            >
+                <a-sub-menu :key="menu.id" v-for="menu in menus">
+                    <span slot="title"><span>{{menu.text}}</span></span>
+                    <a-menu-item :key="menu1.id" v-for="menu1 in menu.children">
+                        {{menu1.text}}
+                    </a-menu-item>
+                </a-sub-menu>
+            </a-menu>
+        </a-layout-sider>
+        <a-layout>
+            <a-layout-header style="background:#ffffff;">Header</a-layout-header>
+            <a-layout-content style="padding:10px;">
+                <a-tabs v-model="menuSelectedKey[0]" type="editable-card" @edit="onTabEdit" class="index-tabs" @change="onTabChange">
+                    <a-tab-pane v-for="pane in panes" :tab="pane.text" :key="pane.id" closable="true">
+                        <iframe :src="host+pane.url" frameborder="0" style="width:100%;" :height="iframeHeight"></iframe>
+                    </a-tab-pane>
+                </a-tabs>
+            </a-layout-content>
+            <a-layout-footer style="text-align:center;">
+                Copyright © Power By QQ:185085781 WX:qiantangxiaobei
+            </a-layout-footer>
+        </a-layout>
+
+    </a-layout>
+</div>
+</body>
+<script>
+    /*演示数据*/
+    var user = {
+        getInfo:function(callback){
+            callback({username:"张三"});
+        },
+        logout:function(){
+
+        },
+        getMenus:function(callback){
+            var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
+            callback(data);
+        }
+    };
+</script>
+<script>
+    /*更新iframe高度*/
+    window.addEventListener("resize", function(){
+        toUpdateIframeHeight();
+    });
+    function toUpdateIframeHeight(){
+        utils.delayAction(function(){
+            if(!window.vm){
+                return false;
+            }
+            var tempHeight = document.querySelector(".ant-layout-content").clientHeight;
+            if(!window.lastClientHeight){
+                window.lastClientHeight = tempHeight;
+                return false;
+            }
+            if(tempHeight != window.lastClientHeight){
+                window.lastClientHeight = tempHeight;
+                return false;
+            }
+            return true;
+        },function(){
+            var height = (document.querySelector(".ant-layout-content").clientHeight-document.querySelector(".ant-tabs-nav-scroll").clientHeight-20)+"";
+            vm.iframeHeight = height;
+        });
+    }
+</script>
+<script type="text/javascript">
+    Vue.app({
+        data:{
+            username:"",
+            menus:[],
+            iframeHeight:"0",
+            panes:[],
+            menuSelectedKey:[""],
+            host:utils.host,
+            openKeys:[]
+        },
+        el: '#app',
+        methods: {
+            selectMenuItem:function(item){
+                this.activePane(item.key);
+            },
+            activePane:function(key){
+                var panes = this.panes;
+                var has = false;
+                for(var i=0;i<panes.length;i++){
+                    if(key == panes[i].id){
+                        has = true;
+                        break;
+                    }
+                }
+                if(!has){
+                    panes.push(menumap[key]);
+                }
+                this.menuSelectedKey = [key];
+            },
+            onTabEdit:function(key,action){
+                this[action](key);
+            },
+            remove:function(key){
+                var panes = this.panes;
+                if(panes.length<=1){
+                    return;
+                }
+                var tempPanes = [];
+                for(var i=0;i<panes.length;i++){
+                    if(key != panes[i].id){
+                        tempPanes.push(panes[i]);
+                    }
+                }
+                this.panes = tempPanes;
+                this.activePane(this.panes[0].id);
+            },
+            onTabChange:function(key){
+                this.menuSelectedKey = [key];
+            }
+        },
+        mounted:function(){
+            var that = this;
+            user.getInfo(function(data){
+                that.username = data.username;
+            });
+            user.getMenus(function (data) {
+                window.menumap = {};
+                var defaultKey = "";
+                that.openKeys = [];
+                for(var i=0;i<data.length;i++){
+                    var menu = data[i];
+                    window.menumap[menu.id] = menu;
+                    if(!defaultKey && menu.url){
+                        defaultKey = menu.id;
+                    }
+                    if(!menu.url){
+                        that.openKeys.push(menu.id);
+                    }
+                }
+                that.menus = listToTree(data);
+                that.activePane(defaultKey);
+                toUpdateIframeHeight();
+            });
+        },
+        watch: {
+            openKeys:function (val,aaa) {
+                console.log(val,aaa);
+                console.log('openKeys', val);
+            }
+        }
+    });
+    function listToTree(list){
+        var trees = [];
+        if(!list || list.length == 0){
+            return trees;
+        }
+        while(true){
+            var hasIn = true;
+            for(var i=0;i<list.length;i++){
+                var one = list[i];
+                if(one.isIn){
+                    continue;
+                }
+                one.children = [];
+                if(!one.pid){
+                    trees.push(JSON.parse(JSON.stringify(one)));
+                }else{
+                    var pidObj = dgFindPidObject(one.pid,trees);
+                    if(!pidObj){
+                        hasIn = false;
+                        continue;
+                    }
+                    pidObj.children.push(JSON.parse(JSON.stringify(one)));
+                }
+                one.isIn = true;
+            }
+            if(hasIn){
+                break;
+            }
+        }
+        return trees;
+    }
+    function dgFindPidObject(pid,tempTrees){
+        for(var i=0;i<tempTrees.length;i++){
+            var tempTree = tempTrees[i];
+            if(tempTree.id == pid){
+                return tempTree;
+            }
+            if(tempTree.children && tempTree.children.length>0){
+                return dgFindPidObject(pid,tempTree.children);
+            }
+        }
+        return null;
+    }
+</script>
+</html>
