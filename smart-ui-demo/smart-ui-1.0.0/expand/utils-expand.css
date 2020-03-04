@@ -1,0 +1,57 @@
+.van-toast.success,.mint-toast.success{
+    color: #67C23A;
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+}
+.van-toast.info,.mint-toast.info{
+    color: #909399;
+    background-color: #edf2fc;
+    border-color: #EBEEF5;
+}
+.van-toast.warning,.mint-toast.warning{
+    color: #E6A23C;
+    background-color: #fdf6ec;
+    border-color: #faecd8;
+}
+.van-toast.error,.mint-toast.error{
+    color: #F56C6C;
+    background-color: #fef0f0;
+    border-color: #fde2e2;
+}
+.van-toast.default,.mint-toast.default{
+    color: #ffffff;
+    background-color: #000000b3;
+    border-color: #000000b3;
+}
+.el-message--default {
+    background-color: #000000b3;
+    border-color: #000000b3;
+}
+.el-message--default .el-message__content {
+    color: #ffffff;
+}
+.vant-prompt-input{
+    border: 1px solid #dedede;
+    border-radius: 5px;
+    padding: 4px 5px;
+    width: 100%;
+}
+.ant-message-success{
+    color:#52c41a;
+}
+.ant-message-warning{
+    color: #faad14;
+}
+.ant-message-error{
+    color: #f5222d;
+}
+.ant-message-info{
+    color: #1890ff;
+}
+.ant-spin-body .ant-spin {
+    position: fixed !important;
+    top: 0px;
+    left: 0px;
+    max-height:none !important;
+    z-index:999999 !important;
+}

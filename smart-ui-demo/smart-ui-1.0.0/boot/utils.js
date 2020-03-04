@@ -1,14 +1,14 @@
 (function(){
     window.utils = initUtils();
     var path = getJsPath("utils.js",2);
+    utils.uihost = path;
     window.initConfig=function(config){
-        if(utils.from == "pc"){
-            document.write("<script src='"+path+config.miniui+"'></script>");
-        }else if(utils.from == "m"){
-            document.write("<script src='"+path+config.vant+"'></script>");
-        }
+        document.write("<script src='"+path+config[utils.from]+"'></script>");
         initPlugins(config.plugins,utils.plugins);
+        document.write('<script src="'+path+'/expand/utils-expand.js"></script>');
+        document.write('<link href="' + path+'/expand/utils-expand.css" rel="stylesheet" type="text/css" />');
     }
+    document.write("<script src='"+path+"/plugins/axios/axios.js'></script>");
     document.write("<script src='"+path+"/expand/core-expand.js'></script>");
     document.write("<script src='"+path+"/boot/config.js'></script>");
     function initPlugins(pluginMap,plugins) {
@@ -108,9 +108,6 @@
             }
         }
         var jsSearch = getJsSearch("utils.js");
-        if(jsSearch.from != "m"){
-            jsSearch.from = "pc";
-        }
         var plugins = [];
         if(jsSearch.plugins && jsSearch.plugins.trim()){
             plugins=jsSearch.plugins.trim().split(",");
