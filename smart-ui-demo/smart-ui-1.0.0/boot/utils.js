@@ -34,7 +34,8 @@
                 }
                 if(plugin.js){
                     document.write("<script src='"+path+plugin.js+"'></script>");
-                }else if(plugin.css){
+                }
+                if(plugin.css){
                     document.write('<link href="' + path+plugin.css + '" rel="stylesheet" type="text/css" />');
                 }
             }
