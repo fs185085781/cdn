@@ -47,7 +47,7 @@
             if(id){
                 this.routerPageId(id);
             }else{
-                utils.$msg.errorMsg(url+"没有在路由中注册");
+                utils.$.errorMsg(url+"没有在路由中注册");
             }
         },
         routerPageId:function(id){

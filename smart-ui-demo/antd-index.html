@@ -42,11 +42,7 @@
                     <h1>SmartUi-antd</h1>
                 </a>
             </div>
-            <a-menu class="index-menu"
-                    mode="inline"
-                    @click="selectMenuItem"
-                    v-model="menuSelectedKey"
-            >
+            <a-menu class="index-menu" mode="inline" @click="selectMenuItem" v-model="menuSelectedKey" :open-keys="openKeys">
                 <a-sub-menu :key="menu.id" v-for="menu in menus">
                     <span slot="title"><span>{{menu.text}}</span></span>
                     <a-menu-item :key="menu1.id" v-for="menu1 in menu.children">
@@ -129,12 +125,11 @@
             iframeHeight:"0",
             panes:[],
             menuSelectedKey:[""],
-            host:utils.host
+            host:utils.host,
+            openKeys:[]
         },
-        el: '#app',
         methods: {
             selectMenuItem:function(item){
-                console.log(item);
                 this.routerPageId(item.key);
             },
             routerPageId:function(key){
@@ -185,6 +180,9 @@
                 }else{
                     utils.$.errorMsg(url+"没有在路由中注册");
                 }
+            },
+            onopenChange:function(a){
+                console.log(a);
             }
         },
         mounted:function(){
@@ -195,9 +193,11 @@
             user.getMenus(function (data) {
                 window.menumap = {};
                 window.urlmap = {};
+                that.openKeys = [];
                 for(var i=0;i<data.length;i++){
                     var menu = data[i];
                     if(!menu.url){
+                        that.openKeys.push(menu.id);
                         continue;
                     }
                     window.urlmap[menu.url]=menu;

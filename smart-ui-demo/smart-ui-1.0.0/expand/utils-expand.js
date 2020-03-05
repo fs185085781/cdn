@@ -42,7 +42,7 @@
             }else if(tools.from == "miniui"){
                 mini.showTips({
                     content:text,
-                    state:type,
+                    state:type=="error"?"danger":type,
                     x:"center",
                     y:"top",
                     timeout:3000
@@ -498,6 +498,9 @@
     }
     if(window.Vue){
         Vue.app = function(options){
+            if(!options.el){
+                options.el = "#app";
+            }
             return window.vm = new Vue(options);
         }
     }
