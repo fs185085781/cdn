@@ -438,7 +438,13 @@
             });
             return http;
         },
-        initFileUpload: function (fileCallBack,accept,url) {
+        initFileUpload: function (fileCallBack,options) {
+            if(!options){
+                options = {};
+            }
+            var accept=options.accept;
+            var url=options.url;
+            var multiple=options.multiple;
             var that = this;
             accept = accept || "";
             accept = accept.toLowerCase();
@@ -460,11 +466,14 @@
                 throw "请先销毁后控件后重新初始化";
                 return;
             }
+            if(!that.attrs){
+                that.attrs = {};
+            }
             that.destroyFileUpload = function () {
                 document.querySelector("form[utils='file-upload-form']").parentElement.remove();
-                tools.removeProp(that,"uploadFileAction");
-                tools.removeProp(that,"selectFile");
-                tools.removeProp(that,"destroyFileUpload");
+                that.removeProp(that,"uploadFileAction");
+                that.removeProp(that,"selectFile");
+                that.removeProp(that,"destroyFileUpload");
             }
             that.uploadFileAction = function () {
                 var input = document.querySelector("form[utils='file-upload-form'] input[input='file-upload-input']");
@@ -493,19 +502,11 @@
                     formData, config).then(function(res){
                     that.attrs.uploadStatus = 0;
                     that.cancelLoading();
-                    var data = res.data;
-                    if (data.status == "SUCCESS") {
-                        data.uploadId = that.attrs.uploadId;
-                        var retData = data.data || {};
-                        retData.flag = true;
-                        retData.uploadId = that.attrs.uploadId;
-                        retData.msg = data.msg;
-                        retData.fileName = fileName;
-                        fileCallBack(retData);
-                    } else {
-                        fileCallBack({flag: false, msg: data.msg});
+                    if(window.uploadResHook){
+                        res = window.uploadResHook(res);
                     }
-
+                    res.uploadId = that.attrs.uploadId;
+                    fileCallBack(res);
                 }).catch(function(){
                     that.attrs.uploadStatus = 0;
                     that.cancelLoading();
@@ -525,7 +526,11 @@
             }
             var formDivEle = document.createElement("div");
             formDivEle.style = "display:none;";
-            formDivEle.innerHTML = "<form utils=\"file-upload-form\" enctype=\"multipart/form-data\"><input file-accept=\"" + accept + "\" input=\"file-upload-input\" type=\"file\" name=\"file\" onchange=\"utils.$.uploadFileAction()\"/></form>";
+            var multAttrs = "";
+            if(multiple){
+                multAttrs = "multiple ";
+            }
+            formDivEle.innerHTML = "<form utils=\"file-upload-form\" enctype=\"multipart/form-data\"><input file-accept=\"" + accept + "\" input=\"file-upload-input\" type=\"file\" name=\"file\" "+multAttrs+"onchange=\"utils.$.uploadFileAction()\"/></form>";
             document.querySelector("body").append(formDivEle);
         }
     }

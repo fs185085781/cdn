@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>更多功能等你探索</title>
+    <script src="./smart-ui-1.0.0/boot/utils.js?from=miniui&plugins=md5"></script>
+</head>
+<body style="overflow:auto;">
+<div class="mini-row" style="padding:20px;">
+    <div class="mini-col-12">
+        <h1>用法</h1>
+        <div>
+            1.引入/boot/utils.js这个入口js,此js封装了加载机制,所有拓展均基于此入口进入
+        </div>
+        <div>
+            2.入口js附带两个参数,from是必填参数,决定使用什么ui,目前可选值为miniui,element,antd,mint,vant总共5种,
+            plugins是选填参数,用于加载什么插件,插件配置在config.js可配置,可自定义增加
+        </div>
+        <div>
+            3.入口js会外露一个全局变量utils,里面包含一些常用方法以及utils.$的拓展方法,具体如下:
+        </div>
+        <div class="mini-col-12">
+            <div class="mini-col-1">方法名</div>
+            <div class="mini-col-1">解说</div>
+            <div class="mini-col-4">举例</div>
+            <div class="mini-col-1">方法名</div>
+            <div class="mini-col-1">解说</div>
+            <div class="mini-col-4">举例</div>
+            <div class="mini-col-1">utils.getParamer</div>
+            <div class="mini-col-1">获取页面传参的值</div>
+            <div class="mini-col-4">/1.html?id=456,则utils.getParamer("id")的值为456</div>
+            <div class="mini-col-1">utils.getSearch</div>
+            <div class="mini-col-1">获取页面传参的对象</div>
+            <div class="mini-col-4">/1.html?id=456&name=test,则utils.getSearch()的值为{id:'456',name:'test'}</div>
+            <div class="mini-col-1">utils.setLocalStorage</div>
+            <div class="mini-col-1">设置缓存数据</div>
+            <div class="mini-col-4">utils.setLocalStorage('user',{name:'test',id:'456'}),则将对象存入缓存</div>
+            <div class="mini-col-1">utils.getLocalStorage</div>
+            <div class="mini-col-1">获取缓存数据</div>
+            <div class="mini-col-4">utils.getLocalStorage('user'),则将存取的实体获取,取不到为null</div>
+            <div class="mini-col-1">utils.delLocalStorage</div>
+            <div class="mini-col-1">删除缓存数据</div>
+            <div class="mini-col-4">utils.delLocalStorage('user'),则将缓存的实体删除,下次将读不到数据</div>
+            <div class="mini-col-1">utils.removeProp</div>
+            <div class="mini-col-1">删除对象的属性</div>
+            <div class="mini-col-4">var data={a:1,b:2},utils.removeProp(data,'a'),则data的a属性会被删掉</div>
+            <div class="mini-col-1">utils.delayAction</div>
+            <div class="mini-col-1">延时执行,3个参数</div>
+            <div class="mini-col-4">参数1是fn判断到达临界点,参数2是fn执行的内容,参数3是number是最大等待时间,其中参3选填</div>
+            <div class="mini-col-1">utils.$.successMsg</div>
+            <div class="mini-col-1">成功消息</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.infoMsg</div>
+            <div class="mini-col-1">信息消息</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.warningMsg</div>
+            <div class="mini-col-1">警告消息</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.errorMsg</div>
+            <div class="mini-col-1">错误消息</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.msg</div>
+            <div class="mini-col-1">默认消息</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.loading</div>
+            <div class="mini-col-1">加载全局遮罩</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.cancelLoading</div>
+            <div class="mini-col-1">取消全局遮罩</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.alert</div>
+            <div class="mini-col-1">alert封装</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.confirm</div>
+            <div class="mini-col-1">confirm封装</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.prompt</div>
+            <div class="mini-col-1">prompt封装</div>
+            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.jsonp</div>
+            <div class="mini-col-1">jsonp封装</div>
+            <div class="mini-col-4">详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.post</div>
+            <div class="mini-col-1">ajax的post封装</div>
+            <div class="mini-col-4">详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.get</div>
+            <div class="mini-col-1">ajax的get封装</div>
+            <div class="mini-col-4">详情参见下面示例</div>
+            <div class="mini-col-1">utils.$.initFileUpload</div>
+            <div class="mini-col-1">文件上传组件</div>
+            <div class="mini-col-4">详情参见下面示例</div>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>时间拓展</h1>
+        <div>
+            <span id="time-old"></span>
+            <input id="time-action" value="1" class="mini-combobox" data="jiajianData" width="50"/>
+            <input id="time-value" class="mini-spinner" maxValue="9999999" decimalPlaces="0" width="100"/>
+            <input id="time-type" value="addHours" class="mini-combobox" data="dateTypeData" width="80"/>
+            <a class="mini-button" onclick="timeCalc()">=</a>
+            <input id="time-res" class="mini-textbox" width="200"/>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>数值拓展</h1>
+        <div>
+            默认加法:0.3+0.6=<script>document.write(0.3+0.6)</script>
+            &nbsp;&nbsp;&nbsp;精准加法:(0.3).add(0.6)=<script>document.write((0.3).add(0.6))</script>
+        </div>
+        <div>
+            默认减法:0.6-0.4=<script>document.write(0.6-0.4)</script>
+            &nbsp;&nbsp;&nbsp;精准减法:(0.6).subtract(0.4)=<script>document.write((0.6).subtract(0.4))</script>
+        </div>
+        <div>
+            默认乘法:0.7*0.7=<script>document.write(0.7*0.7)</script>
+            &nbsp;&nbsp;&nbsp;精准乘法:(0.7).multiply(0.7)=<script>document.write((0.7).multiply(0.7))</script>
+        </div>
+        <div>
+            默认除法:0.7/0.2=<script>document.write(0.7/0.2)</script>
+            &nbsp;&nbsp;&nbsp;精准除法:(0.7).divide(0.2)=<script>document.write((0.7).divide(0.2))</script>
+        </div>
+        <div>
+            保留2位小数,进一法:0.243≈(0.243).ceil(2)=<script>document.write((0.243).ceil(2))</script>
+        </div>
+        <div>
+            保留2位小数,去尾法:0.248≈(0.248).floor(2)=<script>document.write((0.248).floor(2))</script>
+        </div>
+        <div>
+            保留2位小数,四舍五入法:0.243≈(0.243).round(2)=<script>document.write((0.243).round(2))</script>
+            &nbsp;&nbsp;&nbsp;0.248≈(0.248).round(2)=<script>document.write((0.248).round(2))</script>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>调试模式</h1>
+        <div>
+            先更改config.js的debug属性为true,然后访问链接的时候带上debug=true,则右下角会出现一个齿轮按钮用于调试,
+            此功能主要用于移动端页面,毕竟PC自带的开发者工具很强大,是吧
+        </div>
+        <div>
+            <a href="more.html?debug=true" target="_blank">点我试试?</a>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>消息和弹窗</h1>
+        <div>
+            所有ui均支持,不同ui,样式稍有差距,其中element,miniui,antd在上部,mint,vant在下部
+        </div>
+        <div>
+            <div id="message-tabs" class="mini-tabs" height="500"></div>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>ajax</h1>
+        <div>所有ui均支持,其中req,post,get,put,del均基于axios编写</div>
+        <div>
+            window.reqOptionsHook用于拦截请求前的配置,可以统一写在config.js中,也可以页面上单独写用于覆盖config.js的默认配置,
+            此方法有两个入参,
+            此方法返回值为{headers:{'Content-Type': 'application/json'},url:utils.host + url,method:method,responseType:"text"}
+            这种格式
+        </div>
+        <div>
+            window.reqResultHook用于拦截请求后的数据,可以统一写在config.js中,也可以页面上单独写用于覆盖config.js的默认拦截,
+            此方法有一个入参,
+            此方法返回值为{flag:true,msg:"操作成功",data:xhr.data}这种格式,其中flag用于判断执行成功与否,和req,post,get,put,del的参数
+            callBackError息息相关,只要flag为false,都认为是失败的意思,而callBackError就是决定失败的时候是否需要回调,如果为true,则无论何时都会回调方法,
+            如果为false,则仅当flag为true的时候会回调方法,flag为false的时候就算有回调方法也不会执行,仅仅用errorMsg弹出提示
+        </div>
+        <div>
+            <a class="mini-button" onclick="ajaxTest(0)">post</a>
+            <a class="mini-button" onclick="ajaxTest(1)">get</a>
+            <a class="mini-button" onclick="ajaxTest(2)">put</a>
+            <a class="mini-button" onclick="ajaxTest(3)">delete</a>
+            <a class="mini-button" onclick="ajaxTest(4)">jsonp</a>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>文件上传</h1>
+        <div>所有ui均支持</div>
+        <div>
+            使用utils.$.initFileUpload(fileCallBack,options);进行初始化后,
+            即可使用utils.$.selectFile(id);进行选文件上传了,附带进度条功能
+        </div>
+        <div>
+            window.uploadUrlHook用于拦截统一上传的url,一般在config.js配置好即可,返回值为字符串,用于上传的链接,
+            utils.$.initFileUpload中的参数options.url将覆盖window.uploadUrlHook的属性
+        </div>
+        <div>
+            window.uploadResHook用于拦截统一的返回json,一般在config.js配置好即可,返回格式为{flag:true,msg:"上传成功",fileId:"",fileIds:[]}
+            如果不配置此拦截过滤,会造成fileCallBack的方法判断困难
+        </div>
+        <div>
+            <a class="mini-button" onclick="utils.$.selectFile()">文件上传</a>
+            <a class="mini-button" onclick="uploadFile()">点我下载刚才上传的文件</a>
+        </div>
+    </div>
+</div>
+<script>
+    //全局axios配置
+    window.reqOptionsHook=function(url,method){
+        var config = {
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            url:"http://localhost:8080" + url,
+            method:method,
+            responseType:"text"
+        };
+        return config;
+    }
+    //全局axios返回拦截
+    window.reqResultHook = function(res){
+        var temp = {flag:false,msg:"操作失败"};
+        if(res.status == "SUCCESS"){
+            temp.flag = true;
+            if(res.data){
+                temp.data = res.data;
+            }
+        }
+        if(res.msg){
+            temp.msg = res.msg;
+        }
+        return temp;
+    }
+    //全局配置上传链接
+    window.uploadUrlHook = function(){
+        return "http://localhost:8080/selevt/webService/upload";
+    }
+    //全局拦截上传返回数据
+    window.uploadResHook = function(res){
+        var temp ={flag:false,msg:"上传失败"};
+        if(res.status == 200){
+            var json = res.data;
+            if(json && json.status == "SUCCESS"){
+                temp.flag = true;
+                temp.msg = "上传成功";
+                temp.fileId = json.data.fileId;
+                temp.fileIds = json.data.fileIds;
+            }
+        }
+        return temp;
+    }
+    var jiajianData = [{id:'1',text:'加'},{id:'-1',text:'减'}];
+    var dateTypeData = [{id:'addYears',text:'年'},{id:'addMonths',text:'月'},
+        {id:'addDays',text:'日'},{id:'addHours',text:'时'},
+        {id:'addMinutes',text:'分'},{id:'addSeconds',text:'秒'},{id:'addMilliseconds',text:'毫秒'}];
+    mini.parse();
+    function timeCalc(){
+        var type = mini.get("time-type").getValue();
+        var date = $("#time-old")[0].data;
+        var val = mini.get("time-value").getValue();
+        var action = mini.get("time-action").getValue();
+        var res = date[type](val*action).formatDate("yyyy-MM-dd HH:mm:ss.fff");
+        mini.get("time-res").setValue(res);
+    }
+    var ajaxCallBack=function(res){
+        console.log("ajax",res);
+    }
+    function ajaxTest(type){
+        switch (type) {
+            case 0:
+                utils.$.post("/json/webService/ajax", {id:'456'},ajaxCallBack);
+                break;
+            case 1:
+                utils.$.get("/json/webService/ajax?id=456",ajaxCallBack);
+                break;
+            case 2:
+                utils.$.put("/json/webService/ajax", {id:'456'},ajaxCallBack);
+                break;
+            case 3:
+                utils.$.del("/json/webService/ajax?id=456",ajaxCallBack);
+                break;
+            case 4:
+                utils.$.jsonp("https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",function(res){
+                    if(res.ret == 0){
+                        var data = JSON.parse(res.data);
+                        console.log(data);
+                    }
+                });
+                break;
+        }
+    }
+    function uploadFile(){
+        if(!window.lastUploadFileId){
+            utils.$.errorMsg("请先上传文件后重试");
+            return;
+        }
+        var url = "http://localhost:8080/selevt/webService/down?fileId="+window.lastUploadFileId;
+        window.open(url);
+    }
+    (function(){
+        var nowDate = new Date();
+        $("#time-old")[0].data = nowDate;
+        $("#time-old").html(nowDate.formatDate("yyyy-MM-dd HH:mm:ss.fff"));
+        var messageTabs = mini.get("message-tabs");
+        var list=["vant","antd","mint","element","miniui"];
+        var first = null;
+        $.each(list,function(i,item){
+            var temp = {name:item,title:item,url:utils.host+"/html/"+item+"-message.html"};
+            messageTabs.addTab(temp,i);
+            if(!first){
+                first = temp;
+            }
+        });
+        messageTabs.activeTab(first);
+        utils.$.initFileUpload(function(res){
+            utils.$.msg(res.msg);
+            if(res.flag){
+                window.lastUploadFileId = res.fileId;
+            }
+        },{multiple:false});
+    })()
+</script>
+</body>
+</html>

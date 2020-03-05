@@ -4,6 +4,16 @@
     utils.uihost = path;
     window.initConfig=function(config){
         document.write("<script src='"+path+config[utils.from]+"'></script>");
+        if(config.debug){
+            if(utils.getParamer("debug") == "true"){
+                utils.plugins.push("eruda");
+                utils.delayAction(function(){
+                    return window.eruda!=null;
+                },function(){
+                    window.eruda.init();
+                });
+            }
+        }
         initPlugins(config.plugins,utils.plugins);
         document.write('<script src="'+path+'/expand/utils-expand.js"></script>');
         document.write('<link href="' + path+'/expand/utils-expand.css" rel="stylesheet" type="text/css" />');
