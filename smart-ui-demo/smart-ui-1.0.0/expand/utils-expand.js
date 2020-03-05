@@ -22,7 +22,7 @@
             if(!type){
                 type = "default";
             }
-            if(tools.from == "vant"){
+            if(tools.from == "mint" || tools.from == "vant"){
                 that.attrs.vue.$toast({
                     message:text,
                     duration:3000,
@@ -55,7 +55,11 @@
             }
             var that = this;
             that.cancelLoading();
-            if(tools.from == "miniui"){
+            if(tools.from == "mint"){
+                that.attrs.vue.$indicator.open({
+                    text:text
+                });
+            }else if(tools.from == "miniui"){
                 that.attrs.loading = mini.loading(text);
             }else if(tools.from == "element"){
                 var loading = that.attrs.vue.$loading({
@@ -90,7 +94,9 @@
         },
         cancelLoading:function(){
             var that = this;
-            if(tools.from == "miniui"){
+            if(tools.from == "mint"){
+                that.attrs.vue.$indicator.close();
+            }else if(tools.from == "miniui"){
                 if(that.attrs.loading){
                     mini.hideMessageBox(that.attrs.loading);
                     tools.removeProp(that.attrs,"loading");
@@ -116,7 +122,14 @@
         },
         alert:function(text,callback){
             var that = this;
-            if(tools.from == "miniui"){
+            if(tools.from == "mint"){
+                that.attrs.vue.$messagebox.alert(text).then(function(){
+                    if(!callback){
+                        return;
+                    }
+                    callback(1);
+                });
+            }else if(tools.from == "miniui"){
                 mini.alert(text,"提示",function(action){
                     if(!callback){
                         return;
@@ -167,7 +180,17 @@
         },
         confirm:function(text,callback){
             var that = this;
-            if(tools.from == "miniui"){
+            if(tools.from == "mint"){
+                that.attrs.vue.$messagebox.confirm(text).then(function(){
+                    if(callback){
+                        callback(1);
+                    }
+                }).catch(function () {
+                    if(callback){
+                        callback(0);
+                    }
+                });
+            }else if(tools.from == "miniui"){
                 mini.confirm(text,"提示",function(action){
                     if(!callback){
                         return;
@@ -227,7 +250,17 @@
         },
         prompt:function(text,callback){
             var that = this;
-            if(tools.from == "miniui"){
+            if(tools.from == "mint"){
+                that.attrs.vue.$messagebox.prompt(text).then(function(data){
+                    if(callback){
+                        callback(1,data.value);
+                    }
+                }).catch(function () {
+                    if(callback){
+                        callback(0);
+                    }
+                });
+            }else if(tools.from == "miniui"){
                 mini.prompt(text,"提示",function(action,value){
                     if(!callback){
                         return;

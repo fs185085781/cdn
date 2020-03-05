@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>多模块智能ui</title>
+    <script src="./smart-ui-1.0.0/boot/utils.js?from=vant"></script>
+</head>
+<body>
+<div id="app">
+    <van-divider>多模块智能前端ui-demo</van-divider>
+
+    <van-panel :title="item.title" :desc="item.desc" status="" v-for="item in list">
+        <div style="padding:10px;">{{item.text}}</div>
+        <div slot="footer">
+            <van-row>
+                <div style="float:right">
+                    <a :href="item.url" target="_blank">
+                        <van-button size="small" type="primary">查看demo</van-button>
+                    </a>
+                    <a :href="item.apiurl" target="_blank">
+                        <van-button size="small" type="primary">官方文档</van-button>
+                    </a>
+                </div>
+            </van-row>
+        </div>
+    </van-panel>
+</div>
+</body>
+<script>
+    Vue.app({
+        data:{
+            list:[]
+        },
+        mounted:function() {
+            var list = [
+                {
+                    title:"antd",
+                    desc:"Ant Design of Vue",
+                    text:"antd 是基于 Ant Design 设计体系的 VUE UI 组件库，主要用于研发企业级中后台产品，蚂蚁的企业级产品。",
+                    url:"./antd-index.html",
+                    apiurl:"https://www.antdv.com/docs/vue/introduce-cn/"
+                },
+                {
+                    title:"miniui",
+                    desc:"MiniUi of Jquery",
+                    text:"miniui 是基于Jquery的WEB组件库，主要用于研发企业级中后台产品。",
+                    url:"./miniui-index.html",
+                    apiurl:"http://www.miniui.com/docs/api/index.html#ui=base"
+                }
+            ];
+            this.list = list;
+        }
+    });
+</script>
+</html>
