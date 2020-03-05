@@ -30,21 +30,40 @@
                     position:"bottom"
                 });
             }else if(tools.from == "element"){
+                that.attrs.vue.$message.closeAll();
+                var offset = "20";
+                if(window.innerHeight>window.innerWidth){
+                    offset = window.innerHeight-50-32;
+                }
                 that.attrs.vue.$message({
                     message: text,
-                    type: type
+                    type: type,
+                    offset:offset
                 });
             }else if(tools.from == "antd"){
+                var top = "16px";
+                if(window.innerHeight>window.innerWidth){
+                    top = (window.innerHeight-50-32)+"px";
+                }
+                that.attrs.vue.$message.config({
+                    top:top,
+                    maxCount: 1
+                });
                 that.attrs.vue.$message.open({
                     content: text,
-                    type: type
+                    type: type,
+                    top:top
                 });
             }else if(tools.from == "miniui"){
+                var y = "top";
+                if(window.innerHeight>window.innerWidth){
+                    y = "bottom";
+                }
                 mini.showTips({
                     content:text,
                     state:type=="error"?"danger":type,
                     x:"center",
-                    y:"top",
+                    y:y,
                     timeout:3000
                 });
             }
@@ -154,6 +173,9 @@
                         }
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }else if(tools.from == "vant"){
                 that.attrs.vue.$dialog.alert({
                     title: '提示',
@@ -176,6 +198,9 @@
                         }
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }
         },
         confirm:function(text,callback){
@@ -215,6 +240,9 @@
                         callback(0);
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }else if(tools.from == "vant"){
                 that.attrs.vue.$dialog.confirm({
                     title: '提示',
@@ -246,6 +274,9 @@
                         }
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }
         },
         prompt:function(text,callback){
@@ -284,6 +315,9 @@
                         callback(0);
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }else if(tools.from == "vant"){
                 var id = "vant-prompt-"+Date.now()+parseInt(Math.random()*10000);
                 var input = '\n<input id="'+id+'" class="vant-prompt-input"/>';
@@ -335,6 +369,9 @@
                         }
                     }
                 });
+                if(window.dialogToCenter){
+                    window.dialogToCenter();
+                }
             }
         },
         jsonp:function(url,callback,callbackName,jsonp){

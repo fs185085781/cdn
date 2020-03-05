@@ -169,7 +169,7 @@
     <div class="mini-col-12">
         <h1>消息和弹窗</h1>
         <div>
-            所有ui均支持,不同ui,样式稍有差距,其中element,miniui,antd在上部,mint,vant在下部
+            所有ui均支持,不同ui,样式稍有差距,其中element,miniui,antd在PC页面的时候在上部,在手机页面的时候在下部,mint,vant均在下部
         </div>
         <div>
             <div id="message-tabs" class="mini-tabs" height="500"></div>
@@ -354,6 +354,9 @@
         var first = null;
         $.each(list,function(i,item){
             var temp = {name:item,title:item,url:utils.host+"/html/"+item+"-message.html"};
+            if(item == "vant" || item == "mint"){
+                temp.bodyStyle = "width:256px;border:1px solid #ccc;";
+            }
             messageTabs.addTab(temp,i);
             if(!first){
                 first = temp;

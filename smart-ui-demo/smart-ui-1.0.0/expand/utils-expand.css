@@ -30,6 +30,11 @@
 .el-message--default .el-message__content {
     color: #ffffff;
 }
+.el-message{
+    max-width: calc(100vw - 16px);
+    width: 380px;
+    min-width: auto;
+}
 .vant-prompt-input{
     border: 1px solid #dedede;
     border-radius: 5px;

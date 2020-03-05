@@ -1,9 +1,12 @@
 .el-dialog,.el-message-box{
     position: absolute !important;
-    left:40vw;
     top:15vw;
+    left:calc((100vw - 420px)/2);
     margin-top:0px !important;
 }
 .el-dialog .el-dialog__header,.el-message-box .el-message-box__header{
     cursor: pointer;
+}
+.el-message-box{
+    max-width:calc(100vw - 16px);
 }
