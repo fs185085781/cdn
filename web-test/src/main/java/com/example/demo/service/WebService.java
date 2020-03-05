@@ -51,4 +51,7 @@ public class WebService implements NoControllerInterface {
     public Object getLoginUser(HttpServletRequest request) {
         return null;
     }
+
+    public static void main(String[] args) {
+    }
 }

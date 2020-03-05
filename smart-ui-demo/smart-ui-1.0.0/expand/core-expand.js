@@ -168,6 +168,38 @@
             }
         })(temp);
     }
+    var betweenMethods = [
+        {prop:"betweenMilliseconds",pow:1},
+        {prop:"betweenSeconds",pow:1000},
+        {prop:"betweenMinutes",pow:1000*60},
+        {prop:"betweenHours",pow:1000*60*60},
+        {prop:"betweenDays",pow:1000*60*60*24}
+    ];
+    for(var i=0;i<betweenMethods.length;i++){
+        var temp = betweenMethods[i];
+        (function(map){
+            Date.prototype[map.prop] = function(x){
+                var cha = x.getTime() - this.getTime();
+                return parseInt(cha/map.pow);
+            }
+        })(temp);
+    }
+    Date.prototype.betweenMonths=function(x){
+        var cha = x.getFullYear()*12+x.getMonth()-this.getFullYear()*12-this.getMonth();
+        if(x.getTime()>=this.addMonths(cha).getTime()){
+            return cha;
+        }else{
+            return cha-1;
+        }
+    }
+    Date.prototype.betweenYears=function(x){
+        var cha = x.getFullYear()-this.getFullYear();
+        if(x.getTime()>=this.addYears(cha).getTime()){
+            return cha;
+        }else{
+            return cha-1;
+        }
+    }
     Date.prototype.formatDate = function(format){
         return dateUtils.formatDate(this,format);
     };
