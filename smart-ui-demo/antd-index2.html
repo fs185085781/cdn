@@ -141,7 +141,26 @@
         },
         methods: {
             selectMenuItem:function(item){
-                router.routerPageId(item.key);
+                this.routerPageId(item.key);
+            },
+            routerPageId:function(key){
+                var panes = this.panes;
+                var has = false;
+                for(var i=0;i<panes.length;i++){
+                    if(key == panes[i].id){
+                        has = true;
+                        break;
+                    }
+                }
+                var menu = menumap[key];
+                if(!has){
+                    panes.push(menu);
+                }
+                this.menuSelectedKey = [key];
+                history.pushState({status: 0} ,'' ,'#'+menu.url);
+                this.$nextTick(function(){
+                    toUpdateIframeHeight();
+                });
             },
             onTabEdit:function(key,action){
                 this[action](key);
@@ -156,14 +175,25 @@
                 }
                 this.panes = tempPanes;
                 if(this.panes.length>0){
-                    router.routerPageId(this.panes[0].id);
+                    this.routerPageId(this.panes[0].id);
                 }
             },
             onTabChange:function(key){
-                router.routerPageId(key);
+                this.routerPageId(key);
             },
             toLogut:function(){
                 user.logout();
+            },
+            routerPageUrl:function(url){
+                var menu = window.urlmap[url];
+                if(menu){
+                    this.routerPageId(menu.id);
+                }else{
+                    utils.$.errorMsg(url+"没有在路由中注册");
+                }
+            },
+            onopenChange:function(a){
+                console.log(a);
             }
         },
         mounted:function(){
@@ -172,23 +202,74 @@
                 that.username = data.username;
             });
             user.getMenus(function (data) {
-                var options = {
-                    vm:that,
-                    panesField:"panes",
-                    selectKeyField:"menuSelectedKey",
-                    menuUrlField:"url",
-                    menus:data,
-                    menusField:"menus",
-                    menuIdField:"id",
-                    menuPidField:"pid",
-                    openKeysField:"openKeys",
-                    onRouter:function(){
-                        toUpdateIframeHeight();
+                window.menumap = {};
+                window.urlmap = {};
+                that.openKeys = [];
+                for(var i=0;i<data.length;i++){
+                    var menu = data[i];
+                    if(!menu.url){
+                        that.openKeys.push(menu.id);
+                        continue;
                     }
-                };
-                router.init(options);
+                    window.urlmap[menu.url]=menu;
+                    window.menumap[menu.id] = menu;
+                }
+                that.menus = listToTree(data);
+                if(window.location.hash){
+                    that.$nextTick(function(){
+                        that.routerPageUrl(window.location.hash.substring(1));
+                    });
+                }
             });
         }
     });
+    function listToTree(list){
+        var trees = [];
+        if(!list || list.length == 0){
+            return trees;
+        }
+        for(var i=0;i<100;i++){
+            var hasIn = true;
+            for(var i=0;i<list.length;i++){
+                var one = list[i];
+                if(one.isIn){
+                    continue;
+                }
+                one.children = [];
+                if(!one.pid){
+                    //没有pid 说明是顶级
+                    trees.push(JSON.parse(JSON.stringify(one)));
+                }else{
+                    //有pid 说明是子级
+                    var pidObj = dgFindPidObject(one.pid,trees);
+                    if(!pidObj){
+                        hasIn = false;
+                        continue;
+                    }
+                    pidObj.children.push(JSON.parse(JSON.stringify(one)));
+                }
+                one.isIn = true;
+            }
+            if(hasIn){
+                break;
+            }
+        }
+        return trees;
+    }
+    function dgFindPidObject(pid,tempTrees){
+        for(var i=0;i<tempTrees.length;i++){
+            var tempTree = tempTrees[i];
+            if(tempTree.id == pid){
+                return tempTree;
+            }
+        }
+        for(var i=0;i<tempTrees.length;i++){
+            var tempTree = tempTrees[i];
+            if(tempTree.children && tempTree.children.length>0){
+                return dgFindPidObject(pid,tempTree.children);
+            }
+        }
+        return null;
+    }
 </script>
 </html>

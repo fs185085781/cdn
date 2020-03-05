@@ -6,16 +6,26 @@
     <script src="./smart-ui-1.0.0/boot/utils.js?from=vant"></script>
 </head>
 <body>
-<div id="app">
-    <van-divider>多模块智能前端ui-demo</van-divider>
-
+<div id="app" style="overflow:auto;height:100%;">
+    <van-panel title="多模块智能前端ui-demo">
+        <div style="padding:10px;">
+            <van-row>
+                <van-col span="24">1.封装了时间差计算,精准数值计算,时间格式化</van-col>
+                <van-col span="24">2.封装了5个框架的消息和弹窗</van-col>
+                <van-col span="24">3.使element,antd的模态窗支持移动</van-col>
+                <van-col span="24">4.简便引入机制,只需引一个js就能搞定</van-col>
+                <van-col span="24">5.封装了多文件上传组件</van-col>
+                <van-col span="24">6.封装了ajax闭路机制</van-col>
+            </van-row>
+        </div>
+    </van-panel>
     <van-panel :title="item.title" :desc="item.desc" status="" v-for="item in list">
         <div style="padding:10px;">{{item.text}}</div>
         <div slot="footer">
             <van-row>
                 <div style="float:right">
                     <a :href="item.url" target="_blank">
-                        <van-button size="small" type="primary">查看demo</van-button>
+                        <van-button size="small" type="info">查看demo</van-button>
                     </a>
                     <a :href="item.apiurl" target="_blank">
                         <van-button size="small" type="primary">官方文档</van-button>
@@ -36,7 +46,7 @@
                 {
                     title:"antd",
                     desc:"Ant Design of Vue",
-                    text:"antd 是基于 Ant Design 设计体系的 VUE UI 组件库，主要用于研发企业级中后台产品，蚂蚁的企业级产品。",
+                    text:"antd是基于Ant Design设计体系的VUE UI组件库，主要用于研发企业级中后台产品，蚂蚁的企业级产品。",
                     url:"./antd-index.html",
                     apiurl:"https://www.antdv.com/docs/vue/introduce-cn/"
                 },
@@ -46,6 +56,24 @@
                     text:"miniui 是基于Jquery的WEB组件库，主要用于研发企业级中后台产品。",
                     url:"./miniui-index.html",
                     apiurl:"http://www.miniui.com/docs/api/index.html#ui=base"
+                },{
+                    title:"element",
+                    desc:"Element-Ui of Vue",
+                    text:"element-ui 是基于Vue的组件库，主要用于研发企业级中后台产品，饿了么的企业级产品。",
+                    url:"./element-index.html",
+                    apiurl:"https://element.eleme.cn/#/zh-CN/component/installation"
+                },{
+                    title:"vant",
+                    desc:"Vant of Vue",
+                    text:"vant 是基于Vue的移动端组件库，主要用于移动端H5，有赞的得力产品。",
+                    url:"./vant-index.html",
+                    apiurl:"https://youzan.github.io/vant/#/zh-CN/"
+                },{
+                    title:"mint",
+                    desc:"Mint of Vue",
+                    text:"mint 是基于Vue的移动端组件库，主要用于移动端H5。",
+                    url:"./mint-index.html",
+                    apiurl:"http://mint-ui.github.io/docs/#/zh-cn2"
                 }
             ];
             this.list = list;
