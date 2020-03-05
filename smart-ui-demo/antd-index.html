@@ -44,7 +44,6 @@
             </div>
             <a-menu class="index-menu"
                     mode="inline"
-                    :defaultOpenKeys ="openKeys"
                     @click="selectMenuItem"
                     v-model="menuSelectedKey"
             >
@@ -57,7 +56,15 @@
             </a-menu>
         </a-layout-sider>
         <a-layout>
-            <a-layout-header style="background:#ffffff;">Header</a-layout-header>
+            <a-layout-header style="background:#ffffff;">
+                <a-row>
+                    <div style="float:right;">
+                        <a-avatar icon="user"></a-avatar>
+                        <span style="margin-left:3px;">{{username}}</span>
+                        <a-button style="margin-left:10px;" type="link" @click="toLogut">退出</a-button>
+                    </div>
+                </a-row>
+            </a-layout-header>
             <a-layout-content style="padding:10px;">
                 <a-tabs v-model="menuSelectedKey[0]" type="editable-card" @edit="onTabEdit" class="index-tabs" @change="onTabChange">
                     <a-tab-pane v-for="pane in panes" :tab="pane.text" :key="pane.id" closable="true">
@@ -80,7 +87,7 @@
             callback({username:"张三"});
         },
         logout:function(){
-
+            utils.$.successMsg("您已成功退出");
         },
         getMenus:function(callback){
             var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
@@ -122,15 +129,14 @@
             iframeHeight:"0",
             panes:[],
             menuSelectedKey:[""],
-            host:utils.host,
-            openKeys:[]
+            host:utils.host
         },
         el: '#app',
         methods: {
             selectMenuItem:function(item){
-                this.activePane(item.key);
+                this.routerPageId(item.key);
             },
-            activePane:function(key){
+            routerPageId:function(key){
                 var panes = this.panes;
                 var has = false;
                 for(var i=0;i<panes.length;i++){
@@ -139,19 +145,21 @@
                         break;
                     }
                 }
+                var menu = menumap[key];
                 if(!has){
-                    panes.push(menumap[key]);
+                    panes.push(menu);
                 }
                 this.menuSelectedKey = [key];
+                history.pushState({status: 0} ,'' ,'#'+menu.url);
+                this.$nextTick(function(){
+                    toUpdateIframeHeight();
+                });
             },
             onTabEdit:function(key,action){
                 this[action](key);
             },
             remove:function(key){
                 var panes = this.panes;
-                if(panes.length<=1){
-                    return;
-                }
                 var tempPanes = [];
                 for(var i=0;i<panes.length;i++){
                     if(key != panes[i].id){
@@ -159,10 +167,23 @@
                     }
                 }
                 this.panes = tempPanes;
-                this.activePane(this.panes[0].id);
+                if(this.panes.length>0){
+                    this.routerPageId(this.panes[0].id);
+                }
             },
             onTabChange:function(key){
-                this.menuSelectedKey = [key];
+                this.routerPageId(key);
+            },
+            toLogut:function(){
+                user.logout();
+            },
+            routerPageUrl:function(url){
+                var menu = window.urlmap[url];
+                if(menu){
+                    this.routerPageId(menu.id);
+                }else{
+                    utils.$.errorMsg(url+"没有在路由中注册");
+                }
             }
         },
         mounted:function(){
@@ -172,28 +193,22 @@
             });
             user.getMenus(function (data) {
                 window.menumap = {};
-                var defaultKey = "";
-                that.openKeys = [];
+                window.urlmap = {};
                 for(var i=0;i<data.length;i++){
                     var menu = data[i];
-                    window.menumap[menu.id] = menu;
-                    if(!defaultKey && menu.url){
-                        defaultKey = menu.id;
-                    }
                     if(!menu.url){
-                        that.openKeys.push(menu.id);
+                        continue;
                     }
+                    window.urlmap[menu.url]=menu;
+                    window.menumap[menu.id] = menu;
                 }
                 that.menus = listToTree(data);
-                that.activePane(defaultKey);
-                toUpdateIframeHeight();
+                if(window.location.hash){
+                    that.$nextTick(function(){
+                        that.routerPageUrl(window.location.hash.substring(1));
+                    });
+                }
             });
-        },
-        watch: {
-            openKeys:function (val,aaa) {
-                console.log(val,aaa);
-                console.log('openKeys', val);
-            }
         }
     });
     function listToTree(list){

@@ -32,7 +32,7 @@
         </a>
         <div style="position:absolute;top:12px;right:10px;">
             <span id="user-name-span"></span>
-            <a class="mini-button mini-button-iconTop" iconCls="icon-close" onclick="toLogout()"  plain="true" >退出</a>
+            <a class="mini-button mini-button-iconTop" onclick="toLogout()"  plain="true" >退出</a>
         </div>
     </div>
     <div title="south" region="south" showSplit="false" showHeader="false" height="30" >
@@ -61,7 +61,7 @@
             callback({username:"张三"});
         },
         logout:function(){
-
+            utils.$.successMsg("您已成功退出");
         },
         getMenus:function(callback){
             var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
