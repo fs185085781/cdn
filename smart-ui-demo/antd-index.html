@@ -134,6 +134,7 @@
         el: '#app',
         methods: {
             selectMenuItem:function(item){
+                console.log(item);
                 this.routerPageId(item.key);
             },
             routerPageId:function(key){
