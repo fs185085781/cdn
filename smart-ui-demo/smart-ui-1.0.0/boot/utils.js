@@ -3,6 +3,9 @@
     var path = getJsPath("utils.js",2);
     utils.uihost = path;
     window.initConfig=function(config){
+        if(window.smartInitHook){
+            window.smartInitHook(config);
+        }
         document.write("<script src='"+path+config[utils.from]+"'></script>");
         if(config.debug){
             if(utils.getParamer("debug") == "true"){
@@ -33,10 +36,10 @@
                     continue;
                 }
                 if(plugin.js){
-                    document.write("<script src='"+path+plugin.js+"'></script>");
+                    document.write("<script src='"+plugin.js+"'></script>");
                 }
                 if(plugin.css){
-                    document.write('<link href="' + path+plugin.css + '" rel="stylesheet" type="text/css" />');
+                    document.write('<link href="' + plugin.css + '" rel="stylesheet" type="text/css" />');
                 }
             }
         }
