@@ -86,7 +86,14 @@
             utils.$.successMsg("您已成功退出");
         },
         getMenus:function(callback){
-            var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
+            var data = [
+                {"id":"0cc175b9c0f1b6a831c399e269772661","text":"设置","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"用户设置","url":"/html/tab.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},
+                {"id":"36eba1e1e343279857ea7f69a597324e","text":"系统设置","url":"/html/tab2.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2},
+                {"id":"4251ad75fd7e037c6095c0bf5924a5be","text":"统计","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"a3c56aa6943d79989069b3d04b2da6af","text":"单点统计","url":"/html/tab3.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":1},
+                {"id":"a297baa51854616d989470cdb0f107ee","text":"多点统计","url":"/html/tab4.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":2}
+                ];
             callback(data);
         }
     };
@@ -217,7 +224,7 @@
         if(!list || list.length == 0){
             return trees;
         }
-        while(true){
+        for(var i=0;i<100;i++){
             var hasIn = true;
             for(var i=0;i<list.length;i++){
                 var one = list[i];
@@ -226,8 +233,10 @@
                 }
                 one.children = [];
                 if(!one.pid){
+                    //没有pid 说明是顶级
                     trees.push(JSON.parse(JSON.stringify(one)));
                 }else{
+                    //有pid 说明是子级
                     var pidObj = dgFindPidObject(one.pid,trees);
                     if(!pidObj){
                         hasIn = false;
@@ -249,6 +258,9 @@
             if(tempTree.id == pid){
                 return tempTree;
             }
+        }
+        for(var i=0;i<tempTrees.length;i++){
+            var tempTree = tempTrees[i];
             if(tempTree.children && tempTree.children.length>0){
                 return dgFindPidObject(pid,tempTree.children);
             }

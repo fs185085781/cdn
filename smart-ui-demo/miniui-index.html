@@ -56,6 +56,7 @@
 </div>
 </body>
 <script>
+    /*演示数据*/
     var user = {
         getInfo:function(callback){
             callback({username:"张三"});
@@ -64,7 +65,14 @@
             utils.$.successMsg("您已成功退出");
         },
         getMenus:function(callback){
-            var data = [{"id":"0cc175b9c0f1b6a831c399e269772661","text":"表情设置","url":"","type":",1,","pid":null,"orderField":0},{"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"表情管理","url":"/biaoqingset/biaoqing/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},{"id":"36eba1e1e343279857ea7f69a597324e","text":"购买记录","url":"/biaoqingset/record/list.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2}];
+            var data = [
+                {"id":"0cc175b9c0f1b6a831c399e269772661","text":"设置","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"用户设置","url":"/html/tab.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},
+                {"id":"36eba1e1e343279857ea7f69a597324e","text":"系统设置","url":"/html/tab2.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2},
+                {"id":"4251ad75fd7e037c6095c0bf5924a5be","text":"统计","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"a3c56aa6943d79989069b3d04b2da6af","text":"单点统计","url":"/html/tab3.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":1},
+                {"id":"a297baa51854616d989470cdb0f107ee","text":"多点统计","url":"/html/tab4.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":2}
+            ];
             callback(data);
         }
     };
@@ -84,7 +92,7 @@
                 pidField:"pid",
                 textField:"text",
                 menuField:"url",
-                htmlHost:utils.host+"/html"
+                htmlHost:utils.host
             }
             router.init(options);
             if(window.location.hash){
