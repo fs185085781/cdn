@@ -94,12 +94,37 @@
     <div class="mini-col-12">
         <h1>时间拓展</h1>
         <div>
-            <span id="time-old"></span>
+            时间计算:
+            <input id="time-old" class="mini-datepicker" showTime="true" format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss" width="160"/>
             <input id="time-action" value="1" class="mini-combobox" data="jiajianData" width="50"/>
             <input id="time-value" class="mini-spinner" maxValue="9999999" decimalPlaces="0" width="100"/>
             <input id="time-type" value="addHours" class="mini-combobox" data="dateTypeData" width="80"/>
             <a class="mini-button" onclick="timeCalc()">=</a>
-            <input id="time-res" class="mini-textbox" width="200"/>
+            <input id="time-res" class="mini-textbox" width="200" enabled="false"/>
+        </div>
+        <div style="margin-top:10px;">
+            时间求差:
+            <input id="time-old2" class="mini-datepicker" showTime="true" format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss" width="160" onvaluechanged="timeBetweenChange"/>
+            到
+            <input id="time-new" class="mini-datepicker" showTime="true" format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss" width="160" onvaluechanged="timeBetweenChange"/>
+            相差
+            <input id="time-res2" class="mini-textbox" width="100" enabled="false"/>
+            <input id="time-type2" class="mini-combobox" data="dateTypeData2" width="80" onvaluechanged="timeBetweenChange" enabled="false"/>
+        </div>
+        <div style="margin-top:10px;">
+            时间格式化:
+            <input id="time-old3" class="mini-datepicker" showTime="true" format="yyyy-MM-dd HH:mm:ss" timeFormat="HH:mm:ss" width="160"/>
+            使用
+            <input class="mini-textbox" width="200" onvaluechanged="formatChange"/>
+            格式化后为
+            <span id="time-res3"></span>
+            请使用yyyy,yy,y,MM,M,dd,d,HH,H,hh,h,mm,ss,fff,ff,f随意组合
+        </div>
+        <div style="margin-top:10px;">
+            时间转化:
+            <input class="mini-textbox" width="200" onvaluechanged="parseDateChange"/>
+            字符串转化成时间为
+            <span id="time-res4"></span>
         </div>
     </div>
     <div class="mini-col-12">
@@ -244,17 +269,53 @@
     var dateTypeData = [{id:'addYears',text:'年'},{id:'addMonths',text:'月'},
         {id:'addDays',text:'日'},{id:'addHours',text:'时'},
         {id:'addMinutes',text:'分'},{id:'addSeconds',text:'秒'},{id:'addMilliseconds',text:'毫秒'}];
+    var dateTypeData2 = [{id:'betweenYears',text:'年'},{id:'betweenMonths',text:'月'},
+        {id:'betweenDays',text:'日'},{id:'betweenHours',text:'时'},
+        {id:'betweenMinutes',text:'分'},{id:'betweenSeconds',text:'秒'},{id:'betweenMilliseconds',text:'毫秒'}];
     mini.parse();
     function timeCalc(){
         var type = mini.get("time-type").getValue();
-        var date = $("#time-old")[0].data;
+        var date = mini.get("time-old").getValue();
         var val = mini.get("time-value").getValue();
         var action = mini.get("time-action").getValue();
         var res = date[type](val*action).formatDate("yyyy-MM-dd HH:mm:ss.fff");
         mini.get("time-res").setValue(res);
     }
+    function timeBetweenChange(e){
+        var flag = mini.get("time-old2").getValue() && mini.get("time-new").getValue();
+        mini.get("time-type2").setEnabled(flag);
+        if(!flag){
+            mini.get("time-res2").setValue("");
+            mini.get("time-type2").setValue("");
+        }
+        var value = e.value;
+        if(e.sender.id == "time-type2" && value){
+            var res = mini.get("time-old2").getValue()[value](mini.get("time-new").getValue());
+            mini.get("time-res2").setValue(res);
+        }
+    }
+    function formatChange(e){
+        var time = mini.get("time-old3").getValue();
+        if(!e.value || !time){
+            $("#time-res3").html("");
+            return;
+        }
+        $("#time-res3").html(time.formatDate(e.value));
+    }
+    function parseDateChange(e){
+        if(!e.value){
+            $("#time-res4").html("");
+            return;
+        }
+        var time = Date.parseDate(e.value);
+        var res = "当前字符串不可转化成时间";
+        if(time){
+            res = time.formatDate("yyyy-MM-dd HH:mm:ss.fff");
+        }
+        $("#time-res4").html(res);
+    }
     var ajaxCallBack=function(res){
-        console.log("ajax",res);
+        utils.$.successMsg(JSON.stringify(res));
     }
     function ajaxTest(type){
         switch (type) {
@@ -273,8 +334,7 @@
             case 4:
                 utils.$.jsonp("https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5",function(res){
                     if(res.ret == 0){
-                        var data = JSON.parse(res.data);
-                        console.log(data);
+                        utils.$.successMsg(res.data);
                     }
                 });
                 break;
@@ -289,9 +349,6 @@
         window.open(url);
     }
     (function(){
-        var nowDate = new Date();
-        $("#time-old")[0].data = nowDate;
-        $("#time-old").html(nowDate.formatDate("yyyy-MM-dd HH:mm:ss.fff"));
         var messageTabs = mini.get("message-tabs");
         var list=["vant","antd","mint","element","miniui"];
         var first = null;
