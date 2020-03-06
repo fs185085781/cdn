@@ -1,11 +1,20 @@
 (function(){
     var script = document.querySelector("script[smart-ui-script]");
-    var host = getHost(script.src,3);
+    var uiHost = getHost(script.src,3);
+    /*使用相对host*/
+    //var ajaxHost = getHost(script.src,4);
+    /*使用绝对host*/
+    var ajaxHost = "http://localhost:8080";
     var search = script.src.substring(script.src.indexOf("?"));
-    var utiljs = "http://localhost:63342/eweb/smart-ui-demo/smart-ui-1.0.0/boot/utils.js"+search;
+    /*使用远程cdn*/
+    var utiljs = "http://fs185085781.gitee.io/pages/smart-ui-demo/smart-ui-1.0.0/boot/utils.js"+search;
+    /*使用本地引入*/
+    //var utiljs = uiHost + "/smart-ui-1.0.0/boot/utils.js"+search;
     window.smartInitHook=function(config){
         config.debug = true;
-        config.plugins.md5 = [{js:host+"/smart-ui-1.0.0/plugins/md5/md5.js"}];
+        config.plugins.md5 = [{js:uiHost+"/smart-ui-1.0.0/plugins/md5/md5.js"}];
+        utils.uiHost=uiHost;
+        utils.ajaxHost=ajaxHost;
     }
     document.write("<script src='"+utiljs+"'></script>");
     //全局axios配置
@@ -14,7 +23,7 @@
             headers:{
                 'Content-Type': 'application/json'
             },
-            url:host + url,
+            url:ajaxHost + url,
             method:method,
             responseType:"text"
         };
@@ -36,7 +45,7 @@
     }
     //全局配置上传链接
     window.uploadUrlHook = function(){
-        return host+"/selevt/webService/upload";
+        return ajaxHost+"/selevt/webService/upload";
     }
     //全局拦截上传返回数据
     window.uploadResHook = function(res){

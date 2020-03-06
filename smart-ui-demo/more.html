@@ -181,7 +181,7 @@
         <div>
             window.reqOptionsHook用于拦截请求前的配置,可以统一写在config.js中,也可以页面上单独写用于覆盖config.js的默认配置,
             此方法有两个入参,
-            此方法返回值为{headers:{'Content-Type': 'application/json'},url:utils.host + url,method:method,responseType:"text"}
+            此方法返回值为{headers:{'Content-Type': 'application/json'},url:"http://localhost:8080" + url,method:method,responseType:"text"}
             这种格式
         </div>
         <div>
@@ -221,50 +221,6 @@
     </div>
 </div>
 <script>
-    //全局axios配置
-    window.reqOptionsHook=function(url,method){
-        var config = {
-            headers:{
-                'Content-Type': 'application/json'
-            },
-            url:"http://localhost:8080" + url,
-            method:method,
-            responseType:"text"
-        };
-        return config;
-    }
-    //全局axios返回拦截
-    window.reqResultHook = function(res){
-        var temp = {flag:false,msg:"操作失败"};
-        if(res.status == "SUCCESS"){
-            temp.flag = true;
-            if(res.data){
-                temp.data = res.data;
-            }
-        }
-        if(res.msg){
-            temp.msg = res.msg;
-        }
-        return temp;
-    }
-    //全局配置上传链接
-    window.uploadUrlHook = function(){
-        return "http://localhost:8080/selevt/webService/upload";
-    }
-    //全局拦截上传返回数据
-    window.uploadResHook = function(res){
-        var temp ={flag:false,msg:"上传失败"};
-        if(res.status == 200){
-            var json = res.data;
-            if(json && json.status == "SUCCESS"){
-                temp.flag = true;
-                temp.msg = "上传成功";
-                temp.fileId = json.data.fileId;
-                temp.fileIds = json.data.fileIds;
-            }
-        }
-        return temp;
-    }
     var jiajianData = [{id:'1',text:'加'},{id:'-1',text:'减'}];
     var dateTypeData = [{id:'addYears',text:'年'},{id:'addMonths',text:'月'},
         {id:'addDays',text:'日'},{id:'addHours',text:'时'},
@@ -353,7 +309,7 @@
         var list=["vant","antd","mint","element","miniui"];
         var first = null;
         $.each(list,function(i,item){
-            var temp = {name:item,title:item,url:utils.host+"/html/"+item+"-message.html"};
+            var temp = {name:item,title:item,url:utils.uiHost+"/html/"+item+"-message.html"};
             if(item == "vant" || item == "mint"){
                 temp.bodyStyle = "width:256px;border:1px solid #ccc;";
             }
