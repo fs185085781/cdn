@@ -8,7 +8,7 @@
 <body style="overflow:auto;">
 <div class="mini-row" style="padding:20px;">
     <div class="mini-col-12">
-        <h1>用法</h1>
+        <h1>简述</h1>
         <div>
             1.引入/boot/init.js这个入口js,此js是为了方便自行拓展,核心业务在utils.js,utils.js封装了加载机制,所有拓展均基于此入口进入
         </div>
@@ -89,6 +89,21 @@
             <div class="mini-col-1">utils.$.initFileUpload</div>
             <div class="mini-col-1">文件上传组件</div>
             <div class="mini-col-4">详情参见下面示例</div>
+        </div>
+    </div>
+    <div class="mini-col-12">
+        <h1>用法步骤</h1>
+        <div>
+            1.将init.js拷贝到自己项目中
+        </div>
+        <div>
+            2.根据情况配置init.js,可选择性配置uiHost、ajaxHost或者使用远程cdn
+        </div>
+        <div>
+            3.根据后台实际情况修改4个全局拦截的方法和在smartInitHook中添加第三方插件
+        </div>
+        <div>
+            4.页面中引入此init.js即可
         </div>
     </div>
     <div class="mini-col-12">

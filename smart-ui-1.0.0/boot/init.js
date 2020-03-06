@@ -1,5 +1,5 @@
 (function(){
-    var script = document.querySelector("script[smart-ui-script]");
+    var script = getCurrentScript();
     var uiHost = getHost(script.src,3);
     /*使用相对host*/
     //var ajaxHost = getHost(script.src,4);
@@ -66,5 +66,23 @@
         ss.length = ss.length - length;
         var path = ss.join("/");
         return path;
+    }
+    function getCurrentScript() {
+        var js = "init.js";
+        var script = document.currentScript;
+        if(!script){
+            script = document.querySelector("script[src*='"+js+"']");
+        }
+        if(!script){
+            var scripts = document.getElementsByTagName("script");
+            for (var i = 0, l = scripts.length; i < l; i++) {
+                var src = scripts[i].src;
+                if (src.indexOf(js) != -1) {
+                    script = scripts[i];
+                    break;
+                }
+            }
+        }
+        return script;
     }
 })()
