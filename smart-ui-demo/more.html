@@ -10,11 +10,11 @@
     <div class="mini-col-12">
         <h1>用法</h1>
         <div>
-            1.引入/boot/utils.js这个入口js,此js封装了加载机制,所有拓展均基于此入口进入
+            1.引入/boot/init.js这个入口js,此js是为了方便自行拓展,核心业务在utils.js,utils.js封装了加载机制,所有拓展均基于此入口进入
         </div>
         <div>
             2.入口js附带两个参数,from是必填参数,决定使用什么ui,目前可选值为miniui,element,antd,mint,vant总共5种,
-            plugins是选填参数,用于加载什么插件,插件配置在config.js可配置,可自定义增加
+            plugins是选填参数,用于加载什么插件,插件配置在init.js可配置,可自定义增加
         </div>
         <div>
             3.入口js会外露一个全局变量utils,里面包含一些常用方法以及utils.$的拓展方法,具体如下:

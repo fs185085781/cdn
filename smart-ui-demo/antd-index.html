@@ -43,7 +43,7 @@
                     <h1>SmartUi-antd</h1>
                 </a>
             </div>
-            <a-menu class="index-menu" mode="inline" @click="selectMenuItem" v-model="menuSelectedKey" :open-keys="openKeys">
+            <a-menu class="index-menu" mode="inline" @click="selectMenuItem" v-model="menuSelectedKey" :open-keys.sync="openKeys">
                 <a-sub-menu :key="menu.id" v-for="menu in menus">
                     <span slot="title"><span>{{menu.text}}</span></span>
                     <a-menu-item :key="menu1.id" v-for="menu1 in menu.children">
