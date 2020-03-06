@@ -1,14 +1,16 @@
 (function(){
     var script = getCurrentScript();
     var uiHost = getHost(script.src,3);
-    /*使用相对host*/
+    /*相对host,使用灵活,无论怎么修改目录发布都不出问题*/
     //var ajaxHost = getHost(script.src,4);
-    /*使用绝对host*/
+    /*动态绝对host,当在二级目录发布项目会出问题*/
+    //var ajaxHost = window.location.origin;
+    /*静态绝对host,每次更换地方发布,需要改配置*/
     var ajaxHost = "http://localhost:8080";
     var search = script.src.substring(script.src.indexOf("?"));
-    /*使用远程cdn*/
+    /*使用远程cdn,脱离本地文件*/
     var utiljs = "http://fs185085781.gitee.io/cdn/smart-ui-1.0.0/boot/utils.js"+search;
-    /*使用本地引入*/
+    /*使用本地引入,注意路径*/
     //var utiljs = uiHost + "/../smart-ui-1.0.0/boot/utils.js"+search;
     window.smartInitHook=function(config){
         config.debug = true;
