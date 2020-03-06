@@ -12,7 +12,7 @@
     //var utiljs = uiHost + "/smart-ui-1.0.0/boot/utils.js"+search;
     window.smartInitHook=function(config){
         config.debug = true;
-        config.plugins.md5 = [{js:uiHost+"/smart-ui-1.0.0/plugins/md5/md5.js"}];
+        config.plugins.md5 = [{js:uiHost+"/asserts/plugins/md5/md5.js"}];
         utils.uiHost=uiHost;
         utils.ajaxHost=ajaxHost;
     }
