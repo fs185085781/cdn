@@ -7,9 +7,9 @@
     var ajaxHost = "http://localhost:8080";
     var search = script.src.substring(script.src.indexOf("?"));
     /*使用远程cdn*/
-    var utiljs = "http://fs185085781.gitee.io/pages/smart-ui-demo/smart-ui-1.0.0/boot/utils.js"+search;
+    //var utiljs = "http://fs185085781.gitee.io/pages/smart-ui-demo/smart-ui-1.0.0/boot/utils.js"+search;
     /*使用本地引入*/
-    //var utiljs = uiHost + "/smart-ui-1.0.0/boot/utils.js"+search;
+    var utiljs = uiHost + "/../smart-ui-1.0.0/boot/utils.js"+search;
     window.smartInitHook=function(config){
         config.debug = true;
         config.plugins.md5 = [{js:uiHost+"/asserts/plugins/md5/md5.js"}];
