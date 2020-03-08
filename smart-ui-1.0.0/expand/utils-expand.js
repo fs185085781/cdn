@@ -573,6 +573,9 @@
     }
     if(window.Vue){
         Vue.app = function(options){
+            if(window.vm){
+                throw 'vm全局变量已经存在';
+            }
             if(!options.el){
                 options.el = "#app";
             }
