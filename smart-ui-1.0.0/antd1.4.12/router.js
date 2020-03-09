@@ -5,6 +5,12 @@
             that.attr = options;
             that.attr.menumap = {};
             that.attr.urlmap = {};
+            that.attr.el = document.querySelector(options.iframesDivEl);
+            window.addEventListener("resize", function(){
+                winSize();
+            });
+            that.attr.uiHost = options.uiHost;
+            that.attr.background = options.background;
             eval("router.attr.vm."+that.attr.openKeysField+"=[]");
             var data = that.attr.menus;
             for(var i=0;i<data.length;i++){
@@ -22,6 +28,22 @@
                 router.attr.vm.$nextTick(function(){
                     that.routerPageUrl(window.location.hash.substring(1));
                 });
+            }
+        },
+        removePageId:function(id){
+            var that =this;
+            var panes = eval("router.attr.vm."+that.attr.panesField);
+            var tempPanes = [];
+            for(var i=0;i<panes.length;i++){
+                if(id != panes[i][that.attr.menuIdField]){
+                    tempPanes.push(panes[i]);
+                }else{
+                    that.attr.el.querySelector("div[key='"+id+"']").remove();
+                }
+            }
+            eval("router.attr.vm."+that.attr.panesField+"=tempPanes");
+            if(tempPanes.length>0){
+                router.routerPageId(tempPanes[0][that.attr.menuIdField]);
             }
         },
         routerPageUrl:function(url){
@@ -47,8 +69,21 @@
             if(!has){
                 panes.push(menu);
             }
+            var allDivs = that.attr.el.querySelectorAll("div[key]");
+            for(var i=0;i<allDivs.length;i++){
+                allDivs[i].style="display:none;";
+            }
+            var div = that.attr.el.querySelector("div[key='"+id+"']");
+            if(!div){
+                div = document.createElement("div");
+                div.innerHTML = '<iframe src="'+that.attr.uiHost+menu[that.attr.menuUrlField]+'" style="height:100%;width:100%;background:'+that.attr.background+';" frameborder="0"></iframe>';
+                div.setAttribute('key',id);
+                that.attr.el.append(div);
+            }
+            div.style = "height:100%;width:100%;";
             eval("router.attr.vm."+that.attr.selectKeyField+"=[id]");
             history.pushState({status: 0} ,'' ,'#'+menu[that.attr.menuUrlField]);
+            winSize();
             if(that.attr.onRouter){
                 that.attr.onRouter();
             }
@@ -101,6 +136,11 @@
             }
         }
         return null;
+    }
+    function winSize(){
+        if(router.attr.el && router.attr.el.parentElement && router.attr.el.parentElement.clientHeight){
+            router.attr.el.style.height=router.attr.el.parentElement.clientHeight+"px";
+        }
     }
     window.router = router;
 })()
