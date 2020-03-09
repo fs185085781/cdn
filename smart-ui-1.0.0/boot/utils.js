@@ -6,7 +6,8 @@
         if(window.smartInitHook){
             window.smartInitHook(config);
         }
-        document.write("<script src='"+path+config[utils.from]+"'></script>");
+        utils.uiVersion=config[utils.from].version;
+        document.write("<script src='"+path+config[utils.from].boot+"'></script>");
         if(config.debug){
             if(utils.getParamer("debug") == "true"){
                 utils.plugins.push("eruda");
