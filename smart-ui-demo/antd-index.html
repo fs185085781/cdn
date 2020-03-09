@@ -28,9 +28,6 @@
         .index-tabs{
             background: #ffffff;
         }
-        .ant-tabs-extra-content{
-            display:none;
-        }
     </style>
 </head>
 <body>
@@ -66,7 +63,7 @@
                 </a-row>
             </a-layout-header>
             <a-layout-content style="padding:10px;">
-                <a-tabs v-model="menuSelectedKey[0]" type="editable-card" @edit="onTabEdit" class="index-tabs" @change="onTabChange">
+                <a-tabs hide-add v-model="menuSelectedKey[0]" type="editable-card" @edit="onTabEdit" class="index-tabs" @change="onTabChange">
                     <a-tab-pane v-for="pane in panes" :tab="pane.text" :key="pane.id" closable="true">
                     </a-tab-pane>
                 </a-tabs>

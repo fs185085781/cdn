@@ -3,8 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <title>SmartUi-element</title>
+    <script src="./asserts/js/init.js?from=element"></script>
+    <script src="../smart-ui-1.0.0/antd1.4.12/router.js"></script>
+    <style>
+        /*.logo-btn{
+            display: flex;
+            align-items: center;
+            height: 64px;
+            text-decoration:none;
+        }
+        .logo-btn img{
+            height: 32px;
+            margin: 0px 12px;
+        }
+        .logo-btn h1{
+            margin-top: auto;
+            margin-bottom: auto;
+            color:#000000;
+        }
+        .index-menu{
+            border-right:none;
+            width:256px;
+        }
+        .index-tabs{
+            background: #ffffff;
+        }
+        .ant-tabs-extra-content{
+            display:none;
+        }*/
+    </style>
 </head>
 <body>
-
+<div id="app" style="height:100%;width:100%;">
+    <el-container style="height:100%;">
+        <el-aside width="256px">
+            <el-menu
+                    default-active="2"
+                    class="el-menu-vertical-demo">
+                <el-submenu index="1">
+                    <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>导航一</span>
+                    </template>
+                    <el-menu-item index="1-1">选项1</el-menu-item>
+                    <el-menu-item index="1-2">选项2</el-menu-item>
+                </el-submenu>
+                <el-submenu index="1">
+                    <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>导航一</span>
+                    </template>
+                    <el-menu-item index="1-1">选项1</el-menu-item>
+                    <el-menu-item index="1-2">选项2</el-menu-item>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+        <el-container>
+            <el-header height="64px">Header</el-header>
+            <el-main>
+                <el-tabs type="border-card" style="height:100%;">
+                    <el-tab-pane label="用户管理">用户管理</el-tab-pane>
+                    <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+                    <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+                    <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+                </el-tabs>
+            </el-main>
+            <el-footer>Footer</el-footer>
+        </el-container>
+    </el-container>
+</div>
 </body>
+<script>
+    /*演示数据*/
+    var user = {
+        getInfo:function(callback){
+            callback({username:"张三"});
+        },
+        logout:function(){
+            utils.$.successMsg("您已成功退出");
+        },
+        getMenus:function(callback){
+            var data = [
+                {"id":"0cc175b9c0f1b6a831c399e269772661","text":"设置","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"693a9fdd4c2fd0700968fba0d07ff3c0","text":"用户设置","url":"/html/tab.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":1},
+                {"id":"36eba1e1e343279857ea7f69a597324e","text":"系统设置","url":"/html/tab2.html","type":",1,","pid":"0cc175b9c0f1b6a831c399e269772661","orderField":2},
+                {"id":"4251ad75fd7e037c6095c0bf5924a5be","text":"统计","url":"","type":",1,","pid":null,"orderField":0},
+                {"id":"a3c56aa6943d79989069b3d04b2da6af","text":"单点统计","url":"/html/tab3.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":1},
+                {"id":"a297baa51854616d989470cdb0f107ee","text":"多点统计","url":"/html/tab4.html","type":",1,","pid":"4251ad75fd7e037c6095c0bf5924a5be","orderField":2}
+                ];
+            callback(data);
+        }
+    };
+</script>
+<script type="text/javascript">
+    Vue.app({
+        data:{
+            username:"",
+            menus:[],
+            iframeHeight:"0",
+            panes:[],
+            menuSelectedKey:[""],
+            host:utils.uiHost,
+            openKeys:[]
+        },
+        methods: {
+            selectMenuItem:function(item){
+                router.routerPageId(item.key);
+            },
+            onTabEdit:function(key,action){
+                this[action](key);
+            },
+            remove:function(key){
+                router.removePageId(key);
+            },
+            onTabChange:function(key){
+                router.routerPageId(key);
+            },
+            toLogut:function(){
+                user.logout();
+            }
+        },
+        mounted:function(){
+            var that = this;
+            user.getInfo(function(data){
+                that.username = data.username;
+            });
+            user.getMenus(function (data) {
+                var options = {
+                    vm:that,
+                    panesField:"panes",
+                    selectKeyField:"menuSelectedKey",
+                    menuUrlField:"url",
+                    menus:data,
+                    menusField:"menus",
+                    menuIdField:"id",
+                    menuPidField:"pid",
+                    openKeysField:"openKeys",
+                    iframesDivEl:"#panel-body-list",
+                    onRouter:function(){
+                    },
+                    uiHost:that.host,
+                    background:"#ffffff"
+                };
+                router.init(options);
+            });
+        }
+    });
+</script>
 </html>
