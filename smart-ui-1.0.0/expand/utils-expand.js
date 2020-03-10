@@ -1,10 +1,5 @@
-(function (tools) {
-    var vueObj = {};
-    if(window.Vue){
-        vueObj = new Vue({});
-    }
-    tools.$ = {
-        attrs:{vue:vueObj},
+(function () {
+    utils.$ = {
         successMsg:function(text){
             this.msg(text,"success");
         },
@@ -18,368 +13,29 @@
             this.msg(text,"error");
         },
         msg:function(text,type){
-            var that = this;
-            if(!type){
-                type = "default";
-            }
-            if(tools.from == "mint" || tools.from == "vant"){
-                that.attrs.vue.$toast({
-                    message:text,
-                    duration:3000,
-                    className:type,
-                    position:"bottom"
-                });
-            }else if(tools.from == "element"){
-                that.attrs.vue.$message.closeAll();
-                var offset = "20";
-                if(window.innerHeight>window.innerWidth){
-                    offset = window.innerHeight-50-32;
-                }
-                that.attrs.vue.$message({
-                    message: text,
-                    type: type,
-                    offset:offset
-                });
-            }else if(tools.from == "antd"){
-                var top = "16px";
-                if(window.innerHeight>window.innerWidth){
-                    top = (window.innerHeight-50-32)+"px";
-                }
-                that.attrs.vue.$message.config({
-                    top:top,
-                    maxCount: 1
-                });
-                that.attrs.vue.$message.open({
-                    content: text,
-                    type: type,
-                    top:top
-                });
-            }else if(tools.from == "miniui"){
-                var y = "top";
-                if(window.innerHeight>window.innerWidth){
-                    y = "bottom";
-                }
-                mini.showTips({
-                    content:text,
-                    state:type=="error"?"danger":type,
-                    x:"center",
-                    y:y,
-                    timeout:3000
-                });
-            }
+            utils.message.msg(text,type);
         },
         loading:function(text){
-            if(!text){
-                text = "";
-            }
-            var that = this;
-            that.cancelLoading();
-            if(tools.from == "mint"){
-                that.attrs.vue.$indicator.open({
-                    text:text
-                });
-            }else if(tools.from == "miniui"){
-                that.attrs.loading = mini.loading(text);
-            }else if(tools.from == "element"){
-                var loading = that.attrs.vue.$loading({
-                    lock: true,
-                    text: text,
-                    spinner: 'el-icon-loading'
-                });
-                that.attrs.loading = loading;
-            }else if(tools.from == "vant"){
-                that.attrs.vue.$toast.loading({
-                    message: text,
-                    forbidClick: true,
-                    duration:0
-                });
-            }else if(tools.from == "antd"){
-                var body = document.getElementsByTagName("body")[0];
-                var className = body.className+"";
-                className = className.replace("ant-spin-nested-loading","");
-                className = className.replace("  "," ").trim();
-                if(className){
-                    className += " ";
-                }
-                className += "ant-spin-nested-loading";
-                body.className = className;
-                var div = document.createElement("div");
-                that.attrs.loading = "antd-loading-"+Date.now()+parseInt(Math.random()*10000);
-                div.id = that.attrs.loading;
-                div.className = "ant-spin-body";
-                div.innerHTML = "<div class=\"ant-spin ant-spin-spinning ant-spin-show-text\"><span class=\"ant-spin-dot ant-spin-dot-spin\"><i></i><i></i><i></i><i></i></span><div class=\"ant-spin-text\">"+text+"</div></div>";
-                body.append(div);
-            }
+            utils.message.loading(text);
         },
         cancelLoading:function(){
-            var that = this;
-            if(tools.from == "mint"){
-                that.attrs.vue.$indicator.close();
-            }else if(tools.from == "miniui"){
-                if(that.attrs.loading){
-                    mini.hideMessageBox(that.attrs.loading);
-                    tools.removeProp(that.attrs,"loading");
-                }
-            }else if(tools.from == "element"){
-                if(that.attrs.loading){
-                    that.attrs.loading.close();
-                    tools.removeProp(that.attrs,"loading");
-                }
-            }else if(tools.from == "vant"){
-                that.attrs.vue.$toast.clear();
-            }else if(tools.from == "antd"){
-                if(that.attrs.loading){
-                    var body = document.getElementsByTagName("body")[0];
-                    var className = body.className+"";
-                    className = className.replace("ant-spin-nested-loading","");
-                    className = className.replace("  "," ").trim();
-                    body.className = className;
-                    document.getElementById(that.attrs.loading).remove();
-                    tools.removeProp(that.attrs,"loading");
-                }
-            }
+            utils.message.cancelLoading();
         },
         alert:function(text,callback){
-            var that = this;
-            if(tools.from == "mint"){
-                that.attrs.vue.$messagebox.alert(text).then(function(){
-                    if(!callback){
-                        return;
-                    }
-                    callback(1);
-                });
-            }else if(tools.from == "miniui"){
-                mini.alert(text,"提示",function(action){
-                    if(!callback){
-                        return;
-                    }
-                    if(action == "ok"){
-                        callback(1);
-                    }else{
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "element"){
-                that.attrs.vue.$alert(text, '提示', {
-                    confirmButtonText: '确定',
-                    callback:function(action){
-                        if(!callback){
-                            return;
-                        }
-                        if(action == "confirm"){
-                            callback(1);
-                        }else{
-                            callback(0);
-                        }
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }else if(tools.from == "vant"){
-                that.attrs.vue.$dialog.alert({
-                    title: '提示',
-                    message: text
-                }).then(function(){
-                    if(!callback){
-                        return;
-                    }
-                    callback(1);
-                });
-            }else if(tools.from == "antd"){
-                that.attrs.vue.$info({
-                    icon:"none",
-                    okText:"确定",
-                    title: '提示',
-                    content: text,
-                    onOk:function() {
-                        if(callback){
-                            callback(1);
-                        }
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }
+            utils.message.alert(text,callback);
         },
         confirm:function(text,callback){
-            var that = this;
-            if(tools.from == "mint"){
-                that.attrs.vue.$messagebox.confirm(text).then(function(){
-                    if(callback){
-                        callback(1);
-                    }
-                }).catch(function () {
-                    if(callback){
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "miniui"){
-                mini.confirm(text,"提示",function(action){
-                    if(!callback){
-                        return;
-                    }
-                    if(action == "ok"){
-                        callback(1);
-                    }else{
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "element"){
-                that.attrs.vue.$confirm(text, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(function(){
-                    if(callback){
-                        callback(1);
-                    }
-                }).catch(function(){
-                    if(callback){
-                        callback(0);
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }else if(tools.from == "vant"){
-                that.attrs.vue.$dialog.confirm({
-                    title: '提示',
-                    message: text
-                }).then(function(){
-                    if(callback){
-                        callback(1);
-                    }
-                }).catch(function () {
-                    if(callback){
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "antd"){
-                that.attrs.vue.$confirm({
-                    icon:"none",
-                    okText:"确定",
-                    cancelText:"取消",
-                    title: '提示',
-                    content: text,
-                    onOk:function() {
-                        if(callback){
-                            callback(1);
-                        }
-                    },
-                    onCancel:function() {
-                        if(callback){
-                            callback(0);
-                        }
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }
+            utils.message.confirm(text,callback);
         },
         prompt:function(text,callback){
-            var that = this;
-            if(tools.from == "mint"){
-                that.attrs.vue.$messagebox.prompt(text).then(function(data){
-                    if(callback){
-                        callback(1,data.value);
-                    }
-                }).catch(function () {
-                    if(callback){
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "miniui"){
-                mini.prompt(text,"提示",function(action,value){
-                    if(!callback){
-                        return;
-                    }
-                    if(action == "ok"){
-                        callback(1,value);
-                    }else{
-                        callback(0);
-                    }
-                },true);
-            }else if(tools.from == "element"){
-                that.attrs.vue.$prompt(text, '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消'
-                }).then(function(data){
-                    if(callback){
-                        callback(1,data.value);
-                    }
-                }).catch(function () {
-                    if(callback){
-                        callback(0);
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }else if(tools.from == "vant"){
-                var id = "vant-prompt-"+Date.now()+parseInt(Math.random()*10000);
-                var input = '\n<input id="'+id+'" class="vant-prompt-input"/>';
-                that.attrs.vue.$dialog({
-                    title:"提示",
-                    message:text + input,
-                    showCancelButton:true
-                }).then(function(){
-                    var value = document.getElementById(id).value;
-                    if(!value){
-                        value = null;
-                    }
-                    if(callback){
-                        callback(1,value);
-                    }
-                }).catch(function () {
-                    if(callback){
-                        callback(0);
-                    }
-                });
-            }else if(tools.from == "antd"){
-                var id = "antd-prompt-"+Date.now()+parseInt(Math.random()*10000);
-                var input = '<br/><input class="ant-input"/>';
-                that.attrs.vue.$confirm({
-                    icon:"none",
-                    okText:"确定",
-                    cancelText:"取消",
-                    title: '提示',
-                    content: function(createElement){
-                        return createElement("div",{
-                            attrs:{id:id},
-                            domProps:{
-                                innerHTML:text+input
-                            }
-                        });
-                    },
-                    onOk:function() {
-                        var value = document.getElementById(id).getElementsByTagName("input")[0].value;
-                        if(!value){
-                            value = null;
-                        }
-                        if(callback){
-                            callback(1,value);
-                        }
-                    },
-                    onCancel:function() {
-                        if(callback){
-                            callback(0);
-                        }
-                    }
-                });
-                if(window.dialogToCenter){
-                    window.dialogToCenter();
-                }
-            }
+            utils.message.prompt(text,callback);
         },
         jsonp:function(url,callback,callbackName,jsonp){
             var map = {};
             var index = url.indexOf("?");
             var urlHost = url;
             if(index!=-1){
-                map = tools.getSearchByStr(url.substring(index));
+                map = utils.getSearchByStr(url.substring(index));
                 urlHost = url.substring(0,index);
             }
             if(!jsonp){
@@ -403,7 +59,7 @@
             }
             var realUrl = urlHost+searchStr;
             window[callbackName] = function(res){
-                tools.removeProp(window,callbackName);
+                utils.removeProp(window,callbackName);
                 callback(res);
             };
             var script = document.createElement("script");
@@ -582,4 +238,4 @@
             return window.vm = new Vue(options);
         }
     }
-})(utils);
+})();

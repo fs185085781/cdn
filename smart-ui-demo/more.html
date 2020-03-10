@@ -13,7 +13,7 @@
             1.引入/boot/init.js这个入口js,此js是为了方便自行拓展,核心业务在utils.js,utils.js封装了加载机制,所有拓展均基于此入口进入
         </div>
         <div>
-            2.入口js附带两个参数,from是必填参数,决定使用什么ui,目前可选值为miniui,element,antd,mint,vant总共5种,
+            2.入口js附带两个参数,from是必填参数,决定使用什么ui,目前可选值为miniui,element,antd,mint,vant,layui总共6种,
             plugins是选填参数,用于加载什么插件,插件配置在init.js可配置,可自定义增加
         </div>
         <div>
@@ -49,34 +49,34 @@
             <div class="mini-col-4">参数1是fn判断到达临界点,参数2是fn执行的内容,参数3是number是最大等待时间,其中参3选填</div>
             <div class="mini-col-1">utils.$.successMsg</div>
             <div class="mini-col-1">成功消息</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.infoMsg</div>
             <div class="mini-col-1">信息消息</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.warningMsg</div>
             <div class="mini-col-1">警告消息</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.errorMsg</div>
             <div class="mini-col-1">错误消息</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.msg</div>
             <div class="mini-col-1">默认消息</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.loading</div>
             <div class="mini-col-1">加载全局遮罩</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.cancelLoading</div>
             <div class="mini-col-1">取消全局遮罩</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.alert</div>
             <div class="mini-col-1">alert封装</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.confirm</div>
             <div class="mini-col-1">confirm封装</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.prompt</div>
             <div class="mini-col-1">prompt封装</div>
-            <div class="mini-col-4">支持5个ui,详情参见下面示例</div>
+            <div class="mini-col-4">支持所有ui,详情参见下面示例</div>
             <div class="mini-col-1">utils.$.jsonp</div>
             <div class="mini-col-1">jsonp封装</div>
             <div class="mini-col-4">详情参见下面示例</div>
@@ -184,7 +184,7 @@
     <div class="mini-col-12">
         <h1>消息和弹窗</h1>
         <div>
-            所有ui均支持,不同ui,样式稍有差距,其中element,miniui,antd在PC页面的时候在上部,在手机页面的时候在下部,mint,vant均在下部
+            所有ui均支持,不同ui,样式稍有差距,其中layui在中间,element,miniui,antd在PC页面的时候在上部,在手机页面的时候在下部,mint,vant均在下部
         </div>
         <div>
             <div id="message-tabs" class="mini-tabs" height="500"></div>
@@ -321,7 +321,7 @@
     }
     (function(){
         var messageTabs = mini.get("message-tabs");
-        var list=["vant","antd","mint","element","miniui"];
+        var list=["vant","antd","mint","element","miniui","layui"];
         var first = null;
         $.each(list,function(i,item){
             var temp = {name:item,title:item,url:utils.uiHost+"/html/"+item+"-message.html"};

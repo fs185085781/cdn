@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layui</title>
+    <script src="../asserts/js/init.js?from=layui"></script>
+    <script src="utils-message.js"></script>
+    <style>
+        .layui-btn{
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <a class="layui-btn layui-btn-normal" onclick="message(0)">默认消息</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(1)">成功消息</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(2)">信息消息</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(3)">告警消息</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(4)">错误消息</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(5)">alert</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(6)">confirm</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(7)">prompt</a>
+    <a class="layui-btn layui-btn-normal" onclick="message(8)">loading</a>
+</div>
+<script>
+    function message(type){
+        utilsMessage(type);
+    }
+</script>
+</body>
+</html>
