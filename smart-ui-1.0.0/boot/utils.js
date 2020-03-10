@@ -6,8 +6,20 @@
         if(window.smartInitHook){
             window.smartInitHook(config);
         }
+        utils.getCurrentBootScriptPath =function(){
+            var script = document.currentScript;
+            if(!script){
+                script = document.querySelector("script[smart-boot-script]");
+            }
+            var path = script.src;
+            var ss = path.split("/");
+            ss.length = ss.length - 1;
+            path = ss.join("/");
+            utils.removeProp(utils,"getCurrentBootScriptPath");
+            return path;
+        }
         utils.uiVersion=config[utils.from].version;
-        document.write("<script src='"+path+config[utils.from].boot+"'></script>");
+        document.write("<script smart-boot-script src='"+path+config[utils.from].boot+"'></script>");
         if(config.debug){
             if(utils.getParamer("debug") == "true"){
                 utils.plugins.push("eruda");
@@ -120,6 +132,12 @@
                     }
                 }
                 that[key]();
+            },
+            uuid:function(){
+                function S4() {
+                    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+                }
+                return S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4();
             }
         }
         var jsSearch = getJsSearch("utils.js");
