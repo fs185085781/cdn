@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="./asserts/js/init.js?from=vant&plugins=user"></script>
+    <title>怀旧游戏</title>
+</head>
+<body>
+<div id="app">
+    <van-nav-bar
+            title="首页"
+    ></van-nav-bar>
+    <van-row class="user-div">
+        <van-col span="24" v-if="user.id">
+            尊敬的{{user.username}}用户,您好![<a href="javascript:void(0)" @click="loginOut()">退出</a>]
+        </van-col>
+        <van-col span="24" v-if="!user.id">游客,您好!
+            <a href="javascript:void(0)" @click="showDia=true">注册/登录</a>可以保存进度哦!
+        </van-col>
+    </van-row>
+    <van-row>
+        <van-search
+                v-model="searchValue"
+                placeholder="请输入搜索关键词"
+                @search="onSearch"
+        ></van-search>
+    </van-row>
+    <van-grid :column-num="4">
+        <van-grid-item v-for="game in games" :key="game.url" icon="photo-o" :text="game.name"
+                       @click="toPlay(game)"></van-grid-item>
+    </van-grid>
+    <van-dialog confirm-button-text="关闭" v-model="showDia" :lock-scroll="false">
+        <van-cell-group>
+            <van-field v-model="loginData.username" label="用户名" placeholder="请输入用户名"></van-field>
+            <van-field v-model="loginData.password" label="密码" type="password" placeholder="请输入密码"></van-field>
+        </van-cell-group>
+        <van-row>
+            <van-col span="12" class="pan-center">
+                <van-button size="small" type="primary" @click="loginReg(0)">注册</van-button>
+            </van-col>
+            <van-col span="12" class="pan-center">
+                <van-button size="small" type="primary" @click="loginReg(1)">登录</van-button>
+            </van-col>
+        </van-row>
+    </van-dialog>
+</div>
+</body>
+<script>
+    Vue.app({
+        data: {
+            allgames: [],
+            games: [],
+            searchValue: "",
+            showDia: false,
+            user: {},
+            canBind: false,
+            canBindName: "",
+            loginData: {username: "", password: ""}
+        },
+        mounted: function () {
+            this.initData();
+            this.initLogin();
+            this.searchValue = utils.getLocalStorage("searchValue");
+            if (!this.searchValue) {
+                this.searchValue = "";
+            }
+            this.onSearch();
+        },
+        methods: {
+            initData: function () {
+                var that = this;
+                that.allgames.push({url:utils.rootPath+"/roms/超级玛丽.nes",name:"超级玛丽.nes"});
+            },
+            loginReg: function (type) {
+                if (type) {
+                    utils.user.loginByUsername(this.loginData)
+                } else {
+                    utils.user.regUser(this.loginData)
+                }
+            },
+            initLogin: function () {
+                var that = this;
+                var user = utils.user.getUserInfo();
+                if (!user) {
+                    user = {};
+                }
+                that.user = user;
+            },
+            loginOut: function () {
+                utils.user.loginOut();
+                this.initLogin();
+            },
+            toPlay: function (item) {
+                window.location.href = "mgame.html?url="+encodeURIComponent(item.url);
+            },
+            onSearch: function () {
+                var temps = [];
+                this.allgames.forEach((item) => {
+                    if (item.name.indexOf(this.searchValue) != -1) {
+                        temps.push(item)
+                    }
+                });
+                this.games = temps;
+                utils.setLocalStorage("searchValue", this.searchValue)
+            }
+        }
+    });
+</script>
+<style>
+    .user-div {
+        padding: 5px 15px;
+        color: #555;
+    }
+
+    .pan-center {
+        padding: 5px;
+        text-align: center;
+    }
+</style>
+</html>

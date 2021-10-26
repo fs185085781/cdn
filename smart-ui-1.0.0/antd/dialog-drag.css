@@ -1,9 +1,0 @@
-.ant-modal{
-    position: absolute !important;
-    left:calc((100vw - 416px)/2);
-    top:15vw;
-    padding:0;
-}
-.ant-modal .ant-modal-header,.ant-modal .ant-modal-content{
-    cursor: pointer;
-}

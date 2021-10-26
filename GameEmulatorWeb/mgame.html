@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- UC强制竖屏 -->
+    <meta name="screen-orientation" content="portrait">
+    <!-- QQ强制竖屏 -->
+    <meta name="x5-orientation" content="portrait">
+    <!-- UC强制全屏 -->
+    <meta name="full-screen" content="yes">
+    <!-- QQ强制全屏 -->
+    <meta name="x5-fullscreen" content="true">
+    <title>游戏界面</title>
+</head>
+<body>
+<div id="app" style="text-align: center;">
+    <div id="game_div"></div>
+    <div class="game-mb">
+        <van-tag round type="primary" @click="toSet(1)">设置</van-tag>
+        <van-tag round type="primary" @click="toSet(2)">连招</van-tag>
+    </div>
+    <div class="lianzhao-btn-group">
+        <van-button v-for="lianzhao in lianzhaoList" type="primary" class="lianzhao-btn"
+                    round @click="actionLianzhao(lianzhao)"
+                    :style="[lianzhao.left,lianzhao.top]"
+        >{{lianzhao.name.substring(0,2)}}</van-button>
+    </div>
+    <van-dialog class="dialog-setting" v-model="showSet" :lock-scroll="false" confirm-button-text="关闭" :before-close="beforeCloseSet">
+        <template v-if="setType == 1">
+            <div>
+                <h2 class="dialog-title">游戏设置</h2>
+                <van-cell-group>
+                    <van-field readonly
+                               clickable
+                               label="模拟器"
+                               :value="setting.game.mnq.text"
+                               placeholder="选择模拟器"
+                               @click="setting.game.mnq.show = true">
+                        <template #button>
+                            <van-button size="small" type="primary" @click="saveBiosCore()">保存</van-button>
+                        </template>
+                    </van-field>
+                    <van-popup v-model="setting.game.mnq.show" round position="bottom">
+                        <van-picker
+                                show-toolbar
+                                :columns="setting.game.mnq.columns"
+                                @cancel="setting.game.mnq.show = false"
+                                @confirm="mnqSelectConfirm"
+                                :default-index="setting.game.mnq.index"
+                        ></van-picker>
+                    </van-popup>
+                    <van-field readonly
+                               clickable
+                               label="BIOS设置"
+                               :value="setting.game.bios.text"
+                               placeholder="选择BIOS"
+                               @click="setting.game.bios.show = true">
+                        <template #button>
+                            <van-button size="small" type="primary" @click="saveBiosCore()">保存</van-button>
+                        </template>
+                    </van-field>
+                    <van-popup v-model="setting.game.bios.show" round position="bottom">
+                        <van-picker
+                                show-toolbar
+                                :columns="setting.game.bios.columns"
+                                @cancel="setting.game.bios.show = false"
+                                @confirm="biosSelectConfirm"
+                                :default-index="setting.game.bios.index"
+                        ></van-picker>
+                    </van-popup>
+                </van-cell-group>
+                <h2 class="dialog-title">画面设置</h2>
+                <van-cell-group>
+                    <van-field label="保存画面">
+                        <template #input>
+                            <van-button size="small" type="primary" @click="saveImage()">保存</van-button>
+                        </template>
+                    </van-field>
+                    <van-field label="图片预览" v-if="setting.frame.tempImage">
+                        <template #input>
+                            <img :src="setting.frame.tempImage" alt="" style="width:100%;"/>
+                        </template>
+                        <template #button>
+                            <van-button size="mini" icon="close" type="primary" @click="setting.frame.tempImage=null"></van-button>
+                        </template>
+                    </van-field>
+                </van-cell-group>
+                <h2 class="dialog-title">网络存储</h2>
+                <van-cell-group>
+                    <van-field
+                            v-model="jdname"
+                            center
+                            clearable
+                            label="进度保存"
+                            placeholder="请输入进度备注"
+                    >
+                        <template #button>
+                            <van-button size="small" type="primary" @click="saveJindu()">保存</van-button>
+                        </template>
+                    </van-field>
+                    <van-field label="进度读取">
+                        <template #input>
+                            <van-row>
+                                <van-col span="24" v-for="jindu in jinduList"><van-tag type="primary" closeable @click="jinduSelect(jindu)" @close="jinduDelete(jindu)">{{jindu.text}}</van-tag></van-col>
+                            </van-row>
+                        </template>
+                    </van-field>
+                </van-cell-group>
+            </div>
+        </template>
+        <template v-if="setType == 2">
+            <div>
+                <h2 class="dialog-title">连招设置</h2>
+                <van-cell-group>
+                    <van-field
+                            v-model="lzname"
+                            center
+                            clearable
+                            label="创建连招"
+                            placeholder="请输入连招备注"
+                    >
+                        <template #button>
+                            <van-button size="small" type="primary" @click="createLianzhao()">创建</van-button>
+                        </template>
+                    </van-field>
+                    <template v-for="lianzhao in lianzhaoList">
+                        <van-field :label="lianzhao.name">
+                            <template #input>
+                                <van-row>
+                                    <van-tag v-for="(buzhou,i) in lianzhao.buzhous" type="primary" closeable @close="removeBuzhou(i,lianzhao)">{{buzhou.text}}</van-tag>
+                                </van-row>
+                                <van-row>
+                                    <van-button size="small" type="primary" @click="addBuzhou(lianzhao)">+步骤</van-button>
+                                    <van-button size="small" type="primary" @click="bindBuzhou(lianzhao)">绑按钮{{lianzhao.btnName?"("+lianzhao.btnName+")":""}}</van-button>
+                                    <van-button size="small" type="primary" @click="moveBuzhou(lianzhao)">移动</van-button>
+                                    <van-button size="small" type="primary" @click="removeLianzhao(lianzhao)">删除</van-button>
+                                </van-row>
+                            </template>
+                        </van-field>
+                    </template>
+                </van-cell-group>
+            </div>
+        </template>
+    </van-dialog>
+</div>
+</body>
+<script>
+</script>
+<script type="text/javascript">
+    window.initGame = function(){
+        var gameUrl = utils.getParamer("url");
+        var user = utils.getLocalStorage("user");
+        var playerName = "";
+        if(user){
+            playerName = user.username;
+        }
+        var dsz = gameUrl.split(".");
+        var fnamesz = dsz[dsz.length - 2].split("/");
+        var fname1 = fnamesz[fnamesz.length - 1];
+        var fname2 = dsz[dsz.length - 1].toLowerCase();
+        var gameId = fname1+"."+fname2;
+        function getFileExt(){
+            var fext = utils.getParamer("fext");
+            if(!fext){
+                fext = dsz[dsz.length - 1].toLowerCase();
+            }else{
+                fext = fext.toLowerCase();
+            }
+            return fext;
+        }
+        var bios = "";
+        var dBiosMap = {
+            "fds":utils.rootPath+"/asserts/plugins/emulator/bios/disksys.rom"
+        }
+        var fext = getFileExt();
+        var tmpBios = dBiosMap[fext];
+        if(tmpBios){
+            console.log("使用默认bios");
+            bios = tmpBios;
+        }
+        if(!bios){
+            var biosSet = utils.getLocalStorage("biosSet");
+            if(biosSet){
+                bios = biosSet.value;
+            }
+        }
+        var core = "";
+        var dCoreMap = {
+            "fds,nes,unif,unf":"nes",
+            "smc,fig,sfc,gd3,gd7,dx2,bsx,swc":"snes",
+            "bin,cue,img,mdf,pbp,toc,cbn,m3u,ccd":"psx"
+        }
+        for(var keys in dCoreMap){
+            var value = dCoreMap[keys];
+            var keysz = keys.split(",");
+            var has = false;
+            for(var i=0;i<keysz.length;i++){
+                if(keysz[i] == fext){
+                    has = true;
+                    break;
+                }
+            }
+            if(has){
+                console.log("使用默认core");
+                core = value;
+                break;
+            }
+        }
+        if(!core){
+            var mnqSet = utils.getLocalStorage("mnqSet");
+            if(mnqSet){
+                core = mnqSet.value;
+            }
+        }
+        var options = {
+            player:"#game_div",
+            bios:bios,
+            gameUrl:gameUrl,
+            id:gameId,
+            core:core,
+            playerName:playerName
+        }
+        emuUtils.gameId = options.id;
+        emuUtils.initGame(options);
+    }
+</script>
+<script src="./asserts/js/init.js?from=vant&plugins=emulator,md5,user"></script>
+<script>
+    Vue.app({
+        data:{
+            showSet:false,
+            setType:0,
+            jdname:"",//进度名称
+            jinduList:[],//进度列表
+            lzname:"",//连招名称
+            lianzhaoList:[],//连招数组
+            lzBinging:false,//按钮绑定中
+            lastbtn:0,//最后一次的连招按钮
+            lastbtnName:"",//最后一次连招按钮名称,
+            lzMoveing:false,//按钮移动中
+            lastbtnX:0,//最后一次的连招按钮位置
+            lastbtnY:0,//最后一次的连招按钮位置,
+            needFx:false,//是否需要左右颠倒
+            controllerMap:{},//控制器map
+            setting:{//设置
+                game:{
+                    bios:{
+                        show:false,
+                        columns:[],
+                        columnsMap:{},
+                        text:"",
+                        index:0
+                    },
+                    mnq:{
+                        show:false,
+                        columns:[],
+                        columnsMap:{},
+                        text:"",
+                        index:0
+                    }
+
+                },
+                frame:{//画面
+                    tempImage:null,//画面预览
+
+                }
+            }
+        },
+        mounted:function() {
+            var that = this;
+            if(utils.getParamer("ajaxHost")){
+                utils.ajaxHost = utils.getParamer("ajaxHost");
+            }
+            if(utils.getParamer("userId")){
+                utils.user.loginById(utils.getParamer("userId"),function (){
+                    that.init();
+                });
+            }else{
+                that.init();
+            }
+        },
+        methods:{
+            init:function (){
+                var that = this;
+                that.initJindu();
+                that.initLianzhao();
+                that.initBiosSelect();
+                that.initMnqSelect();
+            },
+            biosSelectConfirm:function (item,index){
+                item.index = index;
+                utils.setLocalStorage("biosSetTmp",item);
+                this.setting.game.bios.text = item.text;
+                this.setting.game.bios.show = false;
+            },
+            mnqSelectConfirm:function (item,index){
+                item.index = index;
+                utils.setLocalStorage("mnqSetTmp",item);
+                this.setting.game.mnq.text = item.text;
+                this.setting.game.mnq.show = false;
+            },
+            initBiosSelect:function(){
+                var that = this;
+                var columns = [
+                    {text:"无",value:""},
+                    {text:"磁碟机",value:utils.rootPath+"/asserts/plugins/emulator/bios/disksys.rom"},
+                    {text:"Neo Geo Games",value:utils.rootPath+"/asserts/plugins/emulator/bios/neogeo.zip"},
+                    {text:"IGS Games",value:utils.rootPath+"/asserts/plugins/emulator/bios/pgm.zip"},
+                    {text:"ISG Master 2006",value:utils.rootPath+"/asserts/plugins/emulator/bios/isgsm.zip"},
+                ]
+                that.setting.game.bios.columns = columns;
+                var item = utils.getLocalStorage("biosSet");
+                if(!item){
+                    item = columns[0];
+                    item.index = 0;
+                }
+                that.setting.game.bios.index = item.index;
+                that.setting.game.bios.text = item.text;
+            },
+            initMnqSelect:function(){
+                var that = this;
+                var columns = [
+                    {text:"NES/磁碟机",value:"nes"},
+                    {text:"SNES",value:"snes"},
+                    {text:"街机",value:"arcade"},
+                ]
+                that.setting.game.mnq.columns = columns;
+                var item = utils.getLocalStorage("mnqSet");
+                if(!item){
+                    item = columns[0];
+                    item.index = 0;
+                }
+                that.setting.game.mnq.index = item.index;
+                that.setting.game.mnq.text = item.text;
+            },
+            saveImage:function (){
+                this.setting.frame.tempImage = emuUtils.getImg();
+            },
+            toSet:function (type) {
+                var that = this;
+                that.showSet = true;
+                that.setType = type;
+                emuUtils.paused(true);
+            },
+            saveBiosCore:function(){
+                utils.setLocalStorage("biosSet",utils.getLocalStorage("biosSetTmp"));
+                utils.setLocalStorage("mnqSet",utils.getLocalStorage("mnqSetTmp"));
+                window.location.reload();
+            },
+            beforeCloseSet:function(action,done){
+                done(true);
+                emuUtils.paused(false);
+            },
+            saveJindu:function(){
+                var that = this;
+                if(!that.jdname.trim()){
+                    utils.$.errorMsg("进度名称不可为空")
+                    return;
+                }
+                var user = utils.user.getUserInfo();
+                if(!user){
+                    utils.$.errorMsg("只有登录后才能保存进度");
+                    return;
+                }
+                var text = emuUtils.uint8ArrayToString(emuUtils.saveState());
+                var game = utils.md5(emuUtils.gameId);
+                var fileId = utils.md5(game+new Date().getTime());
+                utils.$.post("/jindu.php?type=3",{user_id:user.id,game:game,name:that.jdname.trim()+"["+new Date().format("yyyy-MM-dd HH:mm:ss")+"]",text:text,fileId:fileId},function (res) {
+                    utils.$.successMsg(res.msg);
+                    that.jdname = "";
+                    that.initJindu();
+                });
+            },
+            initJindu:function () {
+                var that = this;
+                var user = utils.user.getUserInfo();
+                if(!user){
+                    //utils.$.errorMsg("只有登录后才能获取进度");
+                    return;
+                }
+                var game = utils.md5(emuUtils.gameId);
+                utils.$.post("/jindu.php?type=1",{user_id:user.id,game:game},function (res) {
+                    var list = [];
+                    if(res.data){
+                        res.data.forEach((one)=>{
+                            list.push({id:one.id,text:one.name,fileId:one.file_id});
+                        });
+                    }
+                    that.jinduList = list;
+                });
+            },
+            jinduSelect:function(jindu){
+                utils.$.confirm("确定加载进度"+jindu.text+"吗?"
+                    ,function(action){
+                        if(!action){
+                            return;
+                        }
+                        utils.$.post("/jindu.php?type=2",{fileId:jindu.fileId},function (res) {
+                            if(!res.data){
+                                utils.$.errorMsg("进度加载失败");
+                                return;
+                            }
+                            emuUtils.loadState(emuUtils.stringToUint8Array(res.data));
+                            utils.$.successMsg("进度加载成功");
+                        });
+                    });
+            },
+            jinduDelete:function(jindu){
+                var that = this;
+                utils.$.confirm("确认删除'"+jindu.text+"'",function (action) {
+                    if(action != 1){
+                        return;
+                    }
+                    utils.$.post("/jindu.php?type=4",{fileId:jindu.fileId,id:jindu.id},function (res) {
+                        utils.$.successMsg(res.msg);
+                        that.initJindu();
+                    });
+                });
+            },
+            createLianzhao:function () {
+                var that = this;
+                if(!that.lzname.trim()){
+                    utils.$.errorMsg("连招名称不可为空")
+                    return;
+                }
+                for(var i=0;i<that.lianzhaoList.length;i++){
+                    if(that.lianzhaoList[i].name==that.lzname){
+                        utils.$.errorMsg("当前连招名已经存在");
+                        return;
+                    }
+                }
+                that.lianzhaoList.push({name:that.lzname,buzhous:[]});
+                that.lzname = "";
+                that.initLianzhao(true);
+            },
+            addBuzhou:function (lianzhao) {
+                var that = this;
+                var typeMap = {"1":"按下","2":"弹起","3":"按键","4":"延时"};
+                var valMap = {"1":"上","2":"下","3":"左","4":"右","5":"A","6":"B","7":"X","8":"Y"};
+                utils.$.prompt("请输入操作类型,仅限:1按下,2弹起,3按键,4延时",function(res,val){
+                    if(!res || !val){
+                        return;
+                    }
+                    if(!typeMap[val]){
+                        utils.$.errorMsg("不支持的操作类型");
+                        return;
+                    }
+                    utils.$.prompt("请输入操作值,仅限:1上,2下,3左,4右,5A,6B,7X,8Y(延时单位为ms)",function(res2,val2){
+                        if(!res2 || !val2){
+                            return;
+                        }
+                        if(isNaN(val2)){
+                            utils.$.errorMsg("请输入数值");
+                            return;
+                        }
+                        if(val!="4" && !valMap[val2]){
+                            utils.$.errorMsg("不支持的操作值");
+                            return;
+                        }
+                        var text = typeMap[val];
+                        if(val == "4"){
+                            text += val2+"毫秒";
+                        }else{
+                            text += valMap[val2];
+                        }
+                        lianzhao.buzhous.push({text:text,type:val,val:val2});
+                        that.initLianzhao(true);
+                    });
+                });
+            },
+            bindBuzhou:function (lianzhao) {
+                var that = this;
+                that.lzBinging = true;
+                that.lastbtn = 0;
+                utils.$.alert("请输入按钮后点确定",function () {
+                    that.lzBinging = false;
+                    if(that.lastbtn){
+                        lianzhao.btn = that.lastbtn;
+                        lianzhao.btnName = that.lastbtnName;
+                        that.initLianzhao(true);
+                    }else{
+                        utils.$.errorMsg("你啥也没按");
+                    }
+                });
+            },
+            moveBuzhou:function (lianzhao) {
+                var that = this;
+                that.lzMoveing = true;
+                that.lastbtnX = 0;
+                that.lastbtnY = 0;
+                utils.$.alert("请移动按钮后点确定",function () {
+                    console.log(that.lastbtn);
+                    that.lzMoveing = false;
+                    if(that.lastbtnX && that.lastbtnY){
+                        lianzhao.left = {"left":that.lastbtnX+"px"};
+                        lianzhao.top = {"top":that.lastbtnY+"px"};
+                        that.initLianzhao(true);
+                    }else{
+                        utils.$.errorMsg("你没有移动");
+                    }
+                });
+            },
+            initLianzhao:function (flag) {
+                var that = this;
+                var game = utils.md5(emuUtils.gameId);
+                if(flag){
+                    //需要保存一下
+                    var game = utils.md5(emuUtils.gameId);
+                    utils.setLocalStorage("lz"+game,that.lianzhaoList);
+                }else{
+                    //首次,用于1.点击调用连招2.连招绑定按钮
+                    document.addEventListener("keydown",function(e){
+                        if(that.showSet){
+                            //设置页面,绑定按钮
+                            if(that.lzBinging){
+                                that.lastbtn = e.keyCode;
+                                that.lastbtnName = e.key;
+                                utils.$.successMsg("你按了"+e.key);
+                            }
+                        }else{
+                            if(e.keyCode == that.controllerMap[7].value*1){
+                                that.needFx = false;
+                            }else if(e.keyCode == that.controllerMap[6].value*1){
+                                that.needFx = true;
+                            }
+                            //游戏页面,调用连招
+                            for(var i=0;i<that.lianzhaoList.length;i++){
+                                var lianzhao = that.lianzhaoList[i];
+                                if(lianzhao.btn != e.keyCode){
+                                    continue;
+                                }
+                                that.actionLianzhao(lianzhao);
+                                break;
+                            }
+
+                        }
+                    });
+                    document.addEventListener('touchmove', that.lianZhaoTouchmove, { passive: false });
+                    document.addEventListener('mousemove', that.lianZhaoTouchmove, { passive: false });
+                }
+                var list = utils.getLocalStorage("lz"+game);
+                if(!list){
+                    list = [];
+                }
+                that.lianzhaoList = list;
+                if(localStorage.getItem("ejs_"+EJS_core+"_settings")){
+                    that.controllerMap = JSON.parse(localStorage.getItem("ejs_"+EJS_core+"_settings")).controllers[0];
+                }
+            },
+            lianZhaoTouchmove:function(e){
+                var that = this;
+                if(!that.showSet || !that.lzMoveing){
+                    return;
+                }
+                if(e.target.className.indexOf("lianzhao-btn")==-1){
+                    return;
+                }
+                var zb = e.touches[0];
+                that.lastbtnX = zb.clientX-22;
+                that.lastbtnY = zb.clientY-22;
+                e.target.style.left = that.lastbtnX+"px";
+                e.target.style.top = that.lastbtnY+"px";
+            },
+            actionLianzhao:function (lianzhao) {
+                var that = this;
+                var list = lianzhao.buzhous;
+                function actionBuzhou(index,list,callback) {
+                    if(index>list.length-1){
+                        return;
+                    }
+                    var buzhou = list[index];
+                    if(buzhou.type == "4"){
+                        setTimeout(function () {
+                            callback(index+1,list,callback);
+                        },buzhou.val*1);
+                    }else{
+                        //var valMap = {"1":"上","2":"下","3":"左","4":"右","5":"A","6":"B","7":"X","8":"Y"};
+                        var typeMap = {"1":"keydown","2":"keyup","3":"keypress"};
+                        //默认nes
+                        var codeMap = {
+                            "1":that.controllerMap[4].value*1,
+                            "2":that.controllerMap[5].value*1,
+                            "3":that.controllerMap[6].value*1,
+                            "4":that.controllerMap[7].value*1,
+                            "5":that.controllerMap[8].value*1,
+                            "6":that.controllerMap[0].value*1,
+                            "7":that.controllerMap[9].value*1,
+                            "8":that.controllerMap[1].value*1
+                        }
+                        if(EJS_core == "nes"){
+                            //使用默认的
+                        }else if(EJS_core == "arcade"){
+                            //和nes保持一致
+                        }
+                        var code = buzhou.val;
+                        if(that.needFx){
+                            if(code == "3"){
+                                code = "4";
+                            }else if(code == "4"){
+                                code = "3";
+                            }
+                        }
+                        var keyType = typeMap[buzhou.type];
+                        var keyCode = codeMap[code];
+                        setTimeout(function () {
+                            emuUtils.fireKeyEvent(keyType,keyCode);
+                            callback(index+1,list,callback);
+                        },10);
+                    }
+                }
+                actionBuzhou(0,list,actionBuzhou);
+            },
+            removeBuzhou:function (index,lianzhao) {
+                var that = this;
+                var tmps = [];
+                for(var i=0;i<lianzhao.buzhous.length;i++){
+                    if(index == i){
+                        continue;
+                    }
+                    tmps.push(lianzhao.buzhous[i]);
+                }
+                lianzhao.buzhous = tmps;
+                that.initLianzhao(true);
+            },
+            removeLianzhao:function(lianzhao){
+                var that = this;
+                for(var i=0;i<that.lianzhaoList.length;i++){
+                    var db = that.lianzhaoList[i];
+                    if(db.name == lianzhao.name){
+                        that.lianzhaoList.splice(i,1);
+                        break;
+                    }
+                }
+                that.initLianzhao(true);
+            }
+        }
+    });
+</script>
+<style>
+    #app,#game_div{
+        width:100%;
+        height:100%;
+    }
+    /*屏蔽右键菜单,屏蔽下面按钮*/
+    .ejs--c7957d8666bb6b8fc7c3e9c021aaf8{
+        display:none !important;
+    }
+    .game-mb{
+        position: fixed;
+        left: 10px;
+        top: 5px;
+    }
+    .dialog-setting{
+        height: 90%;
+        overflow: auto;
+        margin-top: 3%;
+    }
+    .dialog-title{
+        margin: 0;
+        padding: 32px 16px 16px;
+        color: #455a6499;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 16px;
+        text-align: left;
+    }
+    .lianzhao-btn{
+        position: fixed;
+        left: 50vw;
+        top: 50vh;
+        background-color:transparent;
+        border:1px solid #cccccc;
+        color:#cccccc;
+        z-index: 999999;
+    }
+</style>
+</html>
