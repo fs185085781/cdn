@@ -10,7 +10,7 @@
     /*静态绝对host,每次后台更换地方发布,此处需要改配置,适合前后端分离开发*/
     var ajaxHost = "https://hm10735.h61.hmie.cn/php-file/game-emulator";
     var search = script.src.substring(script.src.indexOf("?"));
-    /*使用远程cdn,脱离本地文件(此cdn由gitee pages提供)*/
+    /*使用远程cdn,脱离本地文件(此cdn由jsdelivr提供)*/
     var utiljs = "https://cdn.jsdelivr.net/gh/fs185085781/cdn/smart-ui/boot/utils.js"+search;
     /*使用本地引入,注意路径*/
     //var utiljs = rootPath + "/../../../cn-tenfell-cloud/cloud-plugins/cloud-smart-ui/src/main/resources/static/smart-ui/boot/utils.js"+search;
