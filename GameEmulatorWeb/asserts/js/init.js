@@ -11,7 +11,7 @@
     var ajaxHost = "https://hm10735.h61.hmie.cn/php-file/game-emulator";
     var search = script.src.substring(script.src.indexOf("?"));
     /*使用远程cdn,脱离本地文件(此cdn由gitee pages提供)*/
-    var utiljs = "https://fs185085781.gitee.io/cn-tenfell-cloud/smart-ui/boot/utils.js"+search;
+    var utiljs = "https://cdn.jsdelivr.net/gh/fs185085781/cdn/smart-ui/boot/utils.js"+search;
     /*使用本地引入,注意路径*/
     //var utiljs = rootPath + "/../../../cn-tenfell-cloud/cloud-plugins/cloud-smart-ui/src/main/resources/static/smart-ui/boot/utils.js"+search;
     //拦截配置信息,方便自行拓展配置信息
