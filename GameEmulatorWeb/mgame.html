@@ -156,88 +156,184 @@
     </van-dialog>
 </div>
 </body>
-<script>
-</script>
 <script type="text/javascript">
-    window.initGame = function(){
-        var gameUrl = utils.getParamer("url");
-        var user = utils.getLocalStorage("user");
-        var playerName = "";
-        if(user){
-            playerName = user.username;
-        }
-        var dsz = gameUrl.split(".");
-        var fnamesz = dsz[dsz.length - 2].split("/");
-        var fname1 = fnamesz[fnamesz.length - 1];
-        var fname2 = dsz[dsz.length - 1].toLowerCase();
-        var gameId = fname1+"."+fname2;
-        function getFileExt(){
-            var fext = utils.getParamer("fext");
-            if(!fext){
-                fext = dsz[dsz.length - 1].toLowerCase();
-            }else{
-                fext = fext.toLowerCase();
-            }
-            return fext;
-        }
-        var bios = "";
-        var dBiosMap = {
-            "fds":utils.rootPath+"/asserts/plugins/emulator/bios/disksys.rom"
-        }
-        var fext = getFileExt();
-        var tmpBios = dBiosMap[fext];
-        if(tmpBios){
-            console.log("使用默认bios");
-            bios = tmpBios;
-        }
-        if(!bios){
-            var biosSet = utils.getLocalStorage("biosSet");
-            if(biosSet){
-                bios = biosSet.value;
-            }
-        }
-        var core = "";
-        var dCoreMap = {
-            "fds,nes,unif,unf":"nes",
-            "smc,fig,sfc,gd3,gd7,dx2,bsx,swc":"snes",
-            "bin,cue,img,mdf,pbp,toc,cbn,m3u,ccd":"psx"
-        }
-        for(var keys in dCoreMap){
-            var value = dCoreMap[keys];
-            var keysz = keys.split(",");
-            var has = false;
-            for(var i=0;i<keysz.length;i++){
-                if(keysz[i] == fext){
-                    has = true;
-                    break;
+    (function (){
+        var tmp = {
+            setBiosInVue:function (bios){
+                utils.delayAction(function (){
+                    return window.vm && window.vm.setting && window.vm.setting.game.bios.init
+                },function (){
+                    var columns = window.vm.setting.game.bios.columns;
+                    var index = 0;
+                    if(bios){
+                        for(var i=0;i<columns.length;i++){
+                            var column = columns[i];
+                            if(column.value == bios){
+                                index = i;
+                                break;
+                            }
+                        }
+                    }
+                    var column = columns[index];
+                    window.vm.setting.game.bios.index = index;
+                    window.vm.setting.game.bios.text = column.text;
+                });
+            },
+            setCoreInVue:function (core){
+                utils.delayAction(function (){
+                    return window.vm && window.vm.setting && window.vm.setting.game.mnq.init
+                },function (){
+                    var columns = window.vm.setting.game.mnq.columns;
+                    var index = 0;
+                    if(core){
+                        for(var i=0;i<columns.length;i++){
+                            var column = columns[i];
+                            if(column.value == core){
+                                index = i;
+                                break;
+                            }
+                        }
+                    }
+                    var column = columns[index];
+                    window.vm.setting.game.mnq.index = index;
+                    window.vm.setting.game.mnq.text = column.text;
+                });
+            },
+            checkInByMap:function(map,str){
+                var tmp = {val:"",flag:false};
+                for(var keys in map){
+                    var value = map[keys];
+                    var keysz = keys.split(",");
+                    var has = false;
+                    for(var i=0;i<keysz.length;i++){
+                        if(keysz[i] == str){
+                            has = true;
+                            break;
+                        }
+                    }
+                    if(has){
+                        tmp = {val:value,flag:true};
+                        break;
+                    }
                 }
-            }
-            if(has){
-                console.log("使用默认core");
-                core = value;
-                if(fext!="fds"){
+                return tmp;
+            },
+            getBiosByExt:function (ext){
+                var biosHost = utils.rootPath+"/asserts/plugins/emulator/bios";
+                var dBiosMap = {
+                    "nes,unif,unf,smc,fig,sfc,gd3,gd7,dx2,bsx,swc,bin,cue,img,mdf,pbp,toc,cbn,m3u,ccd":"",
+                    "fds":biosHost+"/disksys.rom"
+                }
+                return this.checkInByMap(dBiosMap,ext);
+            },
+            getBiosByName:function (name){
+                var biosHost = utils.rootPath+"/asserts/plugins/emulator/bios";
+                var dBiosMap = {
+                    "orlegend.zip":biosHost+"/pgm.zip"
+                }
+                return this.checkInByMap(dBiosMap,name);
+            },
+            getCoreByExt:function (ext){
+                var dCoreMap = {
+                    "fds,nes,unif,unf":"nes",
+                    "smc,fig,sfc,gd3,gd7,dx2,bsx,swc":"snes",
+                    "bin,cue,img,mdf,pbp,toc,cbn,m3u,ccd":"psx"
+                }
+                return this.checkInByMap(dCoreMap,ext);
+            },
+            getCoreByName:function (name){
+                var dCoreMap = {
+                    "orlegend.zip":"arcade"
+                }
+                return this.checkInByMap(dCoreMap,name);
+            },
+            getBiosAndCoreByName:function(name){
+                var that = this;
+                var map = {bios:"",core:""};
+                var ext = that.getFileExtByName(name);
+                var core = that.getCoreByExt(ext);
+                if(!core.flag){
+                    core = that.getCoreByName(name);
+                }
+                if(!core.flag){
+                    core = null;
+                    var mnqSet = utils.getLocalStorage("mnqSet");
+                    if(mnqSet){
+                        core = mnqSet.value;
+                    }
+                }else{
+                    core = core.val;
+                    that.setCoreInVue(core);
+                }
+                if(!core){
+                    core = "";
+                }
+                map.core = core;
+                var bios = that.getBiosByExt(ext);
+                if(!bios.flag){
+                    bios = that.getBiosByName(name);
+                }
+                if(!bios.flag){
+                    bios = null;
+                    var biosSet = utils.getLocalStorage("biosSet");
+                    if(biosSet){
+                        bios = biosSet.value;
+                    }
+                }else{
+                    bios = bios.val;
+                    that.setBiosInVue(bios);
+                }
+                if(!bios){
                     bios = "";
                 }
-                break;
+                map.bios = bios;
+                return map;
+            },
+            getGameNameByGameUrl:function (gameUrl){
+                var dsz = gameUrl.split(".");
+                var fnamesz = dsz[dsz.length - 2].split("/");
+                var fname1 = fnamesz[fnamesz.length - 1];
+                var fname2 = dsz[dsz.length - 1].toLowerCase();
+                var name = fname1+"."+fname2;
+                var namesz = name.split("-");
+                name = namesz[namesz.length - 1];
+                return name;
+            },
+            getFileExtByName:function(name){
+                var namesz = name.split(".");
+                return namesz[namesz.length - 1];
+            },
+            getPlayName:function (){
+                var user = utils.getLocalStorage("user");
+                var playerName = "";
+                if(user){
+                    playerName = user.username;
+                }
+                return playerName;
+            },
+            initGame:function(){
+                var that = this;
+                //下载地址
+                var gameUrl = utils.getParamer("url");
+                var playerName = that.getPlayName();
+                var name = that.getGameNameByGameUrl(gameUrl);
+                var biosCore = that.getBiosAndCoreByName(name);
+                var options = {
+                    player:"#game_div",
+                    bios:biosCore.bios,
+                    gameUrl:gameUrl,
+                    id:name,
+                    core:biosCore.core,
+                    playerName:playerName
+                }
+                emuUtils.gameId = options.id;
+                emuUtils.initGame(options);
             }
         }
-        if(!core){
-            var mnqSet = utils.getLocalStorage("mnqSet");
-            if(mnqSet){
-                core = mnqSet.value;
-            }
+        window.initGame = function (){
+            tmp.initGame();
         }
-        var options = {
-            player:"#game_div",
-            bios:bios,
-            gameUrl:gameUrl,
-            id:gameId,
-            core:core,
-            playerName:playerName
-        }
-        emuUtils.gameId = options.id;
-        emuUtils.initGame(options);
-    }
+    })()
 </script>
 <script src="./asserts/js/init.js?from=vant&plugins=emulator,md5,user"></script>
 <script>
@@ -265,14 +361,16 @@
                         columns:[],
                         columnsMap:{},
                         text:"",
-                        index:0
+                        index:0,
+                        init:false
                     },
                     mnq:{
                         show:false,
                         columns:[],
                         columnsMap:{},
                         text:"",
-                        index:0
+                        index:0,
+                        init:false
                     }
 
                 },
@@ -312,7 +410,11 @@
             },
             zhiLianTip:function (){
               var time = 0;
+              var that = this;
               function checkTip(){
+                  if(that.showSet){
+                      return;
+                  }
                   if(window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()<1){
                       utils.$.errorMsg("当前游戏加载比较慢,建议使用直链玩^_^");
                   }else if(window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()>0){
@@ -348,6 +450,31 @@
                     {text:"Neo Geo Games",value:biosHost+"/neogeo.zip"},
                     {text:"IGS Games",value:biosHost+"/pgm.zip"},
                     {text:"ISG Master 2006",value:biosHost+"/isgsm.zip"},
+                    {text:"Game Boy(No)",value:""},
+                    {text:"Game Boy Color",value:biosHost+"/gbc_bios.bin"},
+                    {text:"Game Boy Advance",value:biosHost+"/gba_bios.bin"},
+                    {text:"Super Game Boy",value:biosHost+"/sgb_bios.bin"},
+                    {text:"MasterSystem EU",value:biosHost+"/bios_E.sms"},
+                    {text:"MasterSystem US",value:biosHost+"/bios_U.sms"},
+                    {text:"MasterSystem JP",value:biosHost+"/bios_J.sms"},
+                    {text:"GameGear",value:biosHost+"/bios.gg"},
+                    {text:"Saturn",value:biosHost+"/saturn_bios.bin"},
+                    {text:"MegaCD EU",value:biosHost+"/bios_CD_E.bin"},
+                    {text:"SegaCD US(Uc)",value:biosHost+"/bios_CD_U.bin"},
+                    {text:"MegaCD JP",value:biosHost+"/bios_CD_J.bin"},
+                    {text:"MSX",value:biosHost+"/blueMSXv282full.zip"},
+                    {text:"Super CD-ROM2 System",value:biosHost+"/syscard3.pce"},
+                    {text:"Panasonic FZ-1",value:biosHost+"/panafz1.bin"},
+                    {text:"Panasonic FZ-10",value:biosHost+"/panafz10.bin"},
+                    {text:"Panasonic FZ-10 [RSA Patch](No)",value:""},
+                    {text:"Panasonic FZ-10-E [Anvil]",value:biosHost+"/panafz10e-anvil.bin"},
+                    {text:"Panasonic FZ-10-E [Anvil RSA Patch](No)",value:""},
+                    {text:"Goldstar GDO-101M",value:biosHost+"/goldstar.bin"},
+                    {text:"Sanyo IMP-21J TRY",value:biosHost+"/sanyotry.bin"},
+                    {text:"Shootout At Old Tucson",value:biosHost+"/3do_arcade_saot.bin"},
+                    {text:"PS1 JP",value:biosHost+"/scph5500.bin"},
+                    {text:"PS1 US",value:biosHost+"/scph5501.bin"},
+                    {text:"PS1 EU",value:biosHost+"/scph5502.bin"}
                 ]
                 that.setting.game.bios.columns = columns;
                 var item = utils.getLocalStorage("biosSet");
@@ -357,13 +484,35 @@
                 }
                 that.setting.game.bios.index = item.index;
                 that.setting.game.bios.text = item.text;
+                that.setting.game.bios.init = true;
             },
             initMnqSelect:function(){
                 var that = this;
                 var columns = [
+                    {text:"街机",value:"arcade"},
                     {text:"NES/磁碟机",value:"nes"},
                     {text:"SNES",value:"snes"},
-                    {text:"街机",value:"arcade"},
+                    {text:"Game Boy|Color(GB)",value:"gb"},
+                    {text:"Game Boy Advance(GBA)",value:"gba"},
+                    {text:"Virtual Boy",value:"vb"},
+                    {text:"Nintendo 64",value:"n64"},
+                    {text:"Nintendo DS",value:"nds"},
+                    {text:"Sega Master System",value:"segaMS"},
+                    {text:"Sega Game Gear",value:"segaGG"},
+                    {text:"Sega Mega Drive",value:"segaMD"},
+                    {text:"Sega 32X",value:"sega32x"},
+                    {text:"Sega Saturn",value:"segaSaturn"},
+                    {text:"Sega CD",value:"segaCD"},
+                    {text:"Atari 2600",value:"atari2600"},
+                    {text:"Atari 7800",value:"atari7800"},
+                    {text:"Atari Lynx",value:"lynx"},
+                    {text:"Atari Jaguar",value:"jaguar"},
+                    {text:"Wanderswan|Color",value:"ws"},
+                    {text:"MSX",value:"msx"},
+                    {text:"Neo Geo Poket",value:"ngp"},
+                    {text:"TurboGrafs-16|PC Engine",value:"pce"},
+                    {text:"3DO",value:"3do"},
+                    {text:"PlayStation",value:"psx"}
                 ]
                 that.setting.game.mnq.columns = columns;
                 var item = utils.getLocalStorage("mnqSet");
@@ -373,6 +522,7 @@
                 }
                 that.setting.game.mnq.index = item.index;
                 that.setting.game.mnq.text = item.text;
+                that.setting.game.mnq.init = true;
             },
             saveImage:function (){
                 this.setting.frame.tempImage = emuUtils.getImg();

@@ -125,7 +125,7 @@ EJS_player = '#game';
 EJS_biosUrl = ''; // Url to Bios file
 EJS_gameUrl = ''; // Url to Game rom
 EJS_core = 'msx';
-去http://bluemsx.msxblue.com/download.html下载blueMSXv282full.zip
+去http://bluemsx.msxblue.com/download.html下载blueMSXv282full.zip  下载到了
 
 20.Neo Geo Poket
 EJS_player = '#game';
