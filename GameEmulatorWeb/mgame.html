@@ -68,6 +68,17 @@
                                 :default-index="setting.game.bios.index"
                         ></van-picker>
                     </van-popup>
+                    <van-field
+                            v-model="gameUrl"
+                            center
+                            clearable
+                            label="游戏链接"
+                            placeholder="请输入游戏直链"
+                    >
+                        <template #button>
+                            <van-button size="small" type="primary" @click="zhilianPlay()">直链玩</van-button>
+                        </template>
+                    </van-field>
                 </van-cell-group>
                 <h2 class="dialog-title">画面设置</h2>
                 <van-cell-group>
@@ -203,6 +214,9 @@
             if(has){
                 console.log("使用默认core");
                 core = value;
+                if(fext!="fds"){
+                    bios = "";
+                }
                 break;
             }
         }
@@ -230,6 +244,7 @@
         data:{
             showSet:false,
             setType:0,
+            gameUrl:"",
             jdname:"",//进度名称
             jinduList:[],//进度列表
             lzname:"",//连招名称
@@ -278,6 +293,7 @@
             }else{
                 that.init();
             }
+            that.gameUrl = utils.getParamer("url");
         },
         methods:{
             init:function (){
@@ -286,6 +302,29 @@
                 that.initLianzhao();
                 that.initBiosSelect();
                 that.initMnqSelect();
+                that.zhiLianTip();
+
+            },
+            zhilianPlay:function (){
+                var that = this;
+                window.location.href = utils.urlAddProp(window.location.href,"url",encodeURIComponent(that.gameUrl));
+            },
+            zhiLianTip:function (){
+              var time = 0;
+              function checkTip(){
+                  if(window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()<1){
+                      utils.$.errorMsg("当前游戏加载比较慢,建议使用直链玩^_^");
+                  }else if(window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()>0){
+                      if(time>0){
+                          clearInterval(time);
+                      }
+                  }
+              }
+              setTimeout(function (){
+                  time = setInterval(function (){
+                      checkTip();
+                  },5000);
+              },25000);
             },
             biosSelectConfirm:function (item,index){
                 item.index = index;
@@ -301,12 +340,13 @@
             },
             initBiosSelect:function(){
                 var that = this;
+                var biosHost = utils.rootPath+"/asserts/plugins/emulator/bios";
                 var columns = [
                     {text:"无",value:""},
-                    {text:"磁碟机",value:utils.rootPath+"/asserts/plugins/emulator/bios/disksys.rom"},
-                    {text:"Neo Geo Games",value:utils.rootPath+"/asserts/plugins/emulator/bios/neogeo.zip"},
-                    {text:"IGS Games",value:utils.rootPath+"/asserts/plugins/emulator/bios/pgm.zip"},
-                    {text:"ISG Master 2006",value:utils.rootPath+"/asserts/plugins/emulator/bios/isgsm.zip"},
+                    {text:"磁碟机",value:biosHost+"/disksys.rom"},
+                    {text:"Neo Geo Games",value:biosHost+"/neogeo.zip"},
+                    {text:"IGS Games",value:biosHost+"/pgm.zip"},
+                    {text:"ISG Master 2006",value:biosHost+"/isgsm.zip"},
                 ]
                 that.setting.game.bios.columns = columns;
                 var item = utils.getLocalStorage("biosSet");

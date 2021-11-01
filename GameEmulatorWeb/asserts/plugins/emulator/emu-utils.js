@@ -23,20 +23,20 @@
                 if (a && a.src && a.src.indexOf("emulator.js") != -1) {
                     a.src = emuHost + "/js/emulator.js";
                 } else {
-                    //console.log(a);
+                    //console.log("insertBefore",a);
                 }
-                this.insertBeforeTemp(a, b);
+                return this.insertBeforeTemp(a, b);
             }
             Element.prototype.appendChildTemp = Element.prototype.appendChild;
             Element.prototype.appendChild = function (a) {
                 if (a && a.src && a.src.indexOf("webrtc-adapter.js") != -1) {
                     a.src = emuHost + "/js/webrtc-adapter.js";
                 } else if (a && a.src && a.src.indexOf("ad.html") != -1) {
-                    a.src = emuHost + "/data/ad.html"
+                    a = document.createElement("iframe");
                 } else {
-                    //console.log(a);
+                    //console.log("appendChild",a);
                 }
-                this.appendChildTemp(a);
+                return this.appendChildTemp(a);
             }
             XMLHttpRequest.prototype.openTemp = XMLHttpRequest.prototype.open;
             XMLHttpRequest.prototype.open = function (a, b, c) {
@@ -81,10 +81,10 @@
                         break;
                     }
                     if (!has) {
-                        console.log(b);
+                        console.log("XMLHttpRequest!has",b);
                     }
                 } else {
-                    console.log(b);
+                    console.log("XMLHttpRequest else",b);
                 }
                 return this.openTemp(a, b, c);
             }
@@ -132,11 +132,19 @@
                 obj[fieldName] = undefined;
             }
         },
+        getIntId:function (id){
+            var length = id.length;
+            var str = "";
+            for(var i=0;i<length;i++){
+                str += id.charCodeAt(i);
+            }
+            return str;
+        },
         initGame: function (options) {
             window.EJS_player = options.player;
             window.EJS_biosUrl = options.bios;
             window.EJS_gameUrl = options.gameUrl;
-            window.EJS_gameID = options.id;
+            window.EJS_gameID = this.getIntId(options.id);
             window.EJS_core = options.core;
             window.EJS_playerName = options.playerName;
         },
