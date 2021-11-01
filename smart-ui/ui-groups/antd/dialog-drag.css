@@ -1,0 +1,9 @@
+.ant-modal{
+    position: absolute !important;
+    left:calc((100vw - 416px)/2);
+    top:15vh;
+    padding:0;
+}
+.ant-modal .ant-modal-header/*,.ant-modal .ant-modal-content*/,.ant-modal-confirm .ant-modal-content{
+    cursor: pointer;
+}
