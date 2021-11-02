@@ -19,13 +19,13 @@
             }else if(type == "error"){
                 color = "#f5222d";
             }
-            var div = addDiv(color,text);
+            var div = addMessageDiv(color,text);
             setTimeout(function (){
                 delDiv(div);
             },3000);
         },
         loading:function(text){
-            var div = addDiv("#666666",text);
+            var div = addMessageDiv("#666666",text);
             this.attrs.loadingDivs.push(div);
         },
         cancelLoading:function(){
@@ -60,7 +60,7 @@
             }
         }
     }
-    function addDiv(color,text){
+    function addMessageDiv(color,text){
         var div = document.createElement("div");
         div.className = "";
         div.innerHTML = "<div class=\"none-message-div\">\n" +

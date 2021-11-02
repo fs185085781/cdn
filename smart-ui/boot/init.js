@@ -11,10 +11,9 @@
     //var ajaxHost = "http://localhost:8080";
     /*获取init.js后面的参数*/
     var search = script.src.substring(script.src.indexOf("?")!=-1?script.src.indexOf("?"):script.src.length);
-    /*使用远程cdn,脱离本地文件(此cdn由七牛云提供)*/
-    //var utiljs = "http://static.tenfell.cn/kodbox/smart-ui/boot/utils.js"+search;
+    /*使用远程cdn,脱离本地文件(此cdn由jsdelivr提供)*/
+    //var utiljs = "https://cdn.jsdelivr.net/gh/fs185085781/cdn/smart-ui/boot/utils.js"+search;
     /*使用本地引入,注意路径*/
-    //var utiljs = rootPath + "/../../cloud-plugins/cloud-smart-ui/src/main/resources/static/smart-ui/boot/utils.js"+search;
     var utiljs = rootPath + "/../smart-ui/boot/utils.js"+search;
     //拦截配置信息,方便自行拓展配置信息
     window.smartInitHook=function(config){
