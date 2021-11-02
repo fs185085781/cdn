@@ -388,6 +388,14 @@
             if(utils.getParamer("userId")){
                 utils.user.loginById(utils.getParamer("userId"),function (){
                     that.init();
+                    var user = utils.getLocalStorage("user");
+                    if(user){
+                        utils.delayAction(function (){
+                            return window.emuUtils && emuUtils.emu;
+                        },function (){
+                            emuUtils.emu.playerName = user.username;
+                        });
+                    }
                 });
             }else{
                 that.init();
