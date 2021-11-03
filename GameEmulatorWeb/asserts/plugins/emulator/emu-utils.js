@@ -19,25 +19,33 @@
         hanhua:function (){
             function setInnerText(select,val){
                 utils.delayAction(function (){
-                    return document.querySelector(select);
+                    var list = document.querySelectorAll(select);
+                    return list && list.length > 0;
                 },function (){
                     try{
-                        document.querySelector(select).innerHTML = val;
+                        var list = document.querySelectorAll(select);
+                        for(var i=0;i<list.length;i++){
+                            list[i].innerHTML = val;
+                        }
                     }catch (e){
                     }
                 });
             }
+            //主界面
             setInnerText(".ejs--1acedc5ed6816abe96dd27d910fd74>button:first-child span.ejs--74c6d4176d27e37a19d2e9e61de8f4","重启");
             setInnerText("button[data-btn=\"play\"] span.ejs--ec731619062226d943da67f5d83009","暂停");
             setInnerText("button[data-btn=\"play\"] span.ejs--dc7068585e3d84fe0e676864c1439e","继续");
+            document.querySelector("button[data-btn=\"save-state\"].ejs--8732295ca5c4902a060d34706a8146").remove();
+            document.querySelector("button[data-btn=\"load-state\"].ejs--8732295ca5c4902a060d34706a8146").remove();
             setInnerText("button[data-btn=\"netplay\"] span.ejs--74c6d4176d27e37a19d2e9e61de8f4","联网");
             setInnerText("button[data-btn=\"gamepad\"] span.ejs--74c6d4176d27e37a19d2e9e61de8f4","控制器设置");
             setInnerText("button[data-btn=\"cheat\"] span.ejs--74c6d4176d27e37a19d2e9e61de8f4","金手指");
-            setInnerText("button[data-btn=\"mute\"] span.ejs--ec731619062226d943da67f5d83009","静音");
-            setInnerText("button[data-btn=\"mute\"] span.ejs--dc7068585e3d84fe0e676864c1439e","音量");
+            setInnerText("button[data-btn=\"mute\"] span.ejs--ec731619062226d943da67f5d83009","音量");
+            setInnerText("button[data-btn=\"mute\"] span.ejs--dc7068585e3d84fe0e676864c1439e","静音");
             setInnerText("button[data-btn=\"settings\"] span.ejs--74c6d4176d27e37a19d2e9e61de8f4","设置");
             setInnerText("button[data-btn=\"fullscreen\"] span.ejs--dc7068585e3d84fe0e676864c1439e","全屏");
             setInnerText("button[data-btn=\"fullscreen\"] span.ejs--ec731619062226d943da67f5d83009","退出全屏");
+            //联网对战界面
             setInnerText("#modal-9de6c4e9ce2b9361-title","设置玩家名");
             setInnerText("#modal-9de6c4e9ce2b9361-content strong","玩家名");
             setInnerText("#modal-9de6c4e9ce2b9361 .ejs--319bcec5dee9444e1a2a53d6503b7c","提交");
@@ -59,15 +67,6 @@
             setInnerText("#modal-85cd7a1c543a484a .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(1)","提交");
             setInnerText("#modal-85cd7a1c543a484a .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(2)","关闭");
             setInnerText("div[data-room-password]","");
-            setInnerText(".ejs__cheat__container .ejs--b373c9d5029d49324fb8ac3ece96c1 h4","金手指");
-            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(1)","添加");
-            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(2)","确定");
-            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(3)","关闭");
-            setInnerText("#modal-85cd7a1c543a484b-title","添加金手指");
-            setInnerText("#modal-85cd7a1c543a484b-content strong:nth-child(2)","代码");
-            setInnerText("#modal-85cd7a1c543a484b-content strong:nth-child(6)","描述");
-            setInnerText("#modal-85cd7a1c543a484b .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(1)","提交");
-            setInnerText("#modal-85cd7a1c543a484b .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(2)","关闭");
             setInterval(function (){
                 var list = document.querySelectorAll(".ejs--158ea9dd34e3e7af2d837f8b05babb .ejs--d6a46533fa6e510a571af5c28b440a table tbody tr");
                 if(!list || list.length<1){
@@ -82,8 +81,41 @@
 
                 }
             },500);
-            document.querySelector("button[data-btn=\"save-state\"].ejs--8732295ca5c4902a060d34706a8146").remove();
-            document.querySelector("button[data-btn=\"load-state\"].ejs--8732295ca5c4902a060d34706a8146").remove();
+            //金手指界面
+            setInnerText(".ejs__cheat__container .ejs--b373c9d5029d49324fb8ac3ece96c1 h4","金手指");
+            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(1)","添加");
+            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(2)","确定");
+            setInnerText(".ejs__cheat__container .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(3)","关闭");
+            setInnerText("#modal-85cd7a1c543a484b-title","添加金手指");
+            setInnerText("#modal-85cd7a1c543a484b-content strong:nth-child(2)","代码");
+            setInnerText("#modal-85cd7a1c543a484b-content strong:nth-child(6)","描述");
+            setInnerText("#modal-85cd7a1c543a484b .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(1)","提交");
+            setInnerText("#modal-85cd7a1c543a484b .ejs--ed44f59bb8cd49177586b140658c6c button:nth-child(2)","关闭");
+            //控制器设置界面
+            setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--b373c9d5029d49324fb8ac3ece96c1 h4","控制器设置");
+            for(var i=0;i<4;i++){
+                var n = i+1;
+                setInnerText("#controls-tabs li:nth-child("+n+") a","玩家"+n);
+                setInnerText("#controls-"+i+" .gamepad","");
+                setInnerText("#controls-"+i+" div[data-label='SELECT'] div:nth-child(1) label","选择");
+                setInnerText("#controls-"+i+" div[data-label='START'] div:nth-child(1) label","开始");
+                setInnerText("#controls-"+i+" div[data-label='UP'] div:nth-child(1) label","上");
+                setInnerText("#controls-"+i+" div[data-label='DOWN'] div:nth-child(1) label","下");
+                setInnerText("#controls-"+i+" div[data-label='LEFT'] div:nth-child(1) label","左");
+                setInnerText("#controls-"+i+" div[data-label='RIGHT'] div:nth-child(1) label","右");
+                setInnerText("#controls-"+i+" div[data-label='A'] div:nth-child(1) label","A");
+                setInnerText("#controls-"+i+" div[data-label='B'] div:nth-child(1) label","B");
+                setInnerText("#controls-"+i+" div[data-label='X'] div:nth-child(1) label","X");
+                setInnerText("#controls-"+i+" div[data-label='Y'] div:nth-child(1) label","Y");
+                setInnerText("#controls-"+i+" .row div:nth-child(1)","手柄");
+                setInnerText("#controls-"+i+" .row div:nth-child(2)","键盘");
+                setInnerText("#controls-"+i+" a.ejs--6604c83041a275a78837c452a71dd8","设置");
+            }
+            setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(1)","更新");
+            setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(2)","取消");
+            //设置界面
+            var shader = document.querySelector("button[item='shader'] > span span.ejs--f91e90fe7cabc875aff9a431bf5389").innerHTML;
+            setInnerText("button[item='shader'] > span","画面<span class='ejs--f91e90fe7cabc875aff9a431bf5389'>"+shader+"</span>");
         },
         pojieJs: function () {
             var that = this;
@@ -299,7 +331,7 @@
     });
     //加载默认的按键配置
     if (!localStorage.getItem("ejs_nes_settings")) {
-        var keyMap = {"controllers":{"0":{"0":{"value":"72","value2":"1"},"1":{"value":"89","value2":"3"},"2":{"value":"70","value2":"8"},"3":{"value":"71","value2":"9"},"4":{"value":"87","value2":"12"},"5":{"value":"83","value2":"13"},"6":{"value":"65","value2":"14"},"7":{"value":"68","value2":"15"},"8":{"value":"74","value2":"0"},"9":{"value":"85","value2":"2"}}}};
+        var keyMap = {"controllers":{"0":{"0":{"value":"72"},"1":{"value":"89"},"2":{"value":"70"},"3":{"value":"71"},"4":{"value":"87"},"5":{"value":"83"},"6":{"value":"65"},"7":{"value":"68"},"8":{"value":"74"},"9":{"value":"85"}}}};
         localStorage.setItem("ejs_nes_settings", JSON.stringify(keyMap));
     }
     if (!localStorage.getItem("ejs_arcade_settings")) {
