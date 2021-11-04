@@ -313,10 +313,16 @@
             initGame:function(){
                 var that = this;
                 //下载地址
-                var gameUrl = utils.getParamer("url");
+                var tmpUrl = utils.getParamer("url");
                 var playerName = that.getPlayName();
-                var name = that.getGameNameByGameUrl(gameUrl);
+                var name = that.getGameNameByGameUrl(tmpUrl);
                 var biosCore = that.getBiosAndCoreByName(name);
+                var gameUrl = tmpUrl;
+                var nameIndex = tmpUrl.lastIndexOf(name);
+                var jinIndex = tmpUrl.lastIndexOf("#");
+                if(nameIndex != -1 && jinIndex != -1 && nameIndex > jinIndex){
+                    gameUrl = tmpUrl.substring(0,jinIndex)+"#/"+name;
+                }
                 var options = {
                     player:"#game_div",
                     bios:biosCore.bios,
