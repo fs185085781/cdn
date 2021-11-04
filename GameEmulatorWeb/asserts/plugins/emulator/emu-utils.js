@@ -239,9 +239,6 @@
                 } else {
                     //console.log("XMLHttpRequest else",b);
                 }
-                if(a == "HEAD"){
-                    a = "GET";
-                }
                 return this.openTemp(a, b, c);
             }
             if(document.querySelector("meta[content='no-referrer']")){
