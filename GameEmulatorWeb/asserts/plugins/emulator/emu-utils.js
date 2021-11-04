@@ -239,8 +239,19 @@
                 } else {
                     //console.log("XMLHttpRequest else",b);
                 }
+                if(a == "HEAD"){
+                    a = "GET";
+                }
                 return this.openTemp(a, b, c);
             }
+            if(document.querySelector("meta[content='no-referrer']")){
+                return;
+            }
+            var head = document.getElementsByTagName("head")[0];
+            var meta=document.createElement("meta");
+            meta.name="referrer";
+            meta.content="no-referrer";
+            head.append(meta);
         },
         saveState: function () {
             var that = this;
