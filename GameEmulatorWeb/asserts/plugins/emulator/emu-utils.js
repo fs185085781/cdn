@@ -64,18 +64,58 @@
                 options.system_type.options["famicom"] = "磁碟机";
                 options.system_type.options["nes"] = "红白机";
             }
+            if(options["fba-aspect"]){
+                options["fba-aspect"].label = "纵横比";
+            }
+            if(options["fba-frameskip"]){
+                options["fba-frameskip"].label = "框架船";
+            }
+            if(options["fba-cpu-speed-adjust"]){
+                options["fba-cpu-speed-adjust"].label = "CPU超频";
+            }
+            if(options["fba-diagnostic-input"]){
+                options["fba-diagnostic-input"].label = "诊断输入";
+            }
+            if(options["fba-neogeo-mode"]){
+                options["fba-neogeo-mode"].label = "强制Neo Geo模式";
+            }
+            if(options["fba-dipswitch-orlegend-Test_mode"]){
+                options["fba-dipswitch-orlegend-Test_mode"].label = "测试模式";
+            }
+            if(options["fba-dipswitch-orlegend-Music"]){
+                options["fba-dipswitch-orlegend-Music"].label = "背景音";
+            }
+            if(options["fba-dipswitch-orlegend-Voice"]){
+                options["fba-dipswitch-orlegend-Voice"].label = "前景音";
+            }
+            if(options["fba-dipswitch-orlegend-Free_play"]){
+                options["fba-dipswitch-orlegend-Free_play"].label = "免费玩";
+            }
+            if(options["fba-dipswitch-orlegend-Stop_mode"]){
+                options["fba-dipswitch-orlegend-Stop_mode"].label = "停止模式";
+            }
+            if(options["fba-dipswitch-orlegend-Bios_select_(Fake)"]){
+                options["fba-dipswitch-orlegend-Bios_select_(Fake)"].label = "BIOS选择(伪造)";
+            }
+            if(options["fba-dipswitch-orlegend-Disable_Ba-Chieh"]){
+                options["fba-dipswitch-orlegend-Disable_Ba-Chieh"].label = "节";
+            }
+            if(options["fba-dipswitch-orlegend-Region_(Fake)"]){
+                options["fba-dipswitch-orlegend-Region_(Fake)"].label = "区域(伪造)";
+            }
+            var hasStr = ",fba-dipswitch-orlegend-Region_(Fake),fba-dipswitch-orlegend-Disable_Ba-Chieh,fba-dipswitch-orlegend-Bios_select_(Fake),fba-dipswitch-orlegend-Stop_mode,fba-dipswitch-orlegend-Free_play,fba-dipswitch-orlegend-Voice,fba-dipswitch-orlegend-Music,fba-dipswitch-orlegend-Test_mode,fba-neogeo-mode,fba-diagnostic-input,fba-cpu-speed-adjust,fba-frameskip,fba-aspect,fceumm_nospritelimit,fceumm_palette,fceumm_region,fceumm_sndquality,fceumm_turbo_enable,system_type,";
             for(var key in options){
-                if(",fceumm_nospritelimit,fceumm_palette,fceumm_region,fceumm_sndquality,fceumm_turbo_enable,system_type,".indexOf(","+key+",")!=-1){
+                if(hasStr.indexOf(","+key+",")!=-1){
                     continue;
                 }
-                console.log(key,options[key]);
+                console.log("."+key+".",options[key]);
             }
         },
         i18nHtml:function (){
             function setInnerText(select,val){
                 utils.delayAction(function (){
                     var list = document.querySelectorAll(select);
-                    return list && list.length > 0;
+                    return (window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()>0) || (list && list.length > 0);
                 },function (){
                     try{
                         var list = document.querySelectorAll(select);
@@ -168,6 +208,33 @@
             }
             setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(1)","更新");
             setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(2)","取消");
+            //设置界面
+            var hms = [
+                {"key":"fba-dipswitch-orlegend-Test_mode","name":"测试模式"},
+                {"key":"fba-dipswitch-orlegend-Music","name":"背景音"},
+                {"key":"fba-dipswitch-orlegend-Voice","name":"前景音"},
+                {"key":"fba-dipswitch-orlegend-Free_play","name":"免费玩"},
+                {"key":"fba-dipswitch-orlegend-Stop_mode","name":"停止模式"},
+                {"key":"fba-dipswitch-orlegend-Bios_select_(Fake)","name":"BIOS选择(伪造)"},
+                {"key":"fba-dipswitch-orlegend-Disable_Ba-Chieh","name":"节"},
+                {"key":"fba-dipswitch-orlegend-Region_(Fake)","name":"区域(伪造)"}
+            ];
+            for(var i=0;i<hms.length;i++){
+                (function (n){
+                    var hm = hms[n];
+                    utils.delayAction(function (){
+                        var doc = document.querySelector("button[item='"+hm.key+"'] > span span.ejs--f91e90fe7cabc875aff9a431bf5389");
+                        return (window.emuUtils && window.emuUtils.emu && window.emuUtils.emu.currentFrameNum()>0) || (doc&&doc.innerHTML);
+                    },function (){
+                        try{
+                            var val = document.querySelector("button[item='"+hm.key+"'] > span span.ejs--f91e90fe7cabc875aff9a431bf5389").innerHTML;
+                            setInnerText("button[item='"+hm.key+"'] > span",hm.name+"<span class='ejs--f91e90fe7cabc875aff9a431bf5389'>"+val+"</span>");
+                            setInnerText("div[data-pane='"+hm.key+"'] button.ejs--a7ad9de0cb0ca672b6703c50de7db9 span:nth-child(1)",hm.name);
+                        }catch (e){
+                        }
+                    });
+                })(i);
+            }
         },
         pojieJs: function () {
             var that = this;
