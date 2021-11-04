@@ -298,6 +298,11 @@
                 name = namesz[namesz.length - 1];
                 return name;
             },
+            getGameXnameByGameUrl:function (gameUrl){
+                var xnamesz = gameUrl.split("/");
+                var xname = xnamesz[xnamesz.length - 1];
+                return xname;
+            },
             getFileExtByName:function(name){
                 var namesz = name.split(".");
                 return namesz[namesz.length - 1];
@@ -316,12 +321,16 @@
                 var tmpUrl = utils.getParamer("url");
                 var playerName = that.getPlayName();
                 var name = that.getGameNameByGameUrl(tmpUrl);
+                var xname = that.getGameXnameByGameUrl(tmpUrl);
                 var biosCore = that.getBiosAndCoreByName(name);
                 var gameUrl = tmpUrl;
-                var nameIndex = tmpUrl.lastIndexOf(name);
-                var jinIndex = tmpUrl.lastIndexOf("#");
-                if(nameIndex != -1 && jinIndex != -1 && nameIndex > jinIndex){
-                    gameUrl = tmpUrl.substring(0,jinIndex)+"#/"+name;
+                if(xname != name){
+                    var jinIndex = tmpUrl.lastIndexOf("#");
+                    if(jinIndex == -1){
+                        gameUrl = tmpUrl+"#/"+name;
+                    }else{
+                        gameUrl = tmpUrl.substring(0,jinIndex)+"#/"+name;
+                    }
                 }
                 var options = {
                     player:"#game_div",
