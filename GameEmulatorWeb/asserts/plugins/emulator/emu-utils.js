@@ -16,7 +16,62 @@
                 clearInterval(ds);
             }, 300);
         },
-        hanhua:function (){
+        i18nShader:function (options){
+            if(options.normalOptions){
+                if(options.normalOptions.shader){
+                    options.normalOptions.shader.label = "着色器";
+                    if(options.normalOptions.shader.options){
+                        options.normalOptions.shader.options["2xScaleHQ.glslp"] = "2倍清晰";
+                        options.normalOptions.shader.options["4xScaleHQ.glslp"] = "4倍清晰";
+                        options.normalOptions.shader.options["crt-aperture.glslp"] = "光圈模式";
+                        options.normalOptions.shader.options["crt-easymode.glslp"] = "简易模式";
+                        options.normalOptions.shader.options["crt-geom.glslp"] = "几何模式";
+                        options.normalOptions.shader.options["disabled"] = "禁用";
+                    }
+                }
+            }
+        },
+        i18nCoreOptions:function(options){
+            if(options.fceumm_nospritelimit){
+                options.fceumm_nospritelimit.label = "无精灵限制";
+                if(options.fceumm_nospritelimit.options){
+                    options.fceumm_nospritelimit.options["disabled"] = "禁用";
+                    options.fceumm_nospritelimit.options["enabled"] = "启用";
+                }
+            }
+            if(options.fceumm_palette){
+                options.fceumm_palette.label = "调色板";
+                if(options.fceumm_palette.options){
+                    options.fceumm_palette.options["default"] = "默认";
+                }
+            }
+            if(options.fceumm_region){
+                options.fceumm_region.label = "视频";
+            }
+            if(options.fceumm_sndquality){
+                options.fceumm_sndquality.label = "音质";
+                if(options.fceumm_sndquality.options){
+                    options.fceumm_sndquality.options["High"] = "高";
+                    options.fceumm_sndquality.options["Low"] = "低";
+                    options.fceumm_sndquality.options["Very High"] = "非常高";
+                }
+            }
+            if(options.fceumm_turbo_enable){
+                options.fceumm_turbo_enable.label = "连发";
+            }
+            if(options.system_type){
+                options.system_type.label = "4玩家支持";
+                options.system_type.options["famicom"] = "磁碟机";
+                options.system_type.options["nes"] = "红白机";
+            }
+            for(var key in options){
+                if(",fceumm_nospritelimit,fceumm_palette,fceumm_region,fceumm_sndquality,fceumm_turbo_enable,system_type,".indexOf(","+key+",")!=-1){
+                    continue;
+                }
+                console.log(key,options[key]);
+            }
+        },
+        i18nHtml:function (){
             function setInnerText(select,val){
                 utils.delayAction(function (){
                     var list = document.querySelectorAll(select);
@@ -113,9 +168,6 @@
             }
             setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(1)","更新");
             setInnerText(".ejs--3f0897a8158ba363a0ee0afe4da7c5 .ejs--580e3c22e63f8a1eb29694fd0b141b a:nth-child(2)","取消");
-            //设置界面
-            var shader = document.querySelector("button[item='shader'] > span span.ejs--f91e90fe7cabc875aff9a431bf5389").innerHTML;
-            setInnerText("button[item='shader'] > span","画面<span class='ejs--f91e90fe7cabc875aff9a431bf5389'>"+shader+"</span>");
         },
         pojieJs: function () {
             var that = this;
@@ -327,7 +379,7 @@
         return document.querySelector(".ejs--73f9b4e94a7a1fe74e11107d5ab2ef");
     }, function () {
         document.querySelector(".ejs--73f9b4e94a7a1fe74e11107d5ab2ef").click();
-        emuUtils.hanhua();
+        emuUtils.i18nHtml();
     });
     //加载默认的按键配置
     if (!localStorage.getItem("ejs_nes_settings")) {
