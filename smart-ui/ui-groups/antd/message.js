@@ -43,7 +43,7 @@
             that.attrs.loading = "antd-loading-"+Date.now()+parseInt(Math.random()*10000);
             div.id = that.attrs.loading;
             div.className = "ant-spin-body";
-            div.innerHTML = "<div class=\"ant-spin ant-spin-spinning ant-spin-show-text\"><span class=\"ant-spin-dot ant-spin-dot-spin\"><i></i><i></i><i></i><i></i></span><div class=\"ant-spin-text\">"+text+"</div></div>";
+            div.innerHTML = "<div class=\"ant-spin ant-spin-spinning ant-spin-show-text\"><span class=\"ant-spin-dot ant-spin-dot-spin\"><i class=\"ant-spin-dot-item\"></i><i class=\"ant-spin-dot-item\"></i><i class=\"ant-spin-dot-item\"></i><i class=\"ant-spin-dot-item\"></i></span><div class=\"ant-spin-text\">"+text+"</div></div>";
             body.append(div);
         },
         cancelLoading:function(){
