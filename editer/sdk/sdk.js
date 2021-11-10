@@ -4,8 +4,8 @@
         getConfig:function(fn){
             var config = {
                 sv:5, //每隔多少秒执行一次保存
-                save:true, //是否开启自动保存
-                canEdit:false //是否可以编辑
+                save:false, //是否开启自动保存
+                canEdit:true //是否可以编辑
             };
             fn(config);
         },
@@ -49,7 +49,11 @@
             //1.根据file_id调用接口获取文件流
             //2.将文件流推送到指定的地方
             //3.使用fn进行回调  fn({"flag":true,"msg":"保存成功"})
-            fn({flag:true,msg:"保存成功"});
+            fn({flag:true,msg:"即将开始下载"});
+            var a = document.createElement("a");
+            a.href = aliyundriveController+"?type=5&file_id="+file_id+"&name="+utils.getParamer("name");
+            a.target = "_blank";
+            a.click();
         }
     }
 })()
