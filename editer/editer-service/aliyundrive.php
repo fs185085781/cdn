@@ -221,6 +221,18 @@ function getFileByUrl($url){
     curl_close($curl);
     return $res;
 }
+function logStr($fileName,$text){
+    $myfile = fopen(dirname(__FILE__)."/".$fileName.".txt", "a");
+    fwrite($myfile, date('Y-m-d H:i:s').$text."\n\n");
+    fclose($myfile);
+}
+function refererToHost(){
+    $sz = explode("/",$_SERVER['HTTP_REFERER']);
+    if(count($sz)>=3){
+        return $sz[0]."/".$sz[1]."/".$sz[2];
+    }
+    return "";
+}
 $fileIo = file_get_contents('php://input');
 $param = json_decode($fileIo,true);
 if($_GET['type'] == "0"){
@@ -340,6 +352,13 @@ if($_GET['type'] == "0"){
     deleteFiles($file_ids);
     $file_text = "总文件:".$nums.",删除6小时前:".$nums6;
     cacheSet("del","file",array("last_time"=>date("Y-m-d H:i:s")));
+    $dellog = $file_text;
+    if($_GET['remark']){
+        $dellog = $dellog.",来自:".$_GET['remark'];
+    }else{
+        $dellog = $dellog.",来自:".refererToHost();
+    }
+    logStr("dellog",$dellog);
     echo return_data(true,$file_text,null);
 }else if($_GET['type'] == "5"){
     //获取阿里文件流
