@@ -39,13 +39,6 @@
             fileName:"test.docx"
         },
         methods: {
-            getHost:function(){
-                var tmpPath = window.location.origin+window.location.pathname;
-                var tmpPathSz = tmpPath.split("/");
-                tmpPathSz.length = tmpPathSz.length-1;
-                tmpPath = tmpPathSz.join("/");
-                return tmpPath;
-            },
             initData:function (){
                 var url = utils.getParamer("url");
                 if(!url){
@@ -85,7 +78,7 @@
             test:function(){
                 var fileUrl = this.fileUrl;
                 var fileName = this.fileName;
-                window.location.href="index.html?url="+encodeURIComponent(fileUrl)+"&name="+encodeURIComponent(fileName)+"&sdk="+encodeURIComponent(this.getHost()+"/sdk/sdk.js");
+                window.location.href="index.html?url="+encodeURIComponent(fileUrl)+"&name="+encodeURIComponent(fileName)+"&sdk="+encodeURIComponent(utils.rootPath+"/sdk/sdk.js");
             }
         },
         mounted:function(){
