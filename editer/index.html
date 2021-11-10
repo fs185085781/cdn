@@ -12,7 +12,7 @@
     </style>
 </head>
 <div id="app">
-    <a-card title="使用说明" style="width:100%;">
+    <a-card title="使用说明" style="width:100%;" v-if="init">
         <a-row>
             <a-col :span="24">
                 1.准备好文件地址(用于读取文件),文件名称(用于判断使用什么打开,可忽略),sdk地址(用于保存文件和自定义,可忽略)和其他参数(用于传参配合sdk,可忽略)
@@ -36,12 +36,15 @@
     Vue.app({
         data:{
             fileUrl:"https://hm50134.j.h57.site/editer-service/test.docx",
-            fileName:"test.docx"
+            fileName:"test.docx",
+            init:false
         },
         methods: {
             initData:function (){
+                var that = this;
                 var url = utils.getParamer("url");
                 if(!url){
+                    that.init = true;
                     return;
                 }
                 var name = utils.getParamer("name");
