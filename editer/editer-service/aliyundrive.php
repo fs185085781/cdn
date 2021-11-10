@@ -176,7 +176,7 @@ function fileListAjaxByMarker($pid,$marker=false){
         "authorization: Bearer ".$res['access_token'],
         "cache-control: no-cache");
     $data = aliRequest('/adrive/v3/file/list', $param, $headers);
-    return $data['data'];
+    return $data;
 }
 function fileList(){
     $setting = cacheGet("setting","token");
@@ -322,6 +322,11 @@ if($_GET['type'] == "0"){
     echo return_data(true,"获取编辑链接成功",$resData);
 }else if($_GET['type'] == "4"){
     //删除6小时前的文件,刷新token 建议每小时调一次
+    $cacheData = cacheGet("del","file");
+    if($cacheData && strtotime($cacheData['last_time']) > time() - 1800){
+        echo return_data(false,"时间未到,请稍后重试",null);
+        return;
+    }
     $items = fileList();
     $nums = count($items);
     $nums6 = 0;
@@ -334,6 +339,7 @@ if($_GET['type'] == "0"){
     }
     deleteFiles($file_ids);
     $file_text = "总文件:".$nums.",删除6小时前:".$nums6;
+    cacheSet("del","file",array("last_time"=>date("Y-m-d H:i:s")));
     echo return_data(true,$file_text,null);
 }else if($_GET['type'] == "5"){
     //获取阿里文件流
