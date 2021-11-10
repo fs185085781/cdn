@@ -21,7 +21,7 @@
                 2.访问本页面并带上参数,链接地址结构如下
             </a-col>
             <a-col :span="24">
-                index.html?url=encodeURIComponent("http://ip/test.docx")&name=encodeURIComponent("test.docx")&sdk=<br>encodeURIComponent("http://ip/sdk/sdk.js")
+                index.html?url=encodeURIComponent("http://ip/test.docx")&name=encodeURIComponent("test.docx")
             </a-col>
             <a-col :span="24">
                 <a href="javascript:" @click="test()">点我尝试一下?</a>
@@ -53,10 +53,6 @@
                     var usz = url.split("/");
                     name = usz[usz.length - 1];
                 }
-                var sdk = utils.getParamer("sdk");
-                if(!sdk){
-                    sdk = this.getHost()+"/sdk/sdk.js";
-                }
                 var page = this.checkFile(name);
                 if(!page){
                     utils.$.errorMsg("此文件类型暂不支持,请加QQ185085781反馈");
@@ -65,7 +61,6 @@
                 var search = utils.getSearch();
                 search["url"] = url;
                 search["name"] = name;
-                search["sdk"] = sdk;
                 var searchStr = "";
                 for(var key in search){
                     searchStr += "&"+key+"="+encodeURIComponent(search[key]);
@@ -85,8 +80,7 @@
                 return;
             },
             test:function(){
-                var path = this.getHost();
-                window.location.href="index.html?url="+encodeURIComponent(path+"/test.docx")+"&name="+encodeURIComponent("test.docx")+"&sdk="+encodeURIComponent(path+"/sdk/sdk.js");
+                window.location.href="index.html?url="+encodeURIComponent("http://hm35658.j.h57.site/editer-service/test.docx")+"&name="+encodeURIComponent("test.docx");
             }
         },
         mounted:function(){

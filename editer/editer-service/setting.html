@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账号配置</title>
+    <script src="js/init.js?from=antd"></script>
+    <style>
+        #app{
+            width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<div id="app">
+    <a-card title="自定义阿里云盘" style="width:100%;">
+        <a-form-model layout="horizontal" :model="setting.aliyun" :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }">
+            <a-form-model-item label="密码" prop="password">
+                <a-input v-model="setting.aliyun.password" type="text" autocomplete="off" placeholder="多次配置需要输入相同的密码"/>
+            </a-form-model-item>
+            <a-form-model-item label="refresh_token" prop="refresh_token">
+                <a-input v-model="setting.aliyun.refresh_token" autocomplete="off" placeholder="参照下面说明获取"/>
+            </a-form-model-item>
+            <a-row style="text-align: center;">
+                <a-col :span="24">
+                    点击此按钮,并登录阿里云盘登录后
+                </a-col>
+                <a-col :span="24">
+                    在地址栏'粘贴并访问'可获取refresh_token
+                </a-col>
+                <a-col :span="24">
+                    <a-button type="primary" @click="copyTextAndAction()">
+                        复制并打开
+                    </a-button>
+                    <a @click="copyTextError()">
+                        未复制成功点我
+                    </a>
+                </a-col>
+            </a-row>
+            <a-form-model-item label="目录id" prop="list_id">
+                <a-input v-model="setting.aliyun.list_id" autocomplete="off" placeholder="临时存放文件6小时,超过6小时自动删除"/>
+            </a-form-model-item>
+            <a-row style="text-align: center;">
+                <a-col :span="24" style="color:red;">
+                    目录id用于将文档临时存到此目录,请使用非自己用的目录,否则文件会被删除
+                </a-col>
+            </a-row>
+            <a-form-model-item :wrapper-col="{ span: 18, offset: 10 }">
+                <a-button type="primary" @click="saveAliyunData()">
+                    应用
+                </a-button>
+            </a-form-model-item>
+        </a-form-model>
+    </a-card>
+    <!--<a-card title="自定义ProcessOn" style="width:100%;">
+        <a-form-model layout="horizontal" :model="setting.process" :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }">
+            <a-form-model-item label="密码" prop="password">
+                <a-input v-model="setting.process.password" type="text" autocomplete="off" placeholder="多次配置需要输入相同的密码"/>
+            </a-form-model-item>
+            <a-form-model-item label="配置模式" prop="type">
+                <a-radio-group v-model="setting.process.type" button-style="solid">
+                    <a-radio-button value="password">
+                        密码模式
+                    </a-radio-button>
+                    <a-radio-button value="cookie">
+                        Cookie模式
+                    </a-radio-button>
+                </a-radio-group>
+            </a-form-model-item>
+            <a-form-model-item v-if="setting.process.type=='password'" label="账号" prop="username">
+                <a-input v-model="setting.process.username" autocomplete="off" placeholder="ProcessOn账号"/>
+            </a-form-model-item>
+            <a-form-model-item v-if="setting.process.type=='password'" label="密码" prop="upassword">
+                <a-input v-model="setting.process.upassword" autocomplete="off" placeholder="ProcessOn密码"/>
+            </a-form-model-item>
+            <a-form-model-item v-if="setting.process.type=='cookie'" label="cookie" prop="cookie">
+                <a-input v-model="setting.process.cookie" autocomplete="off" placeholder="ProcessOn登录后的cookie"/>
+            </a-form-model-item>
+            <a-form-model-item :wrapper-col="{ span: 18, offset: 10 }">
+                <a-button type="primary" @click="saveProcessData()">
+                    应用
+                </a-button>
+            </a-form-model-item>
+        </a-form-model>
+    </a-card>-->
+    <a-card title="教程说明" style="width:100%;">
+        <a-row>
+            <a-col :span="24">
+                下图箭头1处用于获取refresh_token,箭头2处的红框就是目录id
+            </a-col>
+            <a-col :span="24">
+                <img src="./image/bz.png" alt="" style="width:100%;">
+            </a-col>
+        </a-row>
+    </a-card>
+</div>
+</body>
+<script>
+    Vue.app({
+        data:{
+            setting:{
+                aliyun:{
+                    password:'',
+                    refresh_token:'',
+                    list_id:''
+                },
+                process:{
+                    password:'',
+                    type:'password',
+                    username:'',
+                    upassword:'',
+                    cookie:''
+                }
+            },
+            code:"javascript:void((function(){prompt(\"请将如下值复制到插件refresh_token属性中:\",JSON.parse(localStorage.getItem(\"token\")).refresh_token)})())"
+        },
+        methods: {
+            saveAliyunData:function (){
+                var that = this;
+                utils.$.post('/aliyundrive.php?type=0',that.setting.aliyun,function (res){
+                    utils.$.successMsg(res.msg);
+                });
+            },
+            copyTextAndAction:function (){
+                if(!utils.copyText(this.code)){
+                    utils.$.errorMsg('复制失败,请手动复制');
+                }else{
+                    window.open("https://www.aliyundrive.com/");
+                }
+            },
+            copyTextError:function (){
+                prompt("获取refresh_token的代码",this.code);
+            },
+            saveProcessData:function (){
+                utils.$.errorMsg("此功能暂未支持");
+            }
+        },
+        mounted:function(){
+        }
+    });
+</script>
+</html>

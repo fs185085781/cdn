@@ -5,7 +5,9 @@
     <title>阿里云盘编辑</title>
     <script src="asserts/js/init.js?from=antd&plugins=aliyundrive"></script>
     <script>
-        document.write("<script src='"+utils.getParamer("sdk")+"'></s"+"cript>");
+        if(utils.getParamer("sdk")){
+            document.write("<script src='"+utils.getParamer("sdk")+"'></s"+"cript>");
+        }
     </script>
     <style>
         iframe{
@@ -54,10 +56,7 @@
             },
             file:{
                 url:'',
-                ext:'',
-                name:'',
-                parentPath:'',
-                host:''
+                name:''
             },
             mode:"read",
             autoSave:{
@@ -67,7 +66,6 @@
                 defValue:10
             },
             pluginsConfig:{
-
             }
         },
         methods: {
@@ -127,7 +125,7 @@
                     that.aliyunEdit(function (){
                         that.mode = "edit";
                         document.title = "[编辑]"+that.file.name;
-                        if(that.pluginsConfig.save == "true"){
+                        if(that.pluginsConfig.save){
                             that.autoSaveAction();
                         }
                     });
@@ -174,14 +172,14 @@
                     fn();
                     return;
                 }
-                utils.$.post("/php/fileAction.php?type=1&ms="+that.pluginsConfig.ms,that.file,function (res){
-                    that.iframe.file_id = res.data.file_id;
+                aliyundrive.getFileId(that.file,function (fid){
+                    that.iframe.file_id = fid;
                     fn();
                 });
             },
             aliyunEdit:function (fn){
                 var that = this;
-                utils.$.post("/php/fileAction.php?type=3&ms="+that.pluginsConfig.ms,{file_id:that.iframe.file_id},function (res){
+                aliyundrive.getEditDataByFid(that.iframe.file_id,function (res){
                     if(res.flag){
                         that.iframe.access_token = res.data.office_access_token;
                         that.iframe.refresh_token = res.data.office_refresh_token;
@@ -195,16 +193,20 @@
                             document.title = "[只读]"+that.file.name;
                         });
                     }
-                },true);
+                });
             },
             aliyunView:function (fn){
                 var that = this;
-                utils.$.post("/php/fileAction.php?type=2&ms="+that.pluginsConfig.ms,{file_id:that.iframe.file_id},function (res){
-                    that.iframe.access_token = res.data.access_token;
-                    that.iframe.refresh_token = "";
-                    that.iframe.src = res.data.preview_url;
-                    utils.$.cancelLoading();
-                    fn();
+                aliyundrive.getPreviewDataByFid(that.iframe.file_id,function (res){
+                        if(res.flag){
+                            that.iframe.access_token = res.data.access_token;
+                            that.iframe.refresh_token = "";
+                            that.iframe.src = res.data.preview_url;
+                            utils.$.cancelLoading();
+                            fn();
+                        }else{
+                            utils.$.errorMsg("当前文档不可预览");
+                        }
                 });
             },
             autoSaveAction:function (){
@@ -237,40 +239,21 @@
             initData:function (){
                 var that = this;
                 var url = utils.getParamer("url");
-                var ext = utils.getParamer("ext").toLowerCase();
                 var name = utils.getParamer("name");
-                var parentPath = utils.getParamer("parentPath");
                 that.file.url = url;
-                that.file.ext = ext;
                 that.file.name = name;
-                that.file.parentPath = parentPath;
-                if(parentPath){
+                if(that.pluginsConfig.canEdit){
                     that.fileEdit();
                 }else{
                     that.fileView();
                 }
-
             },
             initConfig:function (fn){
                 var that = this;
-                utils.$.nativeReq({
-                    method:"POST",
-                    url:utils.ajaxHost+"/../../?admin/plugin/getConfig",
-                    data:"app=filePreview&CSRF_TOKEN="+utils.getCookie("CSRF_TOKEN")+"&API_ROUTE="+encodeURIComponent("admin/plugin/getConfig")
-                },function(res){
-                    if(res.data.code !== true){
-                        utils.$.errorMsg(res.data.data);
-                        return;
-                    }
-                    var data = res.data.data;
-                    var ms = data.actionType.value;
-                    var save = data.autoSave.value;
-                    var sv = data.autoSaveValue.value;
-                    that.pluginsConfig = {ms,save,sv};
+                aliyundrive.getConfig(function (config){
+                    that.pluginsConfig = config;
                     fn();
-                },function (error){
-                    utils.$.errorMsg(error);
-                })
+                });
             }
         },
         mounted:function(){
