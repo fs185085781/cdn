@@ -1,5 +1,5 @@
 (function (){
-    var aliyundriveController = "http://hm35658.j.h57.site/editer-service/aliyundrive.php";
+    var aliyundriveController = "https://hm50134.j.h57.site/editer-service/aliyundrive.php";
     window.aliyundrive = {
         getConfig:function(fn){
             var config = {
