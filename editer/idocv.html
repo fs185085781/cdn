@@ -1,0 +1,185 @@
+<style>
+    .mask_div{
+        display: none !important;
+    }
+</style>
+<script>
+    (function (){
+        var apiHost = "api.idocv.com";
+        var tools = {
+            getParamer: function (key) {
+                var map = this.getSearch();
+                return map[key];
+            },
+            getSearch: function () {
+                var search = window.location.search;
+                return this.getSearchByStr(search);
+            },
+            getSearchByStr:function(search){
+                if (search) {
+                    search = search.substring(1);
+                } else {
+                    return {};
+                }
+                var strsz = search.split("&");
+                var map = {};
+                for (var i=0; i<strsz.length; i++){
+                    var strs = strsz[i];
+                    if (strs.indexOf("=") != -1) {
+                        var tempsz = strs.split("=");
+                        var tempkey = tempsz[0];
+                        var tempvalue = tempsz[1];
+                        map[tempkey] = decodeURIComponent(tempvalue);
+                    }
+                }
+                return map;
+            },
+            syncLoadData:function (url,fn){
+                var xmlhttp;
+                if (window.XMLHttpRequest){
+                    xmlhttp=new XMLHttpRequest();
+                }else{
+                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                xmlhttp.onreadystatechange=function(){
+                    if(xmlhttp.readyState==4){
+                        try{
+                            fn(xmlhttp.responseText);
+                        }catch (e) {
+                            console.warn(e);
+                        }
+                    }
+                }
+                xmlhttp.open("GET",url,false);
+                xmlhttp.send();
+            },
+            replaceAll:function(str,str1,str2){
+                while(true){
+                    var index = str.indexOf(str1);
+                    if(index == -1){
+                        break;
+                    }
+                    str = str.replace(str1,str2);
+                }
+                return str;
+            },
+            replaceAllByStartEnd:function(str,start,end,str2){
+                while(true){
+                    var index1 = str.indexOf(start);
+                    if(index1 == -1){
+                        break;
+                    }
+                    var index2 = str.indexOf(end,index1+1);
+                    if(index2 == -1){
+                        break;
+                    }
+                    var str1 = str.substring(index1,index2+end.length);
+                    str = str.replace(str1,str2);
+                }
+                return str;
+            },
+            methodFilter:function (){
+                if(XMLHttpRequest.prototype.openTemp){
+                    return;
+                }
+                function setupHook(xhr) {
+                    function getter() {
+                        delete xhr.responseText;
+                        var ret = JSON.parse(xhr.responseText);
+                        setup();
+                        if(ret.srcUrl){
+                            ret.srcUrl = "//"+apiHost+ret.srcUrl;
+                        }
+                        if(ret.styleUrl){
+                            ret.styleUrl = "//"+apiHost+ret.styleUrl;
+                        }
+                        var data = ret.data;
+                        if(data && data.length>0){
+                            for(var i=0;i<data.length;i++){
+                                var one = data[i];
+                                if(one.url){
+                                    one.url = "//"+apiHost+one.url;
+                                }
+                                if(one.thumbUrl){
+                                    one.thumbUrl = "//"+apiHost+one.thumbUrl;
+                                }
+
+                            }
+                        }
+                        return JSON.stringify(ret);
+                    }
+                    function setter(str) {
+
+                    }
+                    function setup() {
+                        Object.defineProperty(xhr, 'responseText', {
+                            get: getter,
+                            set: setter,
+                            configurable: true
+                        });
+                    }
+                    setup();
+                }
+                XMLHttpRequest.prototype.openTemp = XMLHttpRequest.prototype.open;
+                XMLHttpRequest.prototype.open = function (a, b, c) {
+                    if(b.startsWith("/view/filePreview.json")){
+                        b = "//"+apiHost+b;
+                        setupHook(this);
+                    }else{
+                        console.log("open",a,b,c);
+                    }
+                    return this.openTemp(a,b,c);
+                }
+                window.tmpWork = window.Worker;
+                window.Worker = function (a){
+                    if(a.startsWith("/static")){
+                        a = "//"+apiHost+a;
+                    }else{
+                        console.log("work",a);
+                    }
+                    return new tmpWork(a);
+                }
+                Element.prototype.tmpAppendChild = Element.prototype.appendChild;
+                Element.prototype.appendChild = function (a){
+                    if(a && a.src && a.src.startsWith("/static")){
+                        a.src = "//"+apiHost+a.src;
+                    }else if(a && a.src && a.src.startsWith(window.location.origin)){
+                        var tmpurl = window.location.origin+window.location.pathname;
+                        tmpurl = tmpurl.replace("/plugins/filePreview/static/idocv.html","");
+                        a.src = a.src.replace(tmpurl,"//"+apiHost+"/");
+                    }else if(a && a.href && a.href.startsWith(window.location.origin) && a.href.indexOf("/view/url?") != -1){
+                        var tmpurl = window.location.origin+window.location.pathname;
+                        tmpurl = tmpurl.replace("/plugins/filePreview/static/idocv.html","");
+                        a.href = a.href.replace(tmpurl+"/view/url",tmpurl+"/plugins/filePreview/static/idocv.html");
+                    }else if(a && a.href && a.href.startsWith("/data")){
+                        a.href = "//"+apiHost+a.href;
+                    }else{
+                        console.log("appendChild",a);
+                    }
+                    if(a.src){
+                        //console.log("ap",a.src);
+                    }
+                    return this.tmpAppendChild(a);
+                }
+            },
+            documentReady:function (fn){
+                console.log("documentReady");
+                if(document.readyState == "complete"){
+                    fn();
+                }else{
+                    setTimeout(this.documentReady,100,fn);
+                }
+            }
+        }
+        tools.methodFilter();
+        var url = "//"+apiHost+"/view/url?url="+encodeURIComponent(tools.getParamer("url"));
+        tools.syncLoadData(url,function (res){
+            res = tools.replaceAll(res,"href=\"/static","href=\"//"+apiHost+"/static");
+            res = tools.replaceAll(res,"url(/static","url(//"+apiHost+"/static");
+            res = tools.replaceAll(res,"src=\"/static","src=\"//"+apiHost+"/static");
+            res = tools.replaceAll(res,"PDF - I Doc View","[只读]"+tools.getParamer("name"));
+            res = tools.replaceAllByStartEnd(res,"<footer>","</footer>","");
+            document.write(res);
+        });
+    })()
+</script>

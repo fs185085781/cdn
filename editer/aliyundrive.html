@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>阿里云盘编辑</title>
+    <script src="asserts/js/init.js?from=antd&plugins=aliyundrive"></script>
+    <script>
+        document.write("<script src='"+utils.getParamer("sdk")+"'></s"+"cript>");
+    </script>
+    <style>
+        iframe{
+            width: 100%;
+            height: calc(100vh - 40px);
+            border: none;
+        }
+        .text-color{
+            color:red;
+        }
+    </style>
+</head>
+<div id="app">
+    <a-row>
+        <a-col :span="6">
+            <a-button v-if="mode=='edit' && iframe.file_id" type="primary" icon="eye" @click="fileView()"></a-button>
+            <a-button v-if="mode=='read && file.parentPath' && iframe.file_id" type="primary" icon="edit" @click="fileEdit()"></a-button>
+            <a-button v-if="mode=='edit' && iframe.file_id && file.parentPath" type="primary" icon="save" @click="fileSave()"></a-button>
+        </a-col>
+        <a-col :span="18" v-if="mode == 'edit'">
+            <span v-if="autoSave.text" class="text-color">当前已开启自动保存({{autoSave.text}})</span>
+            <span v-if="!autoSave.text" class="text-color">请使用左侧保存按钮保存到可道云,否则文件将不会被保存</span>
+        </a-col>
+    </a-row>
+    <a-row>
+        <a-col :span="24">
+            <iframe ref="iframe" :src="iframe.src"></iframe>
+        </a-col>
+    </a-row>
+</div>
+</body>
+<script>
+    window.addEventListener("message",function (res){
+        if(window.vm){
+            window.vm.sendAlitoken(res);
+        }
+    });
+    Vue.app({
+        data:{
+            iframe:{
+                src:'',
+                file_id:'',
+                access_token:'',
+                refresh_token:'',
+                save_status:0,//0:未保存或保存成功或失败,请求保存,1:收到保存,2:保存中
+            },
+            file:{
+                url:'',
+                ext:'',
+                name:'',
+                parentPath:'',
+                host:''
+            },
+            mode:"read",
+            autoSave:{
+                init:false,
+                text:null,
+                value:0,
+                defValue:10
+            },
+            pluginsConfig:{
+
+            }
+        },
+        methods: {
+            getParentHost:function (){
+                var that = this;
+                if(that.file.host){
+                    return that.file.host;
+                }
+                var path = utils.rootPath;
+                var pathsz = path.split("/");
+                pathsz.length = pathsz.length -2;
+                path = pathsz.join("/");
+                that.file.host = path;
+                return that.file.host;
+            },
+            sendAlitoken:function (res){
+                var that = this;
+                var data = JSON.parse(res.data);
+                if(data.eventName == "ready"){
+                    var setToken = {"eventName":"setToken","data":{"token":that.iframe.access_token,"timeout":100000,"hasRefreshTokenConfig":true}};
+                    that.$refs["iframe"].contentWindow.postMessage(JSON.stringify(setToken), '*');
+                    var setConfig = {"eventName":"setConfig","data":{"refreshToken":{"eventName":"api.getToken"},"version":"1.1.5"}};
+                    that.$refs["iframe"].contentWindow.postMessage(JSON.stringify(setConfig), '*');
+                }else if(data.eventName == "wps.api.reply"){
+                    if(data.data.result == "nochange" || data.data.result == "ok"){
+                        if(that.iframe.save_status == 0){
+                            that.iframe.save_status = 1;
+                            that.fileSave();
+                        }
+                    }else if(data.data.error){
+                        if(data.data.error == "PermissionDenied"){
+                            that.fileView();
+                        }else if(data.data.reason == "SavedEmptyFile"){
+                            utils.$.errorMsg("空文件不允许保存");
+                        }else{
+                            console.log(res);
+                        }
+                    }else{
+                        console.log(res);
+                    }
+                }else{
+                    console.log(res);
+                }
+            },
+            fileView:function (){
+                var that = this;
+                that.getAliFileId(function (){
+                    that.aliyunView(function (){
+                        that.mode = "read";
+                        document.title = "[只读]"+that.file.name;
+                    });
+                });
+            },
+            fileEdit:function (){
+                var that = this;
+                that.getAliFileId(function (){
+                    that.aliyunEdit(function (){
+                        that.mode = "edit";
+                        document.title = "[编辑]"+that.file.name;
+                        if(that.pluginsConfig.save == "true"){
+                            that.autoSaveAction();
+                        }
+                    });
+                });
+            },
+            fileSave:function(){
+                var that = this;
+                if(that.iframe.save_status == 0){
+                    that.$refs["iframe"].contentWindow.postMessage(JSON.stringify({"data":{"api":"save"},"msgId":2,"eventName":"wps.jssdk.api"}), '*');
+                }else if(that.iframe.save_status == 1){
+                    that.iframe.save_status = 2;
+                    utils.$.attr.tmpMask = false;
+                    if(that.autoSave.init){
+                        that.autoSave.text = "正在保存中...请稍后";
+                    }else{
+                        utils.$.loading("正在保存中...请稍后");
+                    }
+                    utils.$.post("/php/fileAction.php?type=4&ms="+that.pluginsConfig.ms,{
+                        parentPath:that.file.parentPath,
+                        file_id:that.iframe.file_id,
+                        name:that.file.name,
+                        host:that.getParentHost(),
+                    },function (res){
+                        utils.$.cancelLoading();
+                        that.iframe.save_status = 0;
+                        if(that.autoSave.init){
+                            that.autoSave.text = res.msg;
+                            that.autoSave.value = that.autoSave.defValue;
+                        }else{
+                            if(res.flag){
+                                utils.$.successMsg(res.msg);
+                            }else{
+                                utils.$.errorMsg(res.msg);
+                            }
+                        }
+                    },true);
+                }else if(that.iframe.save_status == 2){
+                    //utils.$.errorMsg("正在保存中，请稍后");
+                }
+            },
+            getAliFileId:function (fn){
+                var that = this;
+                if(that.iframe.file_id){
+                    fn();
+                    return;
+                }
+                utils.$.post("/php/fileAction.php?type=1&ms="+that.pluginsConfig.ms,that.file,function (res){
+                    that.iframe.file_id = res.data.file_id;
+                    fn();
+                });
+            },
+            aliyunEdit:function (fn){
+                var that = this;
+                utils.$.post("/php/fileAction.php?type=3&ms="+that.pluginsConfig.ms,{file_id:that.iframe.file_id},function (res){
+                    if(res.flag){
+                        that.iframe.access_token = res.data.office_access_token;
+                        that.iframe.refresh_token = res.data.office_refresh_token;
+                        that.iframe.src = res.data.edit_url;
+                        utils.$.cancelLoading();
+                        fn();
+                    }else{
+                        utils.$.errorMsg("当前文档不可编辑");
+                        that.aliyunView(function (){
+                            that.mode = "read";
+                            document.title = "[只读]"+that.file.name;
+                        });
+                    }
+                },true);
+            },
+            aliyunView:function (fn){
+                var that = this;
+                utils.$.post("/php/fileAction.php?type=2&ms="+that.pluginsConfig.ms,{file_id:that.iframe.file_id},function (res){
+                    that.iframe.access_token = res.data.access_token;
+                    that.iframe.refresh_token = "";
+                    that.iframe.src = res.data.preview_url;
+                    utils.$.cancelLoading();
+                    fn();
+                });
+            },
+            autoSaveAction:function (){
+                var that = this;
+                if(that.autoSave.init){
+                    return;
+                }
+                var sv = that.pluginsConfig.sv;
+                if(sv && !isNaN(sv)){
+                    that.autoSave.defValue = sv*1;
+                }
+                that.autoSave.value = that.autoSave.defValue;
+                that.autoSave.text = "保存倒计时"+that.autoSave.value;
+                that.autoSave.init = true;
+                setInterval(function (){
+                    if(that.mode != 'edit'){
+                        return;
+                    }
+                    if(that.iframe.save_status == 2){
+                        return;
+                    }
+                    that.autoSave.value--;
+                    if(that.autoSave.value <= 0){
+                        that.fileSave();
+                    }else{
+                        that.autoSave.text = "保存倒计时"+that.autoSave.value;
+                    }
+                },1000);
+            },
+            initData:function (){
+                var that = this;
+                var url = utils.getParamer("url");
+                var ext = utils.getParamer("ext").toLowerCase();
+                var name = utils.getParamer("name");
+                var parentPath = utils.getParamer("parentPath");
+                that.file.url = url;
+                that.file.ext = ext;
+                that.file.name = name;
+                that.file.parentPath = parentPath;
+                if(parentPath){
+                    that.fileEdit();
+                }else{
+                    that.fileView();
+                }
+
+            },
+            initConfig:function (fn){
+                var that = this;
+                utils.$.nativeReq({
+                    method:"POST",
+                    url:utils.ajaxHost+"/../../?admin/plugin/getConfig",
+                    data:"app=filePreview&CSRF_TOKEN="+utils.getCookie("CSRF_TOKEN")+"&API_ROUTE="+encodeURIComponent("admin/plugin/getConfig")
+                },function(res){
+                    if(res.data.code !== true){
+                        utils.$.errorMsg(res.data.data);
+                        return;
+                    }
+                    var data = res.data.data;
+                    var ms = data.actionType.value;
+                    var save = data.autoSave.value;
+                    var sv = data.autoSaveValue.value;
+                    that.pluginsConfig = {ms,save,sv};
+                    fn();
+                },function (error){
+                    utils.$.errorMsg(error);
+                })
+            }
+        },
+        mounted:function(){
+            var that = this;
+            utils.$.loading("正在加载中...请稍后");
+            that.initConfig(that.initData);
+        }
+    });
+</script>
+</html>

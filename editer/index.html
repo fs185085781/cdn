@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>万能在线编辑器</title>
+    <script src="asserts/js/init.js?from=antd"></script>
+    <style>
+        #app{
+            width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<div id="app">
+    <a-card title="使用说明" style="width:100%;">
+        <a-row>
+            <a-col :span="24">
+                1.准备好文件地址(用于读取文件),文件名称(用于判断使用什么打开,可忽略),sdk地址(用于保存文件和自定义,可忽略)和其他参数(用于传参配合sdk,可忽略)
+            </a-col>
+            <a-col :span="24">
+                2.访问本页面并带上参数,链接地址结构如下
+            </a-col>
+            <a-col :span="24">
+                index.html?url=encodeURIComponent("http://ip/test.docx")&name=encodeURIComponent("test.docx")&sdk=<br>encodeURIComponent("http://ip/sdk/sdk.js")
+            </a-col>
+            <a-col :span="24">
+                <a href="javascript:" @click="test()">点我尝试一下?</a>
+            </a-col>
+        </a-row>
+    </a-card>
+</div>
+</body>
+<script>
+    Vue.app({
+        data:{
+
+        },
+        methods: {
+            getHost:function(){
+                var tmpPath = window.location.origin+window.location.pathname;
+                var tmpPathSz = tmpPath.split("/");
+                tmpPathSz.length = tmpPathSz.length-1;
+                tmpPath = tmpPathSz.join("/");
+                return tmpPath;
+            },
+            initData:function (){
+                var url = utils.getParamer("url");
+                if(!url){
+                    return;
+                }
+                var name = utils.getParamer("name");
+                if(!name){
+                    var usz = url.split("/");
+                    name = usz[usz.length - 1];
+                }
+                var sdk = utils.getParamer("sdk");
+                if(!sdk){
+                    sdk = this.getHost()+"/sdk/sdk.js";
+                }
+                var page = this.checkFile(name);
+                if(!page){
+                    utils.$.errorMsg("此文件类型暂不支持,请加QQ185085781反馈");
+                    return;
+                }
+                var search = utils.getSearch();
+                search["url"] = url;
+                search["name"] = name;
+                search["sdk"] = sdk;
+                var searchStr = "";
+                for(var key in search){
+                    searchStr += "&"+key+"="+encodeURIComponent(search[key]);
+                }
+                window.location.href=page+"?"+searchStr.substring(1);
+            },
+            checkFile:function(name){
+                var nsz = name.split(".");
+                var ext = nsz[nsz.length - 1];
+                var ali = "pdf,wps,wpt,doc,docx,docm,dot,dotx,dotm,rtf,txt,et,xls,xlsx,xlsm,xlt,xltx,xltm,csv,ppt,pptx,pptm,ppsx,ppsm,pps,potx,potm,dpt,dps".split(",");
+                var idocv = "doc,docx,wps,odt,rtf,xls,xlsx,et,ods,csv,ppt,pptx,dps,odp,pdf,ofd,txt,jpg,jpeg,gif,png,bmp,tif,tiff,mp3,m4a,mid,midi,wma,mp4,zip,rar,tar,7z,dwg,dxf,dwf,html,htm,mhtml,xml,js,css,java,php,cpp,cs,sql,bat,json,conf".split(",");
+                if(ali.includes(ext.toLowerCase())){
+                    return "aliyundrive.html";
+                }else if(idocv.includes(ext.toLowerCase())){
+                    return "idocv.html";
+                }
+                return;
+            },
+            test:function(){
+                var path = this.getHost();
+                window.location.href="index.html?url="+encodeURIComponent(path+"/test.docx")+"&name="+encodeURIComponent("test.docx")+"&sdk="+encodeURIComponent(path+"/sdk/sdk.js");
+            }
+        },
+        mounted:function(){
+            this.initData();
+
+        }
+    });
+</script>
+</html>
