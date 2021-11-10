@@ -24,8 +24,8 @@
     <a-row>
         <a-col :span="6">
             <a-button v-if="mode=='edit' && iframe.file_id" type="primary" icon="eye" @click="fileView()"></a-button>
-            <a-button v-if="mode=='read && file.parentPath' && iframe.file_id" type="primary" icon="edit" @click="fileEdit()"></a-button>
-            <a-button v-if="mode=='edit' && iframe.file_id && file.parentPath" type="primary" icon="save" @click="fileSave()"></a-button>
+            <a-button v-if="mode=='read' && iframe.file_id && pluginsConfig.canEdit" type="primary" icon="edit" @click="fileEdit()"></a-button>
+            <a-button v-if="mode=='edit' && iframe.file_id && pluginsConfig.canEdit" type="primary" icon="save" @click="fileSave()"></a-button>
         </a-col>
         <a-col :span="18" v-if="mode == 'edit'">
             <span v-if="autoSave.text" class="text-color">当前已开启自动保存({{autoSave.text}})</span>
@@ -90,6 +90,7 @@
                     var setConfig = {"eventName":"setConfig","data":{"refreshToken":{"eventName":"api.getToken"},"version":"1.1.5"}};
                     that.$refs["iframe"].contentWindow.postMessage(JSON.stringify(setConfig), '*');
                 }else if(data.eventName == "wps.api.reply"){
+                    console.log(data.data.result);
                     if(data.data.result == "nochange" || data.data.result == "ok"){
                         if(that.iframe.save_status == 0){
                             that.iframe.save_status = 1;
@@ -133,6 +134,7 @@
             },
             fileSave:function(){
                 var that = this;
+                console.log(that.iframe.save_status);
                 if(that.iframe.save_status == 0){
                     that.$refs["iframe"].contentWindow.postMessage(JSON.stringify({"data":{"api":"save"},"msgId":2,"eventName":"wps.jssdk.api"}), '*');
                 }else if(that.iframe.save_status == 1){
@@ -143,12 +145,7 @@
                     }else{
                         utils.$.loading("正在保存中...请稍后");
                     }
-                    utils.$.post("/php/fileAction.php?type=4&ms="+that.pluginsConfig.ms,{
-                        parentPath:that.file.parentPath,
-                        file_id:that.iframe.file_id,
-                        name:that.file.name,
-                        host:that.getParentHost(),
-                    },function (res){
+                    aliyundrive.saveFile(that.iframe.file_id,function (res){
                         utils.$.cancelLoading();
                         that.iframe.save_status = 0;
                         if(that.autoSave.init){
@@ -161,7 +158,7 @@
                                 utils.$.errorMsg(res.msg);
                             }
                         }
-                    },true);
+                    });
                 }else if(that.iframe.save_status == 2){
                     //utils.$.errorMsg("正在保存中，请稍后");
                 }
@@ -205,7 +202,7 @@
                             utils.$.cancelLoading();
                             fn();
                         }else{
-                            utils.$.errorMsg("当前文档不可预览");
+                            utils.$.errorMsg(res.msg?res.msg:"当前文档不可预览");
                         }
                 });
             },

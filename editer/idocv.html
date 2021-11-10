@@ -5,7 +5,8 @@
 </style>
 <script>
     (function (){
-        var apiHost = "api.idocv.com";
+        var pagePath = "/cdn/editer/idocv.html";
+        var apiHost = "https://api.idocv.com";
         var tools = {
             getParamer: function (key) {
                 var map = this.getSearch();
@@ -88,20 +89,20 @@
                         var ret = JSON.parse(xhr.responseText);
                         setup();
                         if(ret.srcUrl){
-                            ret.srcUrl = "//"+apiHost+ret.srcUrl;
+                            ret.srcUrl = apiHost+ret.srcUrl;
                         }
                         if(ret.styleUrl){
-                            ret.styleUrl = "//"+apiHost+ret.styleUrl;
+                            ret.styleUrl = apiHost+ret.styleUrl;
                         }
                         var data = ret.data;
                         if(data && data.length>0){
                             for(var i=0;i<data.length;i++){
                                 var one = data[i];
                                 if(one.url){
-                                    one.url = "//"+apiHost+one.url;
+                                    one.url = apiHost+one.url;
                                 }
                                 if(one.thumbUrl){
-                                    one.thumbUrl = "//"+apiHost+one.thumbUrl;
+                                    one.thumbUrl = apiHost+one.thumbUrl;
                                 }
 
                             }
@@ -122,8 +123,8 @@
                 }
                 XMLHttpRequest.prototype.openTemp = XMLHttpRequest.prototype.open;
                 XMLHttpRequest.prototype.open = function (a, b, c) {
-                    if(b.startsWith("/view/filePreview.json")){
-                        b = "//"+apiHost+b;
+                    if(b.startsWith("/view/filePreview.json") || b.startsWith("/view/editer.json")){
+                        b = apiHost+b;
                         setupHook(this);
                     }else{
                         console.log("open",a,b,c);
@@ -133,7 +134,7 @@
                 window.tmpWork = window.Worker;
                 window.Worker = function (a){
                     if(a.startsWith("/static")){
-                        a = "//"+apiHost+a;
+                        a = apiHost+a;
                     }else{
                         console.log("work",a);
                     }
@@ -142,17 +143,18 @@
                 Element.prototype.tmpAppendChild = Element.prototype.appendChild;
                 Element.prototype.appendChild = function (a){
                     if(a && a.src && a.src.startsWith("/static")){
-                        a.src = "//"+apiHost+a.src;
+                        a.src = apiHost+a.src;
                     }else if(a && a.src && a.src.startsWith(window.location.origin)){
                         var tmpurl = window.location.origin+window.location.pathname;
-                        tmpurl = tmpurl.replace("/plugins/filePreview/static/idocv.html","");
-                        a.src = a.src.replace(tmpurl,"//"+apiHost+"/");
+                        tmpurl = tmpurl.replace(pagePath,"");
+                        a.src = a.src.replace(tmpurl,apiHost);
                     }else if(a && a.href && a.href.startsWith(window.location.origin) && a.href.indexOf("/view/url?") != -1){
+                        console.log("nihao:"+a.href)
                         var tmpurl = window.location.origin+window.location.pathname;
-                        tmpurl = tmpurl.replace("/plugins/filePreview/static/idocv.html","");
-                        a.href = a.href.replace(tmpurl+"/view/url",tmpurl+"/plugins/filePreview/static/idocv.html");
+                        tmpurl = tmpurl.replace(pagePath,"");
+                        a.href = a.href.replace(tmpurl+"/view/url",tmpurl+pagePath);
                     }else if(a && a.href && a.href.startsWith("/data")){
-                        a.href = "//"+apiHost+a.href;
+                        a.href = apiHost+a.href;
                     }else{
                         console.log("appendChild",a);
                     }
@@ -172,11 +174,11 @@
             }
         }
         tools.methodFilter();
-        var url = "//"+apiHost+"/view/url?url="+encodeURIComponent(tools.getParamer("url"));
+        var url = apiHost+"/view/url?url="+encodeURIComponent(tools.getParamer("url"));
         tools.syncLoadData(url,function (res){
-            res = tools.replaceAll(res,"href=\"/static","href=\"//"+apiHost+"/static");
-            res = tools.replaceAll(res,"url(/static","url(//"+apiHost+"/static");
-            res = tools.replaceAll(res,"src=\"/static","src=\"//"+apiHost+"/static");
+            res = tools.replaceAll(res,"href=\"/static","href=\""+apiHost+"/static");
+            res = tools.replaceAll(res,"url(/static","url("+apiHost+"/static");
+            res = tools.replaceAll(res,"src=\"/static","src=\""+apiHost+"/static");
             res = tools.replaceAll(res,"PDF - I Doc View","[只读]"+tools.getParamer("name"));
             res = tools.replaceAllByStartEnd(res,"<footer>","</footer>","");
             document.write(res);

@@ -80,12 +80,11 @@
                 return;
             },
             test:function(){
-                window.location.href="index.html?url="+encodeURIComponent("http://hm35658.j.h57.site/editer-service/test.docx")+"&name="+encodeURIComponent("test.docx");
+                window.location.href="index.html?url="+encodeURIComponent("http://hm35658.j.h57.site/editer-service/test.docx")+"&name="+encodeURIComponent("test.docx")+"&sdk="+encodeURIComponent(this.getHost()+"/sdk/sdk.js");
             }
         },
         mounted:function(){
             this.initData();
-
         }
     });
 </script>

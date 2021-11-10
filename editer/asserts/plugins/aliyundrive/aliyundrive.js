@@ -12,6 +12,11 @@
                     if(tmpConfig){
                         config = tmpConfig;
                     }
+                    if(config.save){
+                        if(!window.thirdSdk || !window.thirdSdk.aliSaveFile){
+                            config.save = false;
+                        }
+                    }
                     fn(config);
                 });
             }else{
@@ -19,10 +24,10 @@
             }
         },
         getFileId:function(options,fn){
-            //负责将文件保存到阿里云,并返回fileId
+            //负责将文件保存到阿里云,并返回file_id
             if(window.thirdSdk && window.thirdSdk.getAliFileId){
-                window.thirdSdk.getAliFileId(options,function (fileId){
-                    fn(fileId);
+                window.thirdSdk.getAliFileId(options,function (file_id){
+                    fn(file_id);
                 });
             }else{
                 utils.$.post(aliyundriveController+"?type=1",options,function (res){
@@ -30,28 +35,42 @@
                 });
             }
         },
-        getPreviewDataByFid:function (fileId,fn){
+        getPreviewDataByFid:function (file_id,fn){
             //根据阿里云盘文件id获取预览数据
             if(window.thirdSdk && window.thirdSdk.getAliPreviewDataByFid){
-                window.thirdSdk.getAliPreviewDataByFid(fileId,function (res){
+                window.thirdSdk.getAliPreviewDataByFid(file_id,function (res){
                     fn(res);
                 });
             }else{
-                utils.$.post(aliyundriveController+"?type=2",{file_id:fileId},function (res){
+                utils.$.post(aliyundriveController+"?type=2",{file_id:file_id},function (res){
                     fn(res);
                 },true);
             }
         },
-        getEditDataByFid:function (fileId,fn){
+        getEditDataByFid:function (file_id,fn){
             //根据阿里云盘文件id获取编辑数据
             if(window.thirdSdk && window.thirdSdk.getAliEditDataByFid){
-                window.thirdSdk.getAliEditDataByFid(fileId,function (res){
+                window.thirdSdk.getAliEditDataByFid(file_id,function (res){
                     fn(res);
                 });
             }else{
-                utils.$.post(aliyundriveController+"?type=3",{file_id:fileId},function (res){
+                utils.$.post(aliyundriveController+"?type=3",{file_id:file_id},function (res){
                     fn(res);
                 },true);
+            }
+        },
+        saveFile:function (file_id,fn){
+            //保存文件
+            if(window.thirdSdk && window.thirdSdk.aliSaveFile){
+                window.thirdSdk.aliSaveFile(file_id,function (res){
+                    fn(res);
+                });
+            }else{
+                fn({flag:false,msg:"当前未配置保存方法,将调用浏览器下载"});
+                var a = document.createElement("a");
+                a.href = aliyundriveController+"?type=5&file_id="+file_id+"&name="+utils.getParamer("name");
+                a.target = "_blank";
+                a.click();
             }
         }
     }

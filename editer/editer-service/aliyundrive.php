@@ -207,6 +207,20 @@ function deleteFiles($file_ids){
         "cache-control: no-cache");
     aliRequest('/v2/batch', $param, $headers);
 }
+function getFileByUrl($url){
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+    curl_setopt($curl, CURLOPT_REFERER, 'https://www.aliyundrive.com/');
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $res = curl_exec($curl);
+    curl_errno($curl);
+    curl_close($curl);
+    return $res;
+}
 $fileIo = file_get_contents('php://input');
 $param = json_decode($fileIo,true);
 if($_GET['type'] == "0"){
@@ -321,6 +335,27 @@ if($_GET['type'] == "0"){
     deleteFiles($file_ids);
     $file_text = "总文件:".$nums.",删除6小时前:".$nums6;
     echo return_data(true,$file_text,null);
+}else if($_GET['type'] == "5"){
+    //获取阿里文件流
+    $file_id = $_GET['file_id'];
+    $name = $_GET['name'];
+    $tdata = checkToken();
+    $token = $tdata['access_token'];
+    $driveid = $tdata['default_drive_id'];
+    //获取阿里云盘的流,并写入本地
+    $param = array("file_id"=>$file_id,"drive_id"=>$driveid);
+    $headers = array("Content-Type: application/json",
+        "authorization: Bearer ".$token,
+        "cache-control: no-cache");
+    $data = aliRequest('/v2/file/get_download_url', $param, $headers);
+    if(!$data['url']){
+        echo return_data(false,"保存失败:文件地址获取失败",null);
+        return;
+    }
+    $content = getFileByUrl($data['url']);
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="'.$name.'";');
+    echo $content;
 }else{
     echo return_data(false,"此方法暂不支持","");
 }
