@@ -33,7 +33,7 @@
                 'Content-Type': 'application/json',
                 "token":"123456"
             },
-            url:ajaxHost + url,
+            url:utils.ajaxHost + url,
             method:method,
             responseType:"text"
         };
@@ -49,7 +49,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
                 "token":"123456"
             },
-            url:ajaxHost + url,
+            url:utils.ajaxHost + url,
             method:method,
             responseType:"text"
         };
@@ -81,7 +81,7 @@
     }
     //全局配置上传链接,主要是上传插件的使用
     window.uploadUrlHook = function(){
-        return ajaxHost+"/selevt/webService/upload";
+        return utils.ajaxHost+"/selevt/webService/upload";
     }
     //全局拦截上传返回数据,主要为了数据统一
     window.uploadResHook = function(res){
