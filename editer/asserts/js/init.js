@@ -40,7 +40,7 @@
         }
         var config = {
             headers:{
-                'Content-Type': 'text/plain'
+                'Content-Type': 'application/json'
             },
             url:tempUrl,
             method:method,

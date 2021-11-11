@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>升级界面</title>
+    <script src="asserts/js/init.js?from=antd"></script>
+    <style>
+        .update-font{
+            font-size: 14px;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <a-row style="text-align:center;">
+        <a-col span="24">
+            <span class="update-font">版本号:</span>{{version}}
+        </a-col>
+        <a-col span="24">
+            <span class="update-font">更新内容:</span><div v-html="text"></div>
+        </a-col>
+        <a-col span="24">
+            <a-button type="primary" @click="update(0)">
+                手动下载
+            </a-button>
+            <a-button type="primary" @click="update(1)">
+                自动更新
+            </a-button>
+        </a-col>
+    </a-row>
+</div>
+</body>
+<script>
+    Vue.app({
+        data:{
+            version:"",
+            text:"",
+            downUrl:"",
+            actionPhp:""
+        },
+        methods:{
+            update:function (type){
+                if(type==0){
+                    var a = document.createElement('a');
+                    a.href = this.downUrl;
+                    a.target = '_blank';
+                    a.click();
+                }else if(type==1){
+                    utils.$.get(this.actionPhp+"?type=3",function(res){
+                        utils.$.successMsg(res.msg);
+                    });
+                }
+            },
+            initData:function (){
+                var that = this;
+                that.version = window.version;
+                that.text = window.text;
+                that.downUrl = window.downUrl;
+                that.actionPhp = window.actionPhp;
+            }
+        },
+        mounted(){
+            this.initData();
+        }
+    });
+</script>
+</html>
