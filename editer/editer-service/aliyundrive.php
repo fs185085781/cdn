@@ -339,6 +339,7 @@ if($_GET['type'] == "0"){
         echo return_data(false,"时间未到,请稍后重试",null);
         return;
     }
+    cacheSet("del","file",array("last_time"=>date("Y-m-d H:i:s")));
     $items = fileList();
     $nums = count($items);
     $nums6 = 0;
@@ -351,7 +352,6 @@ if($_GET['type'] == "0"){
     }
     deleteFiles($file_ids);
     $file_text = "总文件:".$nums.",删除6小时前:".$nums6;
-    cacheSet("del","file",array("last_time"=>date("Y-m-d H:i:s")));
     $dellog = $file_text;
     if($_GET['remark']){
         $dellog = $dellog.",来自:".$_GET['remark'];
