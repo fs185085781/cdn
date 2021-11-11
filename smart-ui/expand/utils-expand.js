@@ -147,8 +147,12 @@
             if(!data){
                 data = {};
             }
-            if(typeof data == "string"){
-                data = JSON.parse(data);
+            try{
+                if(typeof data == "string"){
+                    data = JSON.parse(data);
+                }
+            }catch (e){
+                console.warn("当前数据无法转化成json对象");
             }
             var config = window.reqOptionsHook(url,type,data);
             if(url.toLowerCase().startsWith("http")){

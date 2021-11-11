@@ -4,7 +4,7 @@
     /*获取当前项目根路径*/
     var rootPath = getHost(script.src,3);
     /*相对host,使用灵活,无论怎么修改目录发布都不出问题,适合前后端混合开发,需要自行调整入参2的值*/
-    var ajaxHost = getHost(script.src,4);
+    var ajaxHost = getHost(script.src,3);
     /*动态绝对host,当在二级目录发布项目会出问题,适合前后端混合开发*/
     //var ajaxHost = window.location.origin;
     /*静态绝对host,每次后台更换地方发布,此处需要改配置,适合前后端分离开发*/
@@ -14,7 +14,7 @@
     /*使用远程cdn,脱离本地文件(此cdn由jsdelivr提供)*/
     //var utiljs = "https://cdn.jsdelivr.net/gh/fs185085781/cdn/smart-ui/boot/utils.js"+search;
     /*使用本地引入,注意路径*/
-    var utiljs = rootPath + "/../smart-ui/boot/utils.js"+search;
+    var utiljs = rootPath + "/smart-ui/boot/utils.js"+search;
     //拦截配置信息,方便自行拓展配置信息
     window.smartInitHook=function(config){
         config.versionUrl=utils.uihost+"/boot/version.js";
@@ -33,7 +33,7 @@
                 'Content-Type': 'application/json',
                 "token":"123456"
             },
-            url:ajaxHost + url,
+            url:utils.ajaxHost + url,
             method:method,
             responseType:"text"
         };
@@ -49,7 +49,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
                 "token":"123456"
             },
-            url:ajaxHost + url,
+            url:utils.ajaxHost + url,
             method:method,
             responseType:"text"
         };
@@ -86,7 +86,7 @@
     }
     //全局配置上传链接,主要是上传插件的使用
     window.uploadUrlHook = function(){
-        return ajaxHost+"/selevt/webService/upload";
+        return utils.ajaxHost+"/selevt/webService/upload";
     }
     //全局拦截上传返回数据,主要为了数据统一
     window.uploadResHook = function(res){
