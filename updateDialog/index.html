@@ -47,7 +47,7 @@
                     a.target = '_blank';
                     a.click();
                 }else if(type==1){
-                    utils.$.get(this.actionPhp+"?type=3",function(res){
+                    utils.$.get(this.actionPhp+"?type=3&version="+this.version,function(res){
                         utils.$.successMsg(res.msg);
                     });
                 }
