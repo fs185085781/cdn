@@ -1,6 +1,4 @@
 (function (){
-    var script = document.currentScript;
-    var index = script.src.indexOf("?");
     var path = window.location.pathname;
     var pathSz = path.split("/");
     path = pathSz[pathSz.length - 1];
