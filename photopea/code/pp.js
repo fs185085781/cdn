@@ -83662,7 +83662,7 @@
 	};
 
 	function b5() {
-		c$.call(this, "Guide Guy", !1, null, c$.YP.a13);
+		c$.call(this, "导游", !1, null, c$.YP.a13);
 		this.nc = null;
 		this.eh = [];
 		var F = i.z("div", "form padded");
@@ -91703,17 +91703,23 @@
 	(function () {
 		var F = [{
 			id: c$.YP.ac0,
-			name: "Gallery",
+			name: "图库",
 			url: "plugins/gallery.html",
 			width: 400,
 			height: 400,
-			icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAAAXNSR0IB2cksfwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAB5QTFRFR0dH////UFBQ8/PzoaGhYWFh3Nzcg4ODxcXFt7e34FYpWAAAAidJREFUeJzt2btuwjAUBuAoIlBGy2mADakVuysh1rCgjlRInQHxAIn6AiB16Ub7xG1utmM7vhwPXfxvRZxPCfY5JSaKQkJCQvjEO4Icgy9LDvhwLa+yYfUTSD1CBQWeYMALBbYwIKXACQZkFCAwAFMAVo9QD0j5ZTUm2UpA7lIfRVMJcLqAv0uQALf6KA4ADEh2BF/2cCC5Ve+b78FAO3U2UGDUdUAOBMoOmMGAhHQA3oOAB9bFVxDwxoBHEMDNzRQEcHNzDgIIAzAIQFz+B/C+Be8P0XsZvTeS91Z2b6ZY+LvsAMt2fiZZ0XvBcaAkp2a5uLiNtFX12r1vOg3V+s0L4apeCf60HOsj7naVMQEl23MggC56IRZaAofemiujBWLaengPArh9vwYBXOsOXoIO6H33PtP7WloDBx7I2rrJqd8bGiAmPICO9LZmlsC4V9+2VPXFEhd2wK0P1C0V38QlGQZGQn3dUu/SkgwDpQign2jSfixrC4DNPhr81e3Mbkl0gP756WwG9I8/mRGYauub/wlawPQAtzAA5kfQux446KsRm3JqQGgDZXIdMNbX1pnpgG8LoB20SkBqA2U2w0BpBTQtpQIUbaDMeghY2dU3l6ACxEkymLMaMLUBS9XVCsDhHOOoAlxOYuYqwNwGXK4yEDsdpCxk4EFfISaXAMejoFQCIAlAAAIgAARWz45EvQ9lvY+FvQ+mvY/GvQ/n/X8eCAkJCYmiX0mkBrefjRa7AAAAAElFTkSuQmCC"
+			icon: ""
 		}, {
-			name: "Emoji",
-			url: "https://hxim.github.io/TwemojiPlugin/twemoji3.html",
+			name: "二维码制作",
+            url: "plugins/qrcode.html",
 			width: 400,
 			height: 400,
-			icon: "https://hxim.github.io/TwemojiPlugin/icon.svg"
+			icon: ""
+		}, {
+			name: "图表制作",
+            url: "plugins/gcharts.html",
+			width: 400,
+			height: 400,
+			icon: ""
 		}];
 		for (var w = 0; w < F.length; w++) c2.fi.push({
 			Nc: new fs(F[w], 100 + w),

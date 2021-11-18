@@ -7,9 +7,10 @@
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0" />
 		
 		<style>
-			body {  background-color:#474747;  }
-			label { color:white;  font-family:sans-serif; }
+			body {  background-color:#474747;  overflow:hidden;  }
+			label { color:white;  font-family:sans-serif; font-size:0.8em; }
 			img { margin-right:4px;  cursor:pointer;  }
+			button {  padding:0 4px;  }
 			#cont {
 				margin-top:4px;
 				overflow-y: scroll;
@@ -25,24 +26,16 @@
 				background: #222222; 
 				margin:2px;
 			}
-			.tips-help,#keyws{
-				background: rgba(255,255,255,0.2);
-				border: 1px solid #888;
-				border-radius: 3px;
-				padding: 2px 5px;
-				color: #fff;
-				outline:none !important;
-			}
-			#isolated{background: rgba(255,255,255,0.2);border: 1px solid #888;}
 		</style>
 		<script>
 			var imgs = [], hits = [];
 		
 			function update() {
-				//document.getElementById("keyws").value = 'flowers';//changed by kodbox;
 				var ikey = document.getElementById("keyws").value;
 				if(document.getElementById("isolated").checked) ikey += " isolated";
 				ikey = ikey.trim();
+				console.log(JSON.stringify(ikey));
+				//alert(keyws);
 				
 				var request = new XMLHttpRequest();
 				var url = "https://pixabay.com/api/?image_type=photo"+(ikey==""?"":"&q="+encodeURIComponent(ikey))+"&per_page=200&page=1&key=10554583-a5eacb61c2e61105fdfb6eb88&safesearch=true"; 
@@ -58,7 +51,7 @@
 			}
 			function imgsLoaded(e) {
 				//console.log(e.target.response);
-				var iw = window.innerWidth-28, th=100;
+				var iw = window.innerWidth-29, th=100;
 				var cont = document.getElementById("cont");
 				cont.setAttribute("style","height:"+(window.innerHeight-42)+"px;");
 				while(cont.firstChild) cont.removeChild(cont.firstChild);
@@ -69,12 +62,13 @@
 					var totw = 0, j=i;
 					while(j<hits.length) {
 						var hit = hits[j];
-						var w=hit["previewWidth"], h=hit["previewHeight"];
-						if(j<=i+1 || totw+w*(th/h)+4 < iw) {  totw+=w*(th/h) + 4;  j++;  }
+						var w=hit["previewWidth"], h=hit["previewHeight"], nw=w*(th/h);
+						if(j<=i+1 || totw+nw < iw) {  totw+=nw;  j++;  }
 						else break;
 					}
+					var num = j-i;
 					while(i<j) {
-						heis.push(th*(iw/totw));  i++;
+						heis.push(th*((iw-num*4)/totw));  i++;
 					}
 				}
 				
@@ -87,11 +81,11 @@
 					cont.appendChild(img);
 					imgs.push(img);
 				}
+				console.log(hits);
 			}
 			function imgClick(e) {
 				var ind = imgs.indexOf(e.currentTarget);
-				var hit = hits[ind];  
-				//console.log(hit);
+				var hit = hits[ind];  console.log(hit);
 				var x = "app.open(\""+hit["largeImageURL"]+"\",null,true);";
 				window.parent.postMessage(x, "*");
 			}
@@ -102,11 +96,10 @@
 	</head>
 	
 	<body onload="update()">
-		<div style="height:22px; overflow:hidden;font-size: 12px;">
+		<div style="height:22px; overflow:hidden;">
+		<button onclick="msg()">?</button>
 		<label>Keywords:</label> <input type="text" id="keyws" onchange="update()"></input>
-		<input type="checkbox" id="isolated" style="vertical-align:middle;" onchange="update()" /> 
-		<label for="isolated">Isolated</label>
-		<button onclick="msg()" class="tips-help">?</button>
+		<input type="checkbox" id="isolated" style="vertical-align:middle;" onchange="update()" /> <label for="isolated">Isolated</label>
 		</div>
 		
 		<div id="cont"></div>
