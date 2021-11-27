@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0" />
-		
+		<script src="host-util.js"></script>
 		<style>
 			body {  background-color:#474747;  overflow:hidden;  }
 			label { color:white;  font-family:sans-serif; font-size:0.8em; }
@@ -41,7 +41,7 @@
 				var url = "https://pixabay.com/api/?image_type=photo"+(ikey==""?"":"&q="+encodeURIComponent(ikey))+"&per_page=200&page=1&key=10554583-a5eacb61c2e61105fdfb6eb88&safesearch=true"; 
 				if(ikey=="") {
 					if(Math.random()<0.005) url="gallery.php?url="+encodeURIComponent(url+"&safesearch=true");
-					else url="gallery.json";
+					else url= window.webHost + "/gallery.json";
 				}
 				//console.log(url);
 				request.open("GET", url, true);
