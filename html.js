@@ -49,10 +49,11 @@
         while(true){
             var i = str.indexOf(reg,index);
             var hi = str.indexOf(reg+"http",index);
-            if(i == -1 && hi == -1){
+            var ji = str.indexOf(reg+"javascript",index);
+            if(i == -1 && hi == -1 && ji == -1){
                 break;
             }
-            if(i == hi){
+            if(i == hi || i == ji){
                 index = i+1;
                 continue;
             }
