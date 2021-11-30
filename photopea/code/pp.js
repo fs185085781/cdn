@@ -89166,7 +89166,7 @@
 		J.appendChild(this.VD.u);
 		J.appendChild(this.XO.u);
 		this.jM.Qj({
-			url: window.webHost + "/rsrc/basic/basic.zip"
+			url: "https://fscdn.hz.wanyuanyun.com/photopea-zip/basic.zip"
 		});
 		this.BN(B.fb);
 		ej.uZ(this.a0f.bind(this));
