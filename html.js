@@ -1,6 +1,9 @@
 (function (){
     var hp = flhostPath();
     var fileUrl = hp.host+hp.path;
+    syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
+        fileUrl = hp.host+"@"+version+hp.path;
+    });
     var filePathSz = fileUrl.split("/");
     filePathSz.length = filePathSz.length - 1;
     var filePath = filePathSz.join("/")+"/";
