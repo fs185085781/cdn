@@ -227,8 +227,9 @@
             },
             getBiosByName:function (name){
                 var biosHost = utils.rootPath+"/asserts/plugins/emulator/bios";
+                var qnbiosHost = window.location.protocol + "//static.tenfell.cn/kodbox/game-bios";
                 var dBiosMap = {
-                    "orlegend.zip":biosHost+"/pgm.zip"
+                    "orlegend.zip":qnbiosHost+"/pgm.zip"
                 }
                 return this.checkInByMap(dBiosMap,name);
             },
@@ -466,12 +467,13 @@
             initBiosSelect:function(){
                 var that = this;
                 var biosHost = utils.rootPath+"/asserts/plugins/emulator/bios";
+                var qnbiosHost = window.location.protocol + "//static.tenfell.cn/kodbox/game-bios";
                 var columns = [
                     {text:"无",value:""},
                     {text:"磁碟机",value:biosHost+"/disksys.rom"},
-                    {text:"Neo Geo Games",value:biosHost+"/neogeo.zip"},
-                    {text:"IGS Games",value:biosHost+"/pgm.zip"},
-                    {text:"ISG Master 2006",value:biosHost+"/isgsm.zip"},
+                    {text:"Neo Geo Games",value:qnbiosHost+"/neogeo.zip"},
+                    {text:"IGS Games",value:qnbiosHost+"/pgm.zip"},
+                    {text:"ISG Master 2006",value:qnbiosHost+"/isgsm.zip"},
                     {text:"Game Boy(No)",value:""},
                     {text:"Game Boy Color",value:biosHost+"/gbc_bios.bin"},
                     {text:"Game Boy Advance",value:biosHost+"/gba_bios.bin"},
@@ -484,7 +486,7 @@
                     {text:"MegaCD EU",value:biosHost+"/bios_CD_E.bin"},
                     {text:"SegaCD US(Uc)",value:biosHost+"/bios_CD_U.bin"},
                     {text:"MegaCD JP",value:biosHost+"/bios_CD_J.bin"},
-                    {text:"MSX",value:biosHost+"/blueMSXv282full.zip"},
+                    {text:"MSX",value:qnbiosHost+"/blueMSXv282full.zip"},
                     {text:"Super CD-ROM2 System",value:biosHost+"/syscard3.pce"},
                     {text:"Panasonic FZ-1",value:biosHost+"/panafz1.bin"},
                     {text:"Panasonic FZ-10",value:biosHost+"/panafz10.bin"},
