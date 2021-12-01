@@ -55,12 +55,20 @@
         var index = 0;
         while(true){
             var i = str.indexOf(reg,index);
+            var yh = "'";
+            if(reg.substring(reg.length-1)=="'"){
+                yh="\"";
+            }
+            //http开头不替换
             var hi = str.indexOf(reg+"http",index);
+            //java开头不替换
             var ji = str.indexOf(reg+"javascript",index);
-            if(i == -1 && hi == -1 && ji == -1){
+            //变量开头不替换
+            var yi = str.indexOf(reg+yh,index);
+            if(i == -1 && hi == -1 && ji == -1 && yi == -1){
                 break;
             }
-            if(i == hi || i == ji){
+            if(i == hi || i == ji || i == yi){
                 index = i+1;
                 continue;
             }
