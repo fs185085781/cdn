@@ -2,9 +2,6 @@
     document.write("<meta charset=\"UTF-8\">");
     var hp = flhostPath();
     var fileUrl = hp.host+hp.path;
-    syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
-        fileUrl = hp.host+"@"+version+hp.path;
-    });
     var filePathSz = fileUrl.split("/");
     filePathSz.length = filePathSz.length - 1;
     var filePath = filePathSz.join("/")+"/";
@@ -35,6 +32,11 @@
         var urlsz = url.split("/");
         urlsz.length = urlsz.length - 1;
         var host = urlsz.join("/");
+        if(urlsz[urlsz.length-1].indexOf("@") === -1){
+            syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
+                host = host+"@"+version;
+            });
+        }
         var strsz = search.split("&");
         var map = {};
         for (var i=0; i<strsz.length; i++){
@@ -46,7 +48,8 @@
                 map[tempkey] = decodeURIComponent(tempvalue);
             }
         }
-        return {host:host,path:map.path};
+        var res = {host:host,path:map.path};
+        return res;
     }
     function clurl(str,reg){
         var index = 0;
