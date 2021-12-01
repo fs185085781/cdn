@@ -1,4 +1,5 @@
 (function (){
+    document.write("<meta charset=\"UTF-8\">");
     var hp = flhostPath();
     var fileUrl = hp.host+hp.path;
     syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
@@ -66,10 +67,10 @@
         return str;
     }
     syncLoadData(fileUrl,function (res){
-        res = clurl(res,"src=\"");
-        res = clurl(res,"href=\"");
-        res = clurl(res,"src='");
-        res = clurl(res,"href='");
+        res = clurl(res," src=\"");
+        res = clurl(res," href=\"");
+        res = clurl(res," src='");
+        res = clurl(res, " href='");
         document.write(res);
     });
 })()
