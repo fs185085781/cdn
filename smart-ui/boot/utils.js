@@ -348,33 +348,33 @@
                 if(val === undefined){
                     val = null;
                 }
-                that.getBigData(key,function (res){
-                    if(!res.flag){
+                that.getBigData(key,function (data,flag){
+                    if(!flag){
                         if(fn){
-                            fn(res);
+                            fn(false);
                         }
                         return;
                     }
                     var req;
-                    if(res.data === undefined){
+                    if(data === undefined){
                         //新增
-                        req = that.indexDb.db.transaction(['smartData'], 'readwrite')
+                        req = that.indexDb.transaction(['smartData'], 'readwrite')
                             .objectStore('smartData')
                             .add({ key: key,val:val});
                     }else{
                         //修改
-                        req = that.indexDb.db.transaction(['smartData'], 'readwrite')
+                        req = that.indexDb.transaction(['smartData'], 'readwrite')
                             .objectStore('smartData')
                             .put({ key: key,val:val});
                     }
                     req.onsuccess = function (event) {
                         if(fn){
-                            fn({flag:true,msg:"数据写入成功"})
+                            fn(true)
                         }
                     };
                     req.onerror = function (event) {
                         if(fn){
-                            fn({flag:false,msg:"数据写入失败"})
+                            fn(false)
                         }
                     }
                 });
@@ -384,14 +384,14 @@
                 that.initBigDb(function (flag){
                     if(!flag){
                         if(fn){
-                            fn({flag:false,msg:"indexDb初始化失败"});
+                            fn(undefined,false);
                         }
                         return;
                     }
-                    var req = that.indexDb.db.transaction(["smartData"]).objectStore("smartData").get(key);
+                    var req = that.indexDb.transaction(["smartData"]).objectStore("smartData").get(key);
                     req.onerror = function(event) {
                         if(fn){
-                            fn({flag:false,msg:"读取数据失败"});
+                            fn(undefined,false);
                         }
                     };
                     req.onsuccess = function(event) {
@@ -400,7 +400,7 @@
                             if(req.result!==undefined){
                                 data = req.result.val;
                             }
-                            fn({flag:true,data:data});
+                            fn(data,true);
                         }
                     };
                 });
@@ -410,25 +410,29 @@
                 that.initBigDb(function (flag){
                     if(!flag){
                         if(fn){
-                            fn({flag:false,msg:"indexDb初始化失败"});
+                            fn(false);
                         }
                         return;
                     }
-                    var req = that.indexDb.db.transaction(["smartData"],"readwrite").objectStore("smartData").delete(key);
+                    var req = that.indexDb.transaction(["smartData"],"readwrite").objectStore("smartData").delete(key);
                     req.onerror = function(event) {
                         if(fn){
-                            fn({flag:false,msg:"删除数据失败"});
+                            fn(false);
                         }
                     };
                     req.onsuccess = function(event) {
                         if(fn){
-                            fn({flag:true,msg:"删除数据成功"});
+                            fn(true);
                         }
                     };
                 });
             },
             initBigDb:function(fn){
                 var that = this;
+                if(that.indexDb){
+                    fn(true);
+                    return;
+                }
                 window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
                 var req = window.indexedDB.open("smart-ui");
                 req.onerror = function(event) {
@@ -437,18 +441,12 @@
                     }
                 };
                 req.onsuccess = function(e) {
-                    if(!that.indexDb){
-                        that.indexDb = {};
-                    }
-                    that.indexDb.db = e.target.result;
+                    that.indexDb = e.target.result;
                     if(fn){
                         fn(true);
                     }
                 };
                 req.onupgradeneeded = function (e){
-                    if(!that.indexDb){
-                        that.indexDb = {};
-                    }
                     e.target.result.createObjectStore('smartData', {
                         keyPath: 'key'
                     });
