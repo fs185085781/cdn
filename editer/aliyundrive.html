@@ -134,7 +134,6 @@
             },
             fileSave:function(){
                 var that = this;
-                console.log(that.iframe.save_status);
                 if(that.iframe.save_status == 0){
                     that.$refs["iframe"].contentWindow.postMessage(JSON.stringify({"data":{"api":"save"},"msgId":2,"eventName":"wps.jssdk.api"}), '*');
                 }else if(that.iframe.save_status == 1){

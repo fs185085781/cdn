@@ -106,6 +106,30 @@
         }
     }
     function initUtils(){
+        function initBigDb(that,fn){
+            if(that.indexDb){
+                fn(true);
+                return;
+            }
+            window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+            var req = window.indexedDB.open("smart-ui");
+            req.onerror = function(event) {
+                if(fn){
+                    fn(false);
+                }
+            };
+            req.onsuccess = function(e) {
+                that.indexDb = e.target.result;
+                if(fn){
+                    fn(true);
+                }
+            };
+            req.onupgradeneeded = function (e){
+                e.target.result.createObjectStore('smartData', {
+                    keyPath: 'key'
+                });
+            }
+        }
         var tools = {
             getParamer: function (key) {
                 var map = this.getSearch();
@@ -381,7 +405,7 @@
             },
             getBigData:function(key,fn){
                 var that = this;
-                that.initBigDb(function (flag){
+                initBigDb(that,function (flag){
                     if(!flag){
                         if(fn){
                             fn(undefined,false);
@@ -407,7 +431,7 @@
             },
             delBigData:function(key,fn){
                 var that = this;
-                that.initBigDb(function (flag){
+                initBigDb(that,function (flag){
                     if(!flag){
                         if(fn){
                             fn(false);
@@ -426,31 +450,6 @@
                         }
                     };
                 });
-            },
-            initBigDb:function(fn){
-                var that = this;
-                if(that.indexDb){
-                    fn(true);
-                    return;
-                }
-                window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-                var req = window.indexedDB.open("smart-ui");
-                req.onerror = function(event) {
-                    if(fn){
-                        fn(false);
-                    }
-                };
-                req.onsuccess = function(e) {
-                    that.indexDb = e.target.result;
-                    if(fn){
-                        fn(true);
-                    }
-                };
-                req.onupgradeneeded = function (e){
-                    e.target.result.createObjectStore('smartData', {
-                        keyPath: 'key'
-                    });
-                }
             }
         }
         var jsSearch = getJsSearch("utils.js");

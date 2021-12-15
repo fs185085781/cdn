@@ -207,15 +207,18 @@ function deleteFiles($file_ids){
         "cache-control: no-cache");
     aliRequest('/v2/batch', $param, $headers);
 }
-function getFileByUrl($url){
+function getFileByUrl($url,$isAliyun){
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-    curl_setopt($curl, CURLOPT_REFERER, 'https://www.aliyundrive.com/');
+    if($isAliyun){
+        curl_setopt($curl, CURLOPT_REFERER, 'https://www.aliyundrive.com/');
+    }
     curl_setopt($curl, CURLOPT_HEADER, 0);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION,1);
     $res = curl_exec($curl);
     curl_errno($curl);
     curl_close($curl);
@@ -271,7 +274,11 @@ if($_GET['type'] == "0"){
     echo return_data(true,"设置成功",null);
 }else if($_GET['type'] == "1"){
     //获取文件id
-    $data = file_get_contents($param['url']);
+    $data = getFileByUrl($param['url'],false);
+    if(!$data){
+        echo return_data(false,"文件数据不能为空",null);
+        return;
+    }
     $tokenData = checkToken();
     $file_id = fileUpload($tokenData,$data,$param['name']);
     if(!$file_id){
@@ -377,7 +384,7 @@ if($_GET['type'] == "0"){
         echo return_data(false,"保存失败:文件地址获取失败",null);
         return;
     }
-    $content = getFileByUrl($data['url']);
+    $content = getFileByUrl($data['url'],true);
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="'.$name.'";');
     echo $content;
