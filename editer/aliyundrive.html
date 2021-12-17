@@ -17,19 +17,54 @@
         }
         .text-color{
             color:red;
+            line-height: 32px;
+        }
+        .ant-tooltip-inner{
+            background-color:#ffffff;
+            color:#000000bf;
+        }
+        .ant-tooltip-arrow::before{
+            background-color:#ffffff;
         }
     </style>
 </head>
 <div id="app">
     <a-row>
-        <a-col :span="6">
-            <a-button v-if="mode=='edit' && iframe.file_id" type="primary" icon="eye" @click="fileView()"></a-button>
-            <a-button v-if="mode=='read' && iframe.file_id && pluginsConfig.canEdit" type="primary" icon="edit" @click="fileEdit()"></a-button>
-            <a-button v-if="mode=='edit' && iframe.file_id && pluginsConfig.canEdit" type="primary" icon="save" @click="fileSave()"></a-button>
+        <a-col :span="5">
+            <a-button-group>
+                <a-button v-if="mode=='edit' && iframe.file_id" type="link" icon="eye" @click="fileView()"></a-button>
+                <a-button v-if="mode=='read' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="edit" @click="fileEdit()"></a-button>
+                <a-button v-if="mode=='edit' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="save" @click="fileSave()"></a-button>
+            </a-button-group>
         </a-col>
-        <a-col :span="18" v-if="mode == 'edit'">
+        <a-col :span="11" v-if="mode == 'edit' && pluginsConfig.canShow">
             <span v-if="autoSave.text" class="text-color">当前已开启自动保存({{autoSave.text}})</span>
             <span v-if="!autoSave.text" class="text-color">请使用左侧保存按钮保存到可道云,否则文件将不会被保存</span>
+        </a-col>
+        <a-col :span="6">
+            <a-tooltip placement="bottom" v-for="(item,i) in persons">
+                <template v-if="i < 3">
+                    <template slot="title">
+                        <span>{{item.name}}</span>
+                    </template>
+                    <a-avatar :src="item.url"></a-avatar>
+                </template>
+            </a-tooltip>
+            <a-popover placement="bottom" v-if="persons.length > 3">
+                <template slot="content">
+                    <p v-for="item in persons">
+                        <a-avatar :src="item.url"></a-avatar>
+                        <span>{{item.name}}</span>
+                    </p>
+                </template>
+                <template slot="title">
+                    <span>{{persons.length}}人正在观看</span>
+                </template>
+                <a-badge :count="persons.length-3"></a-badge>
+            </a-popover>
+        </a-col>
+        <a-col :span="2">
+            <a-button type="link" @click="copyUrl()">复制地址</a-button>
         </a-col>
     </a-row>
     <a-row>
@@ -66,7 +101,10 @@
                 defValue:10
             },
             pluginsConfig:{
-            }
+            },
+            persons:[
+            ],
+            pageUrl:""
         },
         methods: {
             getParentHost:function (){
@@ -168,10 +206,17 @@
                     fn();
                     return;
                 }
-                aliyundrive.getFileId(that.file,function (fid){
-                    that.iframe.file_id = fid;
+                if(utils.getParamer("file_id")){
+                    that.iframe.file_id = utils.getParamer("file_id");
+                    that.pageUrl = utils.urlAddProp(window.location.href,"file_id",that.iframe.file_id);
                     fn();
-                });
+                }else{
+                    aliyundrive.getFileId(that.file,function (fid){
+                        that.iframe.file_id = fid;
+                        that.pageUrl = utils.urlAddProp(window.location.href,"file_id",that.iframe.file_id);
+                        fn();
+                    });
+                }
             },
             aliyunEdit:function (fn){
                 var that = this;
@@ -250,6 +295,21 @@
                     that.pluginsConfig = config;
                     fn();
                 });
+                setInterval(function (){
+                    if(that.iframe.file_id){
+                        aliyundrive.getPersons(that.iframe.file_id,function (sz){
+                            that.persons = sz;
+                        });
+                    }
+                },10000);
+            },
+            copyUrl:function (){
+                var that = this;
+                if(utils.copyText(that.pageUrl)){
+                    utils.$.successMsg("复制成功");
+                }else{
+                    prompt("当前浏览器不支持复制,请手动复制",that.pageUrl);
+                }
             }
         },
         mounted:function(){

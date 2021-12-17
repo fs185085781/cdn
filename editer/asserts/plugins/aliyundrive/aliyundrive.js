@@ -5,7 +5,8 @@
             var config = {
                 sv:1000, //每隔多少秒执行一次保存
                 save:false, //是否开启自动保存
-                canEdit:true //是否可以编辑
+                canEdit:true, //是否可以编辑
+                canShow:true, //是否显示提示
             };
             if(window.thirdSdk && window.thirdSdk.getConfig){
                 window.thirdSdk.getConfig(function (tmpConfig){
@@ -71,6 +72,21 @@
                 a.href = aliyundriveController+"?type=5&file_id="+file_id+"&name="+utils.getParamer("name");
                 a.target = "_blank";
                 a.click();
+            }
+        },
+        getPersons:function(file_id,fn){
+            //获取在线人数
+            if(window.thirdSdk && window.thirdSdk.getPersons){
+                window.thirdSdk.getPersons(file_id,function (res){
+                    fn(res);
+                });
+            }else{
+                var sl = parseInt(Math.random()*10);
+                var sz = [];
+                for(var i=0;i<sl;i++){
+                    sz.push({name:"人"+i,url:""});
+                }
+                fn(sz);
             }
         }
     }
