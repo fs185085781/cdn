@@ -156,19 +156,24 @@ function checkToken(){
 function fileListAjax($pid){
     $items = array();
     $marker = false;
+    $count = 0;
     do {
         $tmp = fileListAjaxByMarker($pid,$marker);
+        $count++;
         $tmpItems = $tmp['items'];
         foreach ($tmpItems as $tmpItem) {
             array_push($items,$tmpItem);
         }
         $marker = $tmp['next_marker'];
+        if($count>=5){
+            break;
+        }
     } while ($marker);
     return $items;
 }
 function fileListAjaxByMarker($pid,$marker=false){
     $res = checkToken();
-    $param = array("parent_file_id"=>$pid,"drive_id"=>$res['default_drive_id'],"limit"=>200);
+    $param = array("parent_file_id"=>$pid,"drive_id"=>$res['default_drive_id'],"limit"=>200,"order_by"=>"updated_at","order_direction"=>"ASC");
     if($marker){
         $param['marker'] = $marker;
     }
@@ -340,7 +345,7 @@ if($_GET['type'] == "0"){
     );
     echo return_data(true,"获取编辑链接成功",$resData);
 }else if($_GET['type'] == "4"){
-    //删除6小时前的文件,刷新token 建议每小时调一次
+    //删除31天前的文件,刷新token 建议每小时调一次
     $cacheData = cacheGet("del","file");
     if($cacheData && strtotime($cacheData['last_time']) > time() - 1800){
         echo return_data(false,"时间未到,请稍后重试",null);
@@ -352,13 +357,13 @@ if($_GET['type'] == "0"){
     $nums6 = 0;
     $file_ids = array();
     foreach ($items as $item) {
-        if(strtotime($item['updated_at']) < time() - 3600 * 6){
+        if(strtotime($item['updated_at']) < time() - 3600 * 24 * 31){
             $nums6++;
             array_push($file_ids,$item['file_id']);
         }
     }
     deleteFiles($file_ids);
-    $file_text = "总文件:".$nums.",删除6小时前:".$nums6;
+    $file_text = "总文件:".$nums.",删除31天前:".$nums6;
     $dellog = $file_text;
     if($_GET['remark']){
         $dellog = $dellog.",来自:".$_GET['remark'];

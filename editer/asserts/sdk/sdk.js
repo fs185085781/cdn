@@ -6,7 +6,7 @@
                 sv:5, //每隔多少秒执行一次保存
                 save:false, //是否开启自动保存
                 canEdit:true, //是否可以编辑
-                canShow:true, //是否显示提示
+                canShow:false, //是否显示提示
             };
             fn(config);
         },
@@ -55,6 +55,51 @@
             a.href = aliyundriveController+"?type=5&file_id="+file_id+"&name="+utils.getParamer("name");
             a.target = "_blank";
             a.click();
+        },
+        getPersons:function(fn){
+            //获取在线人数
+            //后端自行实现,步骤如下
+            //1.获取用户信息,并提交到分享人列表
+            //2.下载分享人列表
+            //3.使用fn进行回调 fn({flag:true,data:sz});
+            var sl = parseInt(Math.random()*10);
+            var sz = [];
+            for(var i=0;i<sl;i++){
+                sz.push({name:"人"+i,url:""});
+            }
+            fn({flag:true,data:sz});
+        },
+        getDocConfig:function (password,fn){
+            //获取文档配置
+            //后端自行实现,步骤如下
+            //1.根据文档地址或者文件id获取分享时候的配置
+            //2.校验配置是否合法
+            //3.使用fn进行回调 fn({flag:true,data:{needPass:false,checkPass:false,needLogin:false,checkLogin:true}});
+            fn({flag:true,data:{needPass:false,checkPass:password==utils.getLocalStorage("docPassword"),needLogin:false,checkLogin:true}});
+        },
+        toLogin:function (){
+            //跳转到登录页面
+            //自行实现,建议如下
+            //1.打印提示用户未登录
+            //2.用户点击后跳转到登录页
+        },
+        setDocConfig:function (config,fn){
+            //设置文档配置
+            //后端自行实现,步骤如下
+            //1.将config存起来  config = {
+            //                     needPass:false,
+            //                     needLogin:false,
+            //                     password:""
+            //                 }
+            //2.使用fn回调  fn({flag:true,msg:"设置文档成功"});
+            fn({flag:true,msg:"设置文档成功"});
+        },
+        hasSetDocConfigAuth:function(fn){
+            //是否有设置文档配置权限
+            //后端自行实现,步骤如下
+            //1.获取用户信息
+            //2.校验此用户是否是文档分享发起人
+            //3.使用fn回调  fn(false);
         }
     }
 })()

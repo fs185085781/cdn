@@ -71,13 +71,6 @@
                     password:'',
                     refresh_token:'',
                     list_id:''
-                },
-                process:{
-                    password:'',
-                    type:'password',
-                    username:'',
-                    upassword:'',
-                    cookie:''
                 }
             },
             code:"javascript:void((function(){prompt(\"请将如下值复制到插件refresh_token属性中:\",JSON.parse(localStorage.getItem(\"token\")).refresh_token)})())"
@@ -98,9 +91,6 @@
             },
             copyTextError:function (){
                 prompt("获取refresh_token的代码",this.code);
-            },
-            saveProcessData:function (){
-                utils.$.errorMsg("此功能暂未支持");
             }
         },
         mounted:function(){
