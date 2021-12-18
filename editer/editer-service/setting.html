@@ -51,37 +51,6 @@
             </a-form-model-item>
         </a-form-model>
     </a-card>
-    <!--<a-card title="自定义ProcessOn" style="width:100%;">
-        <a-form-model layout="horizontal" :model="setting.process" :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }">
-            <a-form-model-item label="密码" prop="password">
-                <a-input v-model="setting.process.password" type="text" autocomplete="off" placeholder="多次配置需要输入相同的密码"/>
-            </a-form-model-item>
-            <a-form-model-item label="配置模式" prop="type">
-                <a-radio-group v-model="setting.process.type" button-style="solid">
-                    <a-radio-button value="password">
-                        密码模式
-                    </a-radio-button>
-                    <a-radio-button value="cookie">
-                        Cookie模式
-                    </a-radio-button>
-                </a-radio-group>
-            </a-form-model-item>
-            <a-form-model-item v-if="setting.process.type=='password'" label="账号" prop="username">
-                <a-input v-model="setting.process.username" autocomplete="off" placeholder="ProcessOn账号"/>
-            </a-form-model-item>
-            <a-form-model-item v-if="setting.process.type=='password'" label="密码" prop="upassword">
-                <a-input v-model="setting.process.upassword" autocomplete="off" placeholder="ProcessOn密码"/>
-            </a-form-model-item>
-            <a-form-model-item v-if="setting.process.type=='cookie'" label="cookie" prop="cookie">
-                <a-input v-model="setting.process.cookie" autocomplete="off" placeholder="ProcessOn登录后的cookie"/>
-            </a-form-model-item>
-            <a-form-model-item :wrapper-col="{ span: 18, offset: 10 }">
-                <a-button type="primary" @click="saveProcessData()">
-                    应用
-                </a-button>
-            </a-form-model-item>
-        </a-form-model>
-    </a-card>-->
     <a-card title="教程说明" style="width:100%;">
         <a-row>
             <a-col :span="24">

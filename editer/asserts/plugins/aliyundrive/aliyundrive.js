@@ -74,10 +74,10 @@
                 a.click();
             }
         },
-        getPersons:function(file_id,fn){
+        getPersons:function(fn){
             //获取在线人数
             if(window.thirdSdk && window.thirdSdk.getPersons){
-                window.thirdSdk.getPersons(file_id,function (res){
+                window.thirdSdk.getPersons(function (res){
                     fn(res);
                 });
             }else{
@@ -86,7 +86,41 @@
                 for(var i=0;i<sl;i++){
                     sz.push({name:"人"+i,url:""});
                 }
-                fn(sz);
+                fn({flag:true,data:sz});
+            }
+        },
+        getDocConfig:function (password,fn){
+            //获取文档配置
+            if(window.thirdSdk && window.thirdSdk.getDocConfig){
+                window.thirdSdk.getDocConfig(password,function (res){
+                    fn(res);
+                });
+            }else{
+                fn({flag:true,data:{needPass:false,checkPass:password==utils.getLocalStorage("docPassword"),needLogin:false,checkLogin:true}});
+            }
+        },
+        toLogin:function (){
+            //跳转到登录页面
+            if(window.thirdSdk && window.thirdSdk.toLogin){
+                window.thirdSdk.toLogin();
+            }else{
+                utils.$.alert("当前没有登录无法查看");
+            }
+        },
+        setDocConfig:function (config,fn){
+            //设置文档配置
+            if(window.thirdSdk && window.thirdSdk.setDocConfig){
+                window.thirdSdk.setDocConfig(config,fn);
+            }else{
+                fn({flag:true,msg:"设置文档成功"});
+            }
+        },
+        hasSetDocConfigAuth:function(fn){
+            //是否有设置文档配置权限
+            if(window.thirdSdk && window.thirdSdk.hasSetDocConfigAuth){
+                window.thirdSdk.hasSetDocConfigAuth(fn);
+            }else{
+                fn(false);
             }
         }
     }

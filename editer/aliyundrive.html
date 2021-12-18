@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>阿里云盘编辑</title>
-    <script src="asserts/js/init.js?from=antd&plugins=aliyundrive"></script>
+    <script src="asserts/js/init.js?from=antd&plugins=aliyundrive,md5"></script>
     <script>
         if(utils.getParamer("sdk")){
             document.write("<script src='"+utils.getParamer("sdk")+"'></s"+"cript>");
@@ -16,12 +16,12 @@
             border: none;
         }
         .text-color{
-            color:red;
+            color:#3d4757;
             line-height: 32px;
         }
         .ant-tooltip-inner{
             background-color:#ffffff;
-            color:#000000bf;
+            color: #3d4757;
         }
         .ant-tooltip-arrow::before{
             background-color:#ffffff;
@@ -32,9 +32,24 @@
     <a-row>
         <a-col :span="5">
             <a-button-group>
-                <a-button v-if="mode=='edit' && iframe.file_id" type="link" icon="eye" @click="fileView()"></a-button>
-                <a-button v-if="mode=='read' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="edit" @click="fileEdit()"></a-button>
-                <a-button v-if="mode=='edit' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="save" @click="fileSave()"></a-button>
+                <a-tooltip placement="bottom">
+                    <template slot="title">
+                        <span>查看</span>
+                    </template>
+                    <a-button v-if="mode=='edit' && iframe.file_id" type="link" icon="eye" @click="fileView()"></a-button>
+                </a-tooltip>
+                <a-tooltip placement="bottom">
+                    <template slot="title">
+                        <span>编辑</span>
+                    </template>
+                    <a-button v-if="mode=='read' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="edit" @click="fileEdit()"></a-button>
+                </a-tooltip>
+                <a-tooltip placement="bottom">
+                    <template slot="title">
+                        <span>保存</span>
+                    </template>
+                    <a-button v-if="mode=='edit' && iframe.file_id && pluginsConfig.canEdit" type="link" icon="save" @click="fileSave()"></a-button>
+                </a-tooltip>
             </a-button-group>
         </a-col>
         <a-col :span="11" v-if="mode == 'edit' && pluginsConfig.canShow">
@@ -42,7 +57,7 @@
             <span v-if="!autoSave.text" class="text-color">请使用左侧保存按钮保存到可道云,否则文件将不会被保存</span>
         </a-col>
         <a-col :span="6">
-            <a-tooltip placement="bottom" v-for="(item,i) in persons">
+            <a-tooltip placement="bottom" v-for="(item,i) in docConfig.persons">
                 <template v-if="i < 3">
                     <template slot="title">
                         <span>{{item.name}}</span>
@@ -50,21 +65,26 @@
                     <a-avatar :src="item.url"></a-avatar>
                 </template>
             </a-tooltip>
-            <a-popover placement="bottom" v-if="persons.length > 3">
+            <a-popover placement="bottom" v-if="docConfig.persons.length > 3">
                 <template slot="content">
-                    <p v-for="item in persons">
+                    <p v-for="item in docConfig.persons">
                         <a-avatar :src="item.url"></a-avatar>
                         <span>{{item.name}}</span>
                     </p>
                 </template>
                 <template slot="title">
-                    <span>{{persons.length}}人正在观看</span>
+                    <span>{{docConfig.persons.length}}人正在观看</span>
                 </template>
-                <a-badge :count="persons.length-3"></a-badge>
+                <a-badge :count="docConfig.persons.length-3"></a-badge>
             </a-popover>
         </a-col>
         <a-col :span="2">
-            <a-button type="link" @click="copyUrl()">复制地址</a-button>
+            <a-tooltip placement="bottom">
+                <template slot="title">
+                    <span>分享地址</span>
+                </template>
+                <a-button type="link" icon="share-alt" @click="toSetDocConfig()"></a-button>
+            </a-tooltip>
         </a-col>
     </a-row>
     <a-row>
@@ -72,6 +92,19 @@
             <iframe ref="iframe" :src="iframe.src"></iframe>
         </a-col>
     </a-row>
+    <a-modal v-model="docConfig.showSet" title="文档分享" @ok="shareDoc()" ok-text="复制分享链接" cancel-text="取消" :mask-closable="false">
+        <a-form-model layout="horizontal" :model="docConfig.docSet" :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }">
+            <a-form-model-item label="需要登录" prop="needLogin">
+                <a-switch v-model="docConfig.docSet.needLogin"></a-switch>
+            </a-form-model-item>
+            <a-form-model-item label="需要密码" prop="needPass">
+                <a-switch v-model="docConfig.docSet.needPass"></a-switch>
+            </a-form-model-item>
+            <a-form-model-item v-if="docConfig.docSet.needPass" label="文档密码" prop="password">
+                <a-input-password v-model="docConfig.docSet.password" placeholder="请输入文档密码"></a-input-password>
+            </a-form-model-item>
+        </a-form-model>
+    </a-modal>
 </div>
 </body>
 <script>
@@ -102,8 +135,16 @@
             },
             pluginsConfig:{
             },
-            persons:[
-            ],
+            docConfig:{
+                persons:[],
+                password:"",
+                showSet:false,
+                docSet:{
+                    needPass:false,
+                    needLogin:false,
+                    password:""
+                }
+            },
             pageUrl:""
         },
         methods: {
@@ -295,27 +336,89 @@
                     that.pluginsConfig = config;
                     fn();
                 });
-                setInterval(function (){
-                    if(that.iframe.file_id){
-                        aliyundrive.getPersons(that.iframe.file_id,function (sz){
-                            that.persons = sz;
-                        });
+                that.getPersons();
+            },
+            toSetDocConfig:function (){
+                var that = this;
+                aliyundrive.hasSetDocConfigAuth(function (flag){
+                    if(flag){
+                        that.docConfig.showSet = true;
+                    }else{
+                        that.copyUrl();
                     }
-                },10000);
+                });
+            },
+            shareDoc:function (){
+                var that = this;
+                aliyundrive.setDocConfig(that.docConfig.docSet,function (res){
+                    if(!res.flag){
+                        utils.$.errorMsg(res.msg);
+                        return;
+                    }
+                    that.docConfig.showSet = false;
+                    that.copyUrl();
+                });
             },
             copyUrl:function (){
                 var that = this;
                 if(utils.copyText(that.pageUrl)){
-                    utils.$.successMsg("复制成功");
+                    utils.$.successMsg("复制成功,请粘贴给别人协同修改");
                 }else{
                     prompt("当前浏览器不支持复制,请手动复制",that.pageUrl);
                 }
+            },
+            getPersons:function (){
+                var that = this;
+                if(that.personAction){
+                    return;
+                }
+                that.personAction = true;
+                aliyundrive.getPersons(function (res){
+                    var sz = [];
+                    if(res.flag){
+                        sz = res.data;
+                    }
+                    that.docConfig.persons = sz;
+                    setTimeout(function (){
+                        that.personAction = false;
+                        that.getPersons();
+                    },5000);
+                });
+            },
+            initAuth:function (){
+                var that = this;
+                if(!that.docConfig.password && utils.getLocalStorage("docPassword")){
+                    that.docConfig.password = utils.getLocalStorage("docPassword");
+                }
+                aliyundrive.getDocConfig(that.docConfig.password,function (res){
+                    if(!res.flag){
+                        utils.$.errorMsg(res.msg);
+                        return;
+                    }
+                    var config = res.data;
+                    if(config.needLogin && !config.checkLogin){
+                        aliyundrive.toLogin();
+                        return;
+                    }
+                    if(config.needPass && !config.checkPass){
+                        //需要输入密码
+                        utils.$.prompt("请输入当前的文档密码",function (flag,text){
+                            if(flag){
+                               that.docConfig.password=text;
+                               that.initAuth();
+                            }
+                        });
+                        return;
+                    }
+                    utils.setLocalStorage("docPassword",that.docConfig.password);
+                    that.initConfig(that.initData);
+                });
             }
         },
         mounted:function(){
             var that = this;
             utils.$.loading("正在加载中...请稍后");
-            that.initConfig(that.initData);
+            that.initAuth();
         }
     });
 </script>
