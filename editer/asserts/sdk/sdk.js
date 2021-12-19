@@ -12,11 +12,13 @@
         },
         getAliFileId:function (options,fn){
             //获取阿里云文件id
-            //options = {url:'',name:''}
+            //options = {url:'',name:'',file_id:''}
             //后端自行实现,步骤如下
-            //1.根据options.url获取文件流
-            //2.将该文件流上传到阿里云盘拿到文件id
-            //3.使用fn进行回调  fn(file_id)
+            //1.判断file_id是否存在或者被删除
+            //2.如果没删除直接返回file_id 使用fn进行回调  fn(file_id)
+            //3.如果删除根据options.url获取文件流
+            //4.将该文件流上传到阿里云盘拿到文件id
+            //5.使用fn进行回调  fn(file_id)
             //示例如下:
             utils.$.post(aliyundriveController+"?type=1",options,function (res){
                 fn(res.data.file_id);
@@ -82,6 +84,7 @@
             //自行实现,建议如下
             //1.打印提示用户未登录
             //2.用户点击后跳转到登录页
+            utils.$.alert("跳转到登录页")
         },
         setDocConfig:function (config,fn){
             //设置文档配置
@@ -100,6 +103,15 @@
             //1.获取用户信息
             //2.校验此用户是否是文档分享发起人
             //3.使用fn回调  fn(false);
+            fn(false);
+        },
+        getShortUrl:function (url,fn){
+            //获取短链接
+            //前后端自行实现,步骤如下
+            //1.后端将该链接存储,并返回一个id
+            //2.前端拼接这个id作为分享链接 回调  fn(url)
+            //3.前端访问这个链接的时候跳转到长连接
+            fn(url);
         }
     }
 })()

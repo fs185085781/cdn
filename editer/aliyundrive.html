@@ -250,16 +250,16 @@
                     return;
                 }
                 if(utils.getParamer("file_id")){
-                    that.iframe.file_id = utils.getParamer("file_id");
-                    that.pageUrl = utils.urlAddProp(window.location.href,"file_id",that.iframe.file_id);
-                    fn();
-                }else{
-                    aliyundrive.getFileId(that.file,function (fid){
-                        that.iframe.file_id = fid;
-                        that.pageUrl = utils.urlAddProp(window.location.href,"file_id",that.iframe.file_id);
-                        fn();
-                    });
+                    that.file.file_id = utils.getParamer("file_id");
                 }
+                aliyundrive.getFileId(that.file,function (fid){
+                    that.iframe.file_id = fid;
+                    that.pageUrl = utils.urlAddProp(window.location.href,"file_id",that.iframe.file_id);
+                    aliyundrive.getShortUrl(that.pageUrl,function (url){
+                        that.pageUrl = url;
+                    });
+                    fn();
+                });
             },
             aliyunEdit:function (fn){
                 var that = this;

@@ -279,12 +279,32 @@ if($_GET['type'] == "0"){
     echo return_data(true,"设置成功",null);
 }else if($_GET['type'] == "1"){
     //获取文件id
+    $file_id = $param['file_id'];
+    $tokenData = checkToken();
+    if($file_id){
+        $token = $tokenData['access_token'];
+        $driveid = $tokenData['default_drive_id'];
+        $param = array(
+            "drive_id"=>$driveid,
+            "file_id"=>$file_id
+        );
+        $headers = array("Content-Type: application/json",
+            "authorization: Bearer ".$token,
+            "cache-control: no-cache");
+        $res = aliRequest("/v2/file/get_download_url",$param,$headers);
+        if($res['url']){
+            $resData = array(
+                "file_id"=>$file_id
+            );
+            echo return_data(true,"获取文件id成功",$resData);
+            return;
+        }
+    }
     $data = getFileByUrl($param['url'],false);
     if(!$data){
         echo return_data(false,"文件数据不能为空",null);
         return;
     }
-    $tokenData = checkToken();
     $file_id = fileUpload($tokenData,$data,$param['name']);
     if(!$file_id){
         echo return_data(false,"获取文件id失败",null);

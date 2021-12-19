@@ -122,6 +122,14 @@
             }else{
                 fn(false);
             }
+        },
+        getShortUrl:function(url,fn){
+            //获取短链接
+            if(window.thirdSdk && window.thirdSdk.getShortUrl){
+                window.thirdSdk.getShortUrl(url,fn);
+            }else{
+                fn(url);
+            }
         }
     }
 })()
