@@ -95,6 +95,10 @@
         </a-col>
     </a-row>
     <a-modal v-model="docConfig.showSet" title="文档分享" @ok="shareDoc()" ok-text="复制分享链接" cancel-text="取消" :mask-closable="false">
+        <a-row>
+            <a-col :span="24" style="color:red;text-align: center;">协同方不具备将数据写到可道云</a-col>
+            <a-col :span="24" style="color:red;text-align: center;">请通知协同方修改后提醒创建方进入保存</a-col>
+        </a-row>
         <a-form-model layout="horizontal" :model="docConfig.docSet" :label-col="{ span: 6 }" :wrapper-col="{ span: 12 }">
             <a-form-model-item label="需要登录" prop="needLogin">
                 <a-switch v-model="docConfig.docSet.needLogin"></a-switch>
@@ -222,15 +226,26 @@
                     utils.$.attr.tmpMask = false;
                     if(that.autoSave.init){
                         that.autoSave.text = "正在保存中...请稍后";
+                        if(!that.pluginsConfig.canShow){
+                            utils.$.successMsg("正在保存中...请稍后");
+                        }
                     }else{
                         utils.$.loading("正在保存中...请稍后");
                     }
+
                     aliyundrive.saveFile(that.iframe.file_id,function (res){
                         utils.$.cancelLoading();
                         that.iframe.save_status = 0;
                         if(that.autoSave.init){
                             that.autoSave.text = res.msg;
                             that.autoSave.value = that.autoSave.defValue;
+                            if(!that.pluginsConfig.canShow){
+                                if(res.flag){
+                                    utils.$.successMsg(res.msg);
+                                }else{
+                                    utils.$.errorMsg(res.msg);
+                                }
+                            }
                         }else{
                             if(res.flag){
                                 utils.$.successMsg(res.msg);
@@ -421,6 +436,13 @@
             var that = this;
             utils.$.loading("正在加载中...请稍后");
             that.initAuth();
+            aliyundrive.hasSetDocConfigAuth(function (flag){
+                if(!flag){
+                    setTimeout(function (){
+                        utils.$.alert("协同方不支持将数据写入到可道云,请修改后及时通知创建人进行保存");
+                    },3000);
+                }
+            });
         }
     });
 </script>
