@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="basic">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/photopea/rsrc/basic/basic.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

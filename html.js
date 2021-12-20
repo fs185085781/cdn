@@ -1,5 +1,4 @@
 (function (){
-    document.write("<meta charset=\"UTF-8\">");
     var hp = flhostPath();
     var fileUrl = hp.host+hp.path;
     var filePathSz = fileUrl.split("/");
@@ -33,9 +32,11 @@
         urlsz.length = urlsz.length - 1;
         var host = urlsz.join("/");
         if(urlsz[urlsz.length-1].indexOf("@") === -1){
-            syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
-                host = host+"@"+version;
-            });
+            if(src.origin.indexOf("jsdelivr")!=-1){
+                syncLoadData("https://fscdn.hz.wanyuanyun.com/version.txt?_="+new Date().getTime(),function (version){
+                    host = host+"@"+version;
+                });
+            }
         }
         var strsz = search.split("&");
         var map = {};

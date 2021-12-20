@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="bios">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/GameEmulatorWeb/asserts/plugins/emulator/bios/isgsm.zip!/" />
+      <root url="jar://$PROJECT_DIR$/GameEmulatorWeb/asserts/plugins/emulator/bios/neogeo.zip!/" />
+      <root url="jar://$PROJECT_DIR$/GameEmulatorWeb/asserts/plugins/emulator/bios/pgm.zip!/" />
+      <root url="jar://$PROJECT_DIR$/GameEmulatorWeb/asserts/plugins/emulator/bios/blueMSXv282full.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
