@@ -301,10 +301,10 @@ if($_GET['type'] == "0"){
         }
     }
     $data = getFileByUrl($param['url'],false);
-    if(!$data){
+    /*if(!$data){
         echo return_data(false,"文件数据不能为空",null);
         return;
-    }
+    }*/
     $file_id = fileUpload($tokenData,$data,$param['name']);
     if(!$file_id){
         echo return_data(false,"获取文件id失败",null);
