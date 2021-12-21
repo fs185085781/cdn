@@ -2,6 +2,7 @@
     /*堡垒机,用于识别使用哪个cdn的,以后所有的情况改这里就行,由七牛云负责主加载*/
     var path;
     var tmpSz = [
+        "https://objective-kepler-55a6d4.netlify.app",
         "https://cdn.jsdelivr.net/gh/fs185085781/cdn"
     ];
     for(var i=0;i<tmpSz.length;i++){
