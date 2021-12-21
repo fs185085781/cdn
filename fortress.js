@@ -4,7 +4,6 @@
         "https://fs185085781.gitee.io/cdn",
         "https://objective-kepler-55a6d4.netlify.app",
         "https://cdn.jsdelivr.net/gh/fs185085781/cdn",
-        "https://static.tenfell.cn/cdn",
         currentPath()
     ];
     for(var i=0;i<tmpSz.length;i++){
