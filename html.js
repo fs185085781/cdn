@@ -74,12 +74,15 @@
         }
         return str;
     }
-
-    syncLoadData(fileUrl, function (res) {
-        res = clurl(res, " src=\"");
-        res = clurl(res, " href=\"");
-        res = clurl(res, " src='");
-        res = clurl(res, " href='");
-        document.write(res);
-    });
+    try{
+        syncLoadData(fileUrl, function (res) {
+            res = clurl(res, " src=\"");
+            res = clurl(res, " href=\"");
+            res = clurl(res, " src='");
+            res = clurl(res, " href='");
+            document.write(res);
+        });
+    }catch (e){
+        window.location.href = fileUrl + window.location.search;
+    }
 })()
