@@ -6,7 +6,7 @@
     ];
     for(var i=0;i<tmpSz.length;i++){
         var tmpPath = tmpSz[i];
-        var url = tmpPath+"/html.js";
+        var url = tmpPath+"/fortress.js";
         try{
             if(hasData(url)){
                 path = tmpPath;
