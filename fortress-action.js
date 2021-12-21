@@ -5,13 +5,6 @@
     }
     window.fortressAction = true;
     var path = currentPath();
-    if(path.indexOf("cdn.jsdelivr.net") != -1){
-        /*当前是cdn.jsdelivr.net,增加版本号*/
-        var version = getUrlData("https://static.tenfell.cn/cdn/version.txt?_="+new Date().getTime());
-        if(version){
-            path += "@"+version;
-        }
-    }
     if(window.fortress){
         window.fortress(path);
     }
