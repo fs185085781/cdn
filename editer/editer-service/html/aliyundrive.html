@@ -1,7 +1,9 @@
 <meta charset="UTF-8">
 <script>
-    function fortressHtml(path){
-        document.write("<script src=\""+path+"/html.js?path=/editer/aliyundrive.html\"><"+"/script>")
-    }
+    (function (){
+        var url = new URL(window.location.href);
+        var toPathName = url.pathname.split("/").pop();
+        url.searchParams.set("toPathName",toPathName);
+        window.location.href = "html.php" + url.search;
+    })()
 </script>
-<script src="https://fs185085781.gitee.io/cdn/fortress.js?method=fortressHtml"></script>
