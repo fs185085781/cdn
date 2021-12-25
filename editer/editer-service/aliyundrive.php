@@ -284,14 +284,14 @@ if($_GET['type'] == "0"){
     if($file_id){
         $token = $tokenData['access_token'];
         $driveid = $tokenData['default_drive_id'];
-        $param = array(
+        $param2 = array(
             "drive_id"=>$driveid,
             "file_id"=>$file_id
         );
         $headers = array("Content-Type: application/json",
             "authorization: Bearer ".$token,
             "cache-control: no-cache");
-        $res = aliRequest("/v2/file/get_download_url",$param,$headers);
+        $res = aliRequest("/v2/file/get_download_url",$param2,$headers);
         if($res['url']){
             $resData = array(
                 "file_id"=>$file_id
