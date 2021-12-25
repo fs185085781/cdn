@@ -23,7 +23,8 @@
         utils.rootPath=rootPath;
         utils.ajaxHost=ajaxHost;
     }
-    var utiljs =  "https://fs185085781.gitee.io/cdn/smart-ui/boot/utils.js"+search;
+    var cdn = getUrlJsonData(rootPath+"/../cdn.js?_="+new Date().getTime());
+    var utiljs =  cdn.cdn + "/smart-ui/boot/utils.js"+search;
     document.write("<script src='"+utiljs+"'></script>");
     //全局axios配置,配置信息请参考axios官网
     window.reqOptionsHook=function(url,method,data){
@@ -142,5 +143,26 @@
             }
         }
         return script;
+    }
+    function getUrlJsonData(url) {
+        var xmlhttp;
+        var res = {};
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        } else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4) {
+                try {
+                    res = JSON.parse(xmlhttp.responseText);
+                } catch (e) {
+                    console.warn(e);
+                }
+            }
+        }
+        xmlhttp.open("GET", url, false);
+        xmlhttp.send();
+        return res;
     }
 })()

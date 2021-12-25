@@ -20,7 +20,7 @@
         utils.rootPath=rootPath;
         utils.ajaxHost=ajaxHost;
     }
-    var utiljs =  "https://fs185085781.gitee.io/cdn/smart-ui/boot/utils.js"+search;
+    var utiljs =  rootPath+"/smart-ui/boot/utils.js"+search;
     document.write("<script src='"+utiljs+"'></script>");
     /*全局axios配置,配置信息请参考axios官网*/
     window.reqOptionsHook=function(url,method,data){
