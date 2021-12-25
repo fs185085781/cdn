@@ -28,7 +28,7 @@
         var utiljs = path + "/smart-ui/boot/utils.js"+search;
         document.write("<script src='"+utiljs+"'></script>");
     }
-    document.write("<script src='https://fs185085781.gitee.io/cdn/fortress.js'></script>");
+    document.write("<script src='https://fs185085781.gitee.io/cdn/fortress.js?method=fortress'></script>");
     /*堡垒机动态选择cdn----结束*/
     //全局axios配置,配置信息请参考axios官网
     window.reqOptionsHook=function(url,method,data){
