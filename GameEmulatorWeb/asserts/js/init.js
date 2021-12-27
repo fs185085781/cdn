@@ -23,9 +23,11 @@
         utils.rootPath=rootPath;
         utils.ajaxHost=ajaxHost;
     }
-    var cdn = getUrlJsonData(rootPath+"/../cdn.js?_="+new Date().getTime());
-    var utiljs =  cdn.cdn + "/smart-ui/boot/utils.js"+search;
-    document.write("<script src='"+utiljs+"'></script>");
+    window.initCdn = function (cdn){
+        var utiljs =  cdn + "/smart-ui/boot/utils.js"+search;
+        document.write("<script src='"+utiljs+"'></script>");
+    }
+    document.write("<script src='"+rootPath+"/../cdn.js?_="+new Date().getTime()+"'></script>");
     //全局axios配置,配置信息请参考axios官网
     window.reqOptionsHook=function(url,method,data){
         //此处是json的例子---开始
