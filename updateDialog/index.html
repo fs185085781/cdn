@@ -13,6 +13,7 @@
 </head>
 <body>
 <div id="app">
+    <a v-if="!hasInit" href="https://gitee.com/fs185085781/kod-plugins/releases" target="_blank">乱码点我去官网下载完整版</a>
     <a-row style="text-align:center;">
         <a-col span="24">
             <span class="update-font">版本号:</span>{{version}}
@@ -22,10 +23,18 @@
         </a-col>
         <a-col span="24">
             <a-button type="primary" @click="update(0)">
-                手动下载
+                直接下载
             </a-button>
             <a-button type="primary" @click="update(1)">
                 自动更新
+            </a-button>
+        </a-col>
+        <a-col span="24" style="margin-top:5px;">
+            <a-button type="primary" @click="update(2)">
+                官网下载
+            </a-button>
+            <a-button type="primary" @click="update(3)">
+                补丁更新
             </a-button>
         </a-col>
     </a-row>
@@ -37,7 +46,8 @@
             version:"",
             text:"",
             downUrl:"",
-            actionPhp:""
+            actionPhp:"",
+            hasInit:false
         },
         methods:{
             update:function (type){
@@ -46,8 +56,13 @@
                     a.href = this.downUrl;
                     a.target = '_blank';
                     a.click();
-                }else if(type==1){
-                    utils.$.get(this.actionPhp+"?type=3&version="+this.version,function(res){
+                }else if(type==2){
+                    var a = document.createElement('a');
+                    a.href = "https://gitee.com/fs185085781/kod-plugins/releases";
+                    a.target = '_blank';
+                    a.click();
+                }else if(type==1 || type==3){
+                    utils.$.get(this.actionPhp+"?type=3&ac="+type+"&version="+this.version,function(res){
                         utils.$.successMsg(res.msg);
                     });
                 }
@@ -58,6 +73,7 @@
                 that.text = window.text;
                 that.downUrl = window.downUrl;
                 that.actionPhp = window.actionPhp;
+                that.hasInit = true;
             }
         },
         mounted(){
