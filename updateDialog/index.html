@@ -22,25 +22,21 @@
             <span class="update-font">更新内容:</span><div v-html="text"></div>
         </a-col>
         <a-col span="24">
-            <a-button type="primary" @click="update(0)">
-                直接下载
-            </a-button>
-            <a-button type="primary" @click="update(1)">
-                全量更新(推荐)
-            </a-button>
-        </a-col>
-        <a-col span="24" style="margin-top:5px;">
-            <a-button type="primary" @click="update(2)">
-                官网下载
-            </a-button>
-            <a-tooltip placement="top">
-                <template slot="title">
-                    <span>版本号只相差1位才能补丁更新,否则插件可能不完整</span>
-                </template>
-                <a-button type="primary" @click="update(3)">
-                    补丁更新
+            <a-col span="12">
+                <a-button type="primary" @click="update(0)">
+                    浏览器下载
                 </a-button>
-            </a-tooltip>
+            </a-col>
+            <a-col span="12">
+                <a-button type="primary" @click="update(1)">
+                    自动更新(推荐)
+                </a-button>
+            </a-col>
+        </a-col>
+        <a-col span="24">
+            <span>
+                无法下载或者更新?<a href="javascript:void(0)" @click="update(2)">点我去官网下载</a>
+            </span>
         </a-col>
     </a-row>
 </div>
@@ -66,8 +62,8 @@
                     a.href = "https://gitee.com/fs185085781/kod-plugins/releases";
                     a.target = '_blank';
                     a.click();
-                }else if(type==1 || type==3){
-                    utils.$.get(this.actionPhp+"?type=3&ac="+type+"&version="+this.version,function(res){
+                }else if(type==1){
+                    utils.$.get(this.actionPhp+"?type=3&version="+this.version,function(res){
                         utils.$.successMsg(res.msg);
                     });
                 }
