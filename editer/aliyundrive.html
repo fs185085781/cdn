@@ -438,6 +438,9 @@
                         return;
                     }
                     utils.setLocalStorage("docPassword",that.docConfig.password);
+                    if(config.config){
+                        that.docConfig.docSet = config.config;
+                    }
                     that.initConfig(that.initData);
                 });
             }
