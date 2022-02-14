@@ -54,8 +54,8 @@
         </a-col>
         <a-col :span="11">
             <template v-if="mode == 'edit' && pluginsConfig.canShow">
-                <span v-if="autoSave.text" class="text-color">当前已开启自动保存({{autoSave.text}})</span>
-                <span v-if="!autoSave.text" class="text-color">请使用左侧保存按钮保存到可道云,否则文件将不会被保存</span>
+                <span v-if="autoSave.text" class="text-color">自动模式({{autoSave.text}})</span>
+                <span v-if="!autoSave.text" class="text-color">手动模式,使用按钮保存</span>
             </template>
         </a-col>
         <a-col :span="6">
