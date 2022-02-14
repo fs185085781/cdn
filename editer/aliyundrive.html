@@ -149,7 +149,8 @@
                     needPass:false,
                     needLogin:false,
                     password:""
-                }
+                },
+                hasSave:false
             },
             pageUrl:""
         },
@@ -243,14 +244,23 @@
                                 if(res.flag){
                                     utils.$.successMsg(res.msg);
                                 }else{
-                                    utils.$.errorMsg(res.msg);
+                                    if(that.docConfig.hasSave){
+                                        utils.$.errorMsg(res.msg);
+                                    }else{
+                                        utils.$.warningMsg("请通知创建者保存");
+                                    }
+
                                 }
                             }
                         }else{
                             if(res.flag){
                                 utils.$.successMsg(res.msg);
                             }else{
-                                utils.$.errorMsg(res.msg);
+                                if(that.docConfig.hasSave){
+                                    utils.$.errorMsg(res.msg);
+                                }else{
+                                    utils.$.warningMsg("请通知创建者保存");
+                                }
                             }
                         }
                     });
@@ -438,9 +448,12 @@
             that.initAuth();
             aliyundrive.hasSetDocConfigAuth(function (flag){
                 if(!flag){
+                    that.docConfig.hasSave = false;
                     setTimeout(function (){
                         utils.$.alert("协同方不支持将数据写入到可道云,请修改后及时通知创建人进行保存");
                     },3000);
+                }else{
+                    that.docConfig.hasSave = true;
                 }
             });
         }
