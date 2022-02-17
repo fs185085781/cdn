@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="orlegend">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/GameEmulatorWeb/roms/orlegend.zip!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
