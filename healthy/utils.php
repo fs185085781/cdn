@@ -1,5 +1,4 @@
 <?php
-error_reporting(0);
 header("Content-type:text/html;charset=utf-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Credentials: true");
@@ -16,7 +15,7 @@ function async_action($flag = "0"){
         return;
     }
     ob_start();
-    echo "1";
+    echo "";
     $size_o = ob_get_length();
     header("Content-Length: $size_o");
     header('Connection: close');
@@ -52,7 +51,7 @@ if($_GET['type'] == "0"){
     }
     $cacheData = cacheGet("url","url");
     if(!$cacheData){
-        return array();
+        $cacheData = array();
     }
     $cacheData[$param['url']] = "1";
     cacheSet("url","url",$cacheData);
