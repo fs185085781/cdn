@@ -58,8 +58,18 @@ if($_GET['type'] == "0"){
     echo return_data(true,"增加成功",null);
 }else if($_GET['type'] == "1"){
     // 调用心跳
+    $timeCache = cacheGet("time","time");
+    if($timeCache && strtotime($timeCache['last_time']) > time() - 1800){
+        echo return_data(false,"时间未到,请稍后重试",null);
+        return;
+    }
+    cacheSet("time","time",array("last_time"=>date("Y-m-d H:i:s")));
     async_action("1");
     $cacheData = cacheGet("url","url");
+    if(!$cacheData){
+        echo return_data(false,"无url跳过不调用",null);
+        return;
+    }
     foreach ($cacheData as $url => $val) {
         action_url($url);
     }
