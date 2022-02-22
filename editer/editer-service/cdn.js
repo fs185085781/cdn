@@ -1,5 +1,5 @@
 (function(){
-    var c = "https://fs185085781.gitee.io/cdn";
+    var c = "https://fscdn.hz.wanyuanyun.com/cdn";
     if(window.initCdn){
         window.initCdn(c);
     }
